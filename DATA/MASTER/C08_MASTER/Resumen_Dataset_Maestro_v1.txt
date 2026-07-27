@@ -1,0 +1,138 @@
+================================================================================
+FRAMEWORK DE GESTIÓN HÍDRICA
+RESUMEN DEL DATASET MAESTRO
+================================================================================
+
+Fecha de generación : 2026-07-27 21:53:09.856825
+Versión             : 1.0
+Módulo              : Integración del Dataset Maestro
+
+================================================================================
+DIMENSIONES
+================================================================================
+Registros : 528
+Columnas  : 39
+
+================================================================================
+TIPOS DE DATOS
+================================================================================
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 528 entries, 0 to 527
+Data columns (total 39 columns):
+ #   Column                                                                    Non-Null Count  Dtype         
+---  ------                                                                    --------------  -----         
+ 0   Nodo                                                                      528 non-null    object        
+ 1   Fecha                                                                     528 non-null    datetime64[ns]
+ 2   Precipitacion_mm                                                          528 non-null    float64       
+ 3   Temp_Max_C                                                                528 non-null    float64       
+ 4   Temp_Min_C                                                                528 non-null    float64       
+ 5   Temp_Media_C                                                              528 non-null    float64       
+ 6   Humedad_Relativa                                                          528 non-null    float64       
+ 7   Velocidad_Viento                                                          528 non-null    float64       
+ 8   Radiacion_Solar                                                           528 non-null    float64       
+ 9   Anio                                                                      528 non-null    int32         
+ 10  Mes                                                                       528 non-null    int32         
+ 11  ONI                                                                       528 non-null    float64       
+ 12  Estado_ENSO                                                               528 non-null    object        
+ 13  VolumenUtilDiarioMasa                                                     292 non-null    float64       
+ 14  irca                                                                      480 non-null    float64       
+ 15  nivel_de_riesgo                                                           480 non-null    object        
+ 16  POBLACION TOTAL                                                           192 non-null    float64       
+ 17  DENSIDAD POBLACIONAL                                                      192 non-null    float64       
+ 18  INDICE DE DESEMPENO INSTITUCIONAL                                         48 non-null     float64       
+ 19  ACCESO A AGUA POTABLE ADECUADO                                            192 non-null    float64       
+ 20  PORCENTAJE DE LA POBLACION CON ACCESO A METODOS DE SANEAMIENTO ADECUADOS  192 non-null    float64       
+ 21  COBERTURA DE ACUEDUCTO URBANO                                             192 non-null    float64       
+ 22  COBERTURA DE ACUEDUCTO RURAL                                              192 non-null    float64       
+ 23  COBERTURA DE ALCANTARILLADO URBANO                                        192 non-null    float64       
+ 24  COBERTURA DE ALCANTARILLADO RURAL                                         192 non-null    float64       
+ 25  CONTINUIDAD DE ACUEDUCTO URBANO                                           96 non-null     float64       
+ 26  CALIDAD DEL AGUA                                                          96 non-null     float64       
+ 27  AGUAS RESIDUALES TRATADAS                                                 96 non-null     float64       
+ 28  Nivel_Minimo                                                              87 non-null     float64       
+ 29  CONDUCTIVIDAD ELECTRICA                                                   50 non-null     float64       
+ 30  DEMANDA BIOQUIMICA DE OXIGENO (DBO5)                                      26 non-null     float64       
+ 31  DEMANDA QUIMICA DE OXIGENO (DQO)                                          49 non-null     float64       
+ 32  FOSFORO TOTAL                                                             49 non-null     float64       
+ 33  NITROGENO TOTAL                                                           29 non-null     float64       
+ 34  OXIGENO DISUELTO (OD)                                                     50 non-null     float64       
+ 35  SOLIDOS SUSPENDIDOS TOTALES                                               50 non-null     float64       
+ 36  TEMPERATURA                                                               50 non-null     float64       
+ 37  TURBIDEZ                                                                  34 non-null     float64       
+ 38  pH                                                                        50 non-null     float64       
+dtypes: datetime64[ns](1), float64(33), int32(2), object(3)
+memory usage: 156.9+ KB
+
+================================================================================
+ESTADÍSTICAS DESCRIPTIVAS
+================================================================================
+                 Nodo                          Fecha  Precipitacion_mm  Temp_Max_C  Temp_Min_C  Temp_Media_C  Humedad_Relativa  Velocidad_Viento  Radiacion_Solar         Anio         Mes         ONI Estado_ENSO  VolumenUtilDiarioMasa        irca nivel_de_riesgo  POBLACION TOTAL  DENSIDAD POBLACIONAL  INDICE DE DESEMPENO INSTITUCIONAL  ACCESO A AGUA POTABLE ADECUADO  PORCENTAJE DE LA POBLACION CON ACCESO A METODOS DE SANEAMIENTO ADECUADOS  COBERTURA DE ACUEDUCTO URBANO  COBERTURA DE ACUEDUCTO RURAL  COBERTURA DE ALCANTARILLADO URBANO  COBERTURA DE ALCANTARILLADO RURAL  CONTINUIDAD DE ACUEDUCTO URBANO  CALIDAD DEL AGUA  AGUAS RESIDUALES TRATADAS  Nivel_Minimo  CONDUCTIVIDAD ELECTRICA  DEMANDA BIOQUIMICA DE OXIGENO (DBO5)  DEMANDA QUIMICA DE OXIGENO (DQO)  FOSFORO TOTAL  NITROGENO TOTAL  OXIGENO DISUELTO (OD)  SOLIDOS SUSPENDIDOS TOTALES  TEMPERATURA    TURBIDEZ         pH
+count             528                            528        528.000000  528.000000  528.000000    528.000000        528.000000        528.000000       528.000000   528.000000  528.000000  528.000000         528           2.920000e+02  480.000000             480       192.000000            192.000000                          48.000000                      192.000000                                                                192.000000                     192.000000                    192.000000                          192.000000                         192.000000                             96.0         96.000000                  96.000000     87.000000                50.000000                             26.000000                         49.000000      49.000000        29.000000              50.000000                    50.000000    50.000000   34.000000  50.000000
+unique              4                            NaN               NaN         NaN         NaN           NaN               NaN               NaN              NaN          NaN         NaN         NaN           3                    NaN         NaN               2              NaN                   NaN                                NaN                             NaN                                                                       NaN                            NaN                           NaN                                 NaN                                NaN                              NaN               NaN                        NaN           NaN                      NaN                                   NaN                               NaN            NaN              NaN                    NaN                          NaN          NaN         NaN        NaN
+top     Bogota_Sabana                            NaN               NaN         NaN         NaN           NaN               NaN               NaN              NaN          NaN         NaN         NaN     Neutral                    NaN         NaN      Sin riesgo              NaN                   NaN                                NaN                             NaN                                                                       NaN                            NaN                           NaN                                 NaN                                NaN                              NaN               NaN                        NaN           NaN                      NaN                                   NaN                               NaN            NaN              NaN                    NaN                          NaN          NaN         NaN        NaN
+freq              132                            NaN               NaN         NaN         NaN           NaN               NaN               NaN              NaN          NaN         NaN         NaN         196                    NaN         NaN             396              NaN                   NaN                                NaN                             NaN                                                                       NaN                            NaN                           NaN                                 NaN                                NaN                              NaN               NaN                        NaN           NaN                      NaN                                   NaN                               NaN            NaN              NaN                    NaN                          NaN          NaN         NaN        NaN
+mean              NaN  2020-06-16 02:10:54.545454592          6.066307   22.991250   11.102652     16.715265         84.681875          1.092746        16.586723  2020.000000    6.500000    0.166364         NaN           4.396593e+08    2.600000             NaN     63014.562500            760.981250                          71.825000                       98.018125                                                                 86.841875                      25.686875                     95.375000                           92.392500                          37.668750                             24.0         27.616750                  67.000000      3.094248               190.908700                             10.636538                         46.994898       0.584959         7.035345               4.243550                    47.829000    16.269500   31.440294   6.964700
+min               NaN            2015-01-01 00:00:00          0.000000   17.640000    4.130000     12.110000         65.840000          0.480000        11.970000  2015.000000    1.000000   -1.360000         NaN           2.901419e+08    0.000000             NaN     18810.000000             80.040000                          60.200000                       89.000000                                                                 25.380000                       0.990000                     82.000000                           60.540000                           1.000000                             24.0          0.000000                   0.000000      0.195000                23.225000                              2.000000                         10.000000       0.112000         0.650000               0.927500                     7.000000    10.700000    4.020000   5.520000
+25%               NaN            2017-09-23 12:00:00          3.085000   20.605000    9.185000     14.507500         81.560000          0.900000        15.457500  2017.000000    3.750000   -0.552500         NaN           3.364336e+08    0.400000             NaN     26834.750000            213.660000                          66.650000                       99.775000                                                                 90.290000                       1.000000                     94.750000                           84.485000                           1.000000                             24.0         16.923500                  51.750000      0.361250                72.172500                              5.000000                         26.500000       0.199500         1.615000               2.006250                    17.625000    14.250000    9.775000   6.732500
+50%               NaN            2020-06-16 00:00:00          5.845000   22.805000   11.260000     17.280000         86.200000          1.030000        16.495000  2020.000000    6.500000   -0.015000         NaN           4.548644e+08    1.800000             NaN     37972.500000            447.330000                          69.200000                      100.000000                                                                 98.850000                       1.000000                    100.000000                           98.045000                          42.450000                             24.0         27.000000                  84.000000      0.672222               118.800000                              7.215000                         40.000000       0.300000         4.187500               4.600000                    34.875000    16.875000   22.750000   6.880000
+75%               NaN            2023-03-08 18:00:00          8.372500   25.205000   13.142500     18.700000         88.540000          1.260000        17.502500  2023.000000    9.250000    0.665000         NaN           5.329571e+08    3.625000             NaN     73342.250000            991.517500                          74.375000                      100.000000                                                                 99.000000                      25.500000                    100.000000                          100.000000                          63.302500                             24.0         36.740000                  99.250000      2.015750               269.375000                             10.755000                         59.500000       0.897500         9.932500               6.287500                    56.500000    17.718750   42.750000   7.163125
+max               NaN            2025-12-01 00:00:00         18.320000   30.630000   16.670000     21.440000         92.160000          1.880000        22.330000  2025.000000   12.000000    2.770000         NaN           6.195856e+08    9.500000             NaN    163306.000000           2148.760000                          88.700000                      100.000000                                                                100.000000                     100.000000                    100.000000                          100.000000                          83.000000                             24.0         68.920000                 100.000000    176.000000               723.250000                             40.000000                        124.000000       2.175000        21.622500               7.650000                   258.000000    20.125000  120.000000   8.490000
+std               NaN                            NaN          3.708268    2.689784    2.474984      2.268462          5.181825          0.261388         1.696319     3.165277    3.455326    0.938824         NaN           1.000797e+08    2.492879             NaN     54602.176959            773.700575                          10.526653                        4.036323                                                                 22.469096                      42.872707                      7.749008                           10.946029                          31.823816                              0.0         20.615271                  40.851979     18.770780               177.641659                             10.264893                         27.920203       0.581621         6.536891               2.143408                    46.372922     2.245371   29.898514   0.491361
+
+================================================================================
+VALORES NULOS
+================================================================================
+Nodo                                                                          0
+Fecha                                                                         0
+Precipitacion_mm                                                              0
+Temp_Max_C                                                                    0
+Temp_Min_C                                                                    0
+Temp_Media_C                                                                  0
+Humedad_Relativa                                                              0
+Velocidad_Viento                                                              0
+Radiacion_Solar                                                               0
+Anio                                                                          0
+Mes                                                                           0
+ONI                                                                           0
+Estado_ENSO                                                                   0
+VolumenUtilDiarioMasa                                                       236
+irca                                                                         48
+nivel_de_riesgo                                                              48
+POBLACION TOTAL                                                             336
+DENSIDAD POBLACIONAL                                                        336
+INDICE DE DESEMPENO INSTITUCIONAL                                           480
+ACCESO A AGUA POTABLE ADECUADO                                              336
+PORCENTAJE DE LA POBLACION CON ACCESO A METODOS DE SANEAMIENTO ADECUADOS    336
+COBERTURA DE ACUEDUCTO URBANO                                               336
+COBERTURA DE ACUEDUCTO RURAL                                                336
+COBERTURA DE ALCANTARILLADO URBANO                                          336
+COBERTURA DE ALCANTARILLADO RURAL                                           336
+CONTINUIDAD DE ACUEDUCTO URBANO                                             432
+CALIDAD DEL AGUA                                                            432
+AGUAS RESIDUALES TRATADAS                                                   432
+Nivel_Minimo                                                                441
+CONDUCTIVIDAD ELECTRICA                                                     478
+DEMANDA BIOQUIMICA DE OXIGENO (DBO5)                                        502
+DEMANDA QUIMICA DE OXIGENO (DQO)                                            479
+FOSFORO TOTAL                                                               479
+NITROGENO TOTAL                                                             499
+OXIGENO DISUELTO (OD)                                                       478
+SOLIDOS SUSPENDIDOS TOTALES                                                 478
+TEMPERATURA                                                                 478
+TURBIDEZ                                                                    494
+pH                                                                          478
+
+================================================================================
+COBERTURA TEMPORAL
+================================================================================
+Fecha inicial : 2015-01-01 00:00:00
+Fecha final   : 2025-12-01 00:00:00
+
+
+================================================================================
+NODOS
+================================================================================
+- Bogota_Sabana
+- Sopo_Sur
+- Tocancipa_Media
+- Villapinzon_Alta
