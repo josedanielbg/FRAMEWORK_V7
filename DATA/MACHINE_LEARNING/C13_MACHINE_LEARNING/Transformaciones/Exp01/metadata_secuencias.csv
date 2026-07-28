@@ -1,0 +1,8 @@
+﻿Parametro,Valor
+Dominio,Gestión Hídrica
+Variable Objetivo,irca
+Ventana,12
+Horizonte,1
+Variables Predictoras,Precipitacion_mm;ONI;Radiacion_Solar;Humedad_Relativa;Temp_Min_C;Mes;Velocidad_Viento;VolumenUtilDiarioMasa
+Variables Modelo,8
+Numero de Secuencias,516
