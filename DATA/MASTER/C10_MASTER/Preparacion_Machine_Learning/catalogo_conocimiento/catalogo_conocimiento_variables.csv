@@ -1,0 +1,36 @@
+Variable;Categoria;Importancia;Peso;Justificacion
+Precipitacion_mm;Climática;Muy Alta;3;Principal variable que controla la disponibilidad hídrica y el comportamiento hidrológico.
+Temp_Max_C;Climática;Muy Alta;3;Influye en los procesos de evaporación y balance energético.
+Temp_Min_C;Climática;Muy Alta;3;Describe la variabilidad térmica diaria y sus efectos sobre el recurso hídrico.
+Temp_Media_C;Climática;Muy Alta;3;Representa el comportamiento térmico general de la región.
+Humedad_Relativa;Climática;Muy Alta;3;Relacionada con evapotranspiración y formación de precipitación.
+Radiacion_Solar;Climática;Muy Alta;3;Controla procesos de evaporación y balance energético.
+VolumenUtilDiarioMasa;Hidrológica;Muy Alta;3;Representa la disponibilidad efectiva del recurso hídrico almacenado.
+Nivel_Minimo;Hidrológica;Muy Alta;3;Describe el comportamiento crítico del nivel del sistema hídrico.
+ONI;Variabilidad Climática;Muy Alta;3;Indicador internacional utilizado para caracterizar los fenómenos El Niño y La Niña y su influencia sobre la disponibilidad hídrica.
+irca;Calidad del Agua;Muy Alta;3;Indicador oficial del riesgo de la calidad del agua para consumo humano.
+CALIDAD DEL AGUA;Calidad del Agua;Muy Alta;3;Indicador consolidado del estado de calidad del recurso hídrico.
+CONDUCTIVIDAD ELECTRICA;Calidad del Agua;Alta;2;Relacionada con la concentración de sales disueltas y mineralización del agua.
+DEMANDA BIOQUIMICA DE OXIGENO (DBO5);Calidad del Agua;Muy Alta;3;Principal indicador de contaminación orgánica biodegradable.
+DEMANDA QUIMICA DE OXIGENO (DQO);Calidad del Agua;Muy Alta;3;Indicador de materia orgánica oxidable presente en el agua.
+FOSFORO TOTAL;Calidad del Agua;Alta;2;Nutriente asociado a procesos de eutrofización.
+NITROGENO TOTAL;Calidad del Agua;Alta;2;Nutriente fundamental para evaluar contaminación difusa y eutrofización.
+OXIGENO DISUELTO (OD);Calidad del Agua;Muy Alta;3;Indicador esencial del equilibrio ecológico de los cuerpos de agua.
+SOLIDOS SUSPENDIDOS TOTALES;Calidad del Agua;Alta;2;Relacionados con erosión, sedimentación y transporte de contaminantes.
+TEMPERATURA;Calidad del Agua;Alta;2;Controla procesos fisicoquímicos y biológicos en los cuerpos de agua.
+TURBIDEZ;Calidad del Agua;Alta;2;Indicador de partículas suspendidas y calidad física del agua.
+pH;Calidad del Agua;Muy Alta;3;Variable fundamental para caracterizar el equilibrio químico del agua.
+ACCESO A AGUA POTABLE ADECUADO;Infraestructura;Muy Alta;3;Indicador estratégico del acceso de la población a agua potable segura.
+PORCENTAJE DE LA POBLACION CON ACCESO A METODOS DE SANEAMIENTO ADECUADOS;Infraestructura;Muy Alta;3;Representa las condiciones de saneamiento básico y salud pública.
+COBERTURA DE ACUEDUCTO URBANO;Infraestructura;Alta;2;Describe la disponibilidad del servicio de acueducto en zonas urbanas.
+COBERTURA DE ACUEDUCTO RURAL;Infraestructura;Alta;2;Caracteriza el acceso al agua potable en zonas rurales.
+COBERTURA DE ALCANTARILLADO URBANO;Infraestructura;Alta;2;Representa el acceso al sistema de alcantarillado en áreas urbanas.
+COBERTURA DE ALCANTARILLADO RURAL;Infraestructura;Alta;2;Describe la infraestructura sanitaria disponible en áreas rurales.
+CONTINUIDAD DE ACUEDUCTO URBANO;Infraestructura;Alta;2;Evalúa la continuidad del suministro de agua potable.
+AGUAS RESIDUALES TRATADAS;Infraestructura;Muy Alta;3;Indicador clave de gestión ambiental y tratamiento de aguas residuales.
+POBLACION TOTAL;Demográfica;Alta;2;Representa la demanda potencial sobre el recurso hídrico.
+DENSIDAD POBLACIONAL;Demográfica;Alta;2;Describe la concentración espacial de la población y su presión sobre el territorio.
+INDICE DE DESEMPENO INSTITUCIONAL;Institucional;Alta;2;Representa la capacidad institucional para apoyar la gestión sostenible del recurso hídrico.
+Anio;Temporal;Media;1;Permite identificar tendencias temporales de largo plazo en las variables del sistema hídrico.
+Mes;Temporal;Alta;2;Representa la estacionalidad anual, fundamental para explicar la variabilidad climática e hidrológica.
+Velocidad_Viento;Climática;Alta;2;Influye en los procesos de evaporación, evapotranspiración y transporte de humedad dentro del ciclo hidrológico.
