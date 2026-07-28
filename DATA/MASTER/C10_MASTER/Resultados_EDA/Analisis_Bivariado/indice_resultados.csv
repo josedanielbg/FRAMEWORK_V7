@@ -1,0 +1,8 @@
+﻿Archivo,Descripción
+correlacion_pearson.csv,Matriz Pearson
+correlacion_spearman.csv,Matriz Spearman
+heatmap_pearson.png,Mapa de calor Pearson
+heatmap_spearman.png,Mapa de calor Spearman
+ranking_correlaciones.csv,Ranking de correlaciones
+variables_redundantes.csv,Variables redundantes
+Informe_Correlaciones.md,Informe automático
