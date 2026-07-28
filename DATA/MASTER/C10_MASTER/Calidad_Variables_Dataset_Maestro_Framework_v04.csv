@@ -1,0 +1,43 @@
+﻿Variable,Tipo,Registros,Completos,Nulos,% Cobertura,% Nulos,Valores Únicos,Duplicados,% Ceros,Calificación,Recomendación
+Nodo,object,528,528,0,100.0,0.0,4,524,,A - Excelente,Lista para modelado
+Fecha,datetime64[ns],528,528,0,100.0,0.0,132,396,,A - Excelente,Lista para modelado
+Precipitacion_mm,float64,528,528,0,100.0,0.0,437,91,0.19,A - Excelente,Lista para modelado
+Temp_Max_C,float64,528,528,0,100.0,0.0,406,122,0.0,A - Excelente,Lista para modelado
+Temp_Min_C,float64,528,528,0,100.0,0.0,410,118,0.0,A - Excelente,Lista para modelado
+Temp_Media_C,float64,528,528,0,100.0,0.0,363,165,0.0,A - Excelente,Lista para modelado
+Humedad_Relativa,float64,528,528,0,100.0,0.0,439,89,0.0,A - Excelente,Lista para modelado
+Velocidad_Viento,float64,528,528,0,100.0,0.0,116,412,0.0,A - Excelente,Lista para modelado
+Radiacion_Solar,float64,528,528,0,100.0,0.0,358,170,0.0,A - Excelente,Lista para modelado
+Anio,int32,528,528,0,100.0,0.0,11,517,0.0,A - Excelente,Lista para modelado
+Mes,int32,528,528,0,100.0,0.0,12,516,0.0,A - Excelente,Lista para modelado
+ONI,float64,528,528,0,100.0,0.0,111,417,0.0,A - Excelente,Lista para modelado
+Estado_ENSO,object,528,528,0,100.0,0.0,3,525,,A - Excelente,Lista para modelado
+VolumenUtilDiarioMasa,int64,528,528,0,100.0,0.0,2,526,91.67,A - Excelente,Lista para modelado
+irca,int64,528,528,0,100.0,0.0,2,526,90.91,A - Excelente,Lista para modelado
+nivel_de_riesgo,object,528,528,0,100.0,0.0,2,526,,A - Excelente,Lista para modelado
+POBLACION TOTAL,int64,528,528,0,100.0,0.0,1,527,100.0,A - Excelente,Lista para modelado
+DENSIDAD POBLACIONAL,int64,528,528,0,100.0,0.0,2,526,36.36,A - Excelente,Lista para modelado
+ACCESO A AGUA POTABLE ADECUADO,int64,528,528,0,100.0,0.0,2,526,36.36,A - Excelente,Lista para modelado
+PORCENTAJE DE LA POBLACION CON ACCESO A METODOS DE SANEAMIENTO ADECUADOS,int64,528,528,0,100.0,0.0,2,526,36.36,A - Excelente,Lista para modelado
+COBERTURA DE ACUEDUCTO URBANO,int64,528,528,0,100.0,0.0,2,526,36.36,A - Excelente,Lista para modelado
+COBERTURA DE ACUEDUCTO RURAL,int64,528,528,0,100.0,0.0,2,526,36.36,A - Excelente,Lista para modelado
+COBERTURA DE ALCANTARILLADO RURAL,int64,528,528,0,100.0,0.0,2,526,36.36,A - Excelente,Lista para modelado
+COBERTURA DE ALCANTARILLADO URBANO,int64,528,528,0,100.0,0.0,2,526,36.36,A - Excelente,Lista para modelado
+Version_Dataset,object,528,528,0,100.0,0.0,1,527,,A - Excelente,Lista para modelado
+Volumen_Fuente,object,528,528,0,100.0,0.0,1,527,,A - Excelente,Lista para modelado
+IRCA_Fuente,object,528,528,0,100.0,0.0,1,527,,A - Excelente,Lista para modelado
+CONTINUIDAD DE ACUEDUCTO URBANO,float64,528,96,432,18.18,81.82,1,95,0.0,D - Baja,No recomendable para entrenamiento
+AGUAS RESIDUALES TRATADAS,float64,528,96,432,18.18,81.82,4,92,4.55,D - Baja,No recomendable para entrenamiento
+CALIDAD DEL AGUA,float64,528,96,432,18.18,81.82,8,88,2.27,D - Baja,No recomendable para entrenamiento
+Nivel_Minimo,float64,528,87,441,16.48,83.52,83,4,0.0,D - Baja,No recomendable para entrenamiento
+SOLIDOS SUSPENDIDOS TOTALES,float64,528,50,478,9.47,90.53,45,5,0.0,D - Baja,No recomendable para entrenamiento
+OXIGENO DISUELTO (OD),float64,528,50,478,9.47,90.53,46,4,0.0,D - Baja,No recomendable para entrenamiento
+CONDUCTIVIDAD ELECTRICA,float64,528,50,478,9.47,90.53,50,0,0.0,D - Baja,No recomendable para entrenamiento
+pH,float64,528,50,478,9.47,90.53,45,5,0.0,D - Baja,No recomendable para entrenamiento
+TEMPERATURA,float64,528,50,478,9.47,90.53,44,6,0.0,D - Baja,No recomendable para entrenamiento
+FOSFORO TOTAL,float64,528,49,479,9.28,90.72,45,4,0.0,D - Baja,No recomendable para entrenamiento
+DEMANDA QUIMICA DE OXIGENO (DQO),float64,528,49,479,9.28,90.72,44,5,0.0,D - Baja,No recomendable para entrenamiento
+INDICE DE DESEMPENO INSTITUCIONAL,float64,528,48,480,9.09,90.91,4,44,0.0,D - Baja,No recomendable para entrenamiento
+TURBIDEZ,float64,528,34,494,6.44,93.56,30,4,0.0,D - Baja,No recomendable para entrenamiento
+NITROGENO TOTAL,float64,528,29,499,5.49,94.51,29,0,0.0,D - Baja,No recomendable para entrenamiento
+DEMANDA BIOQUIMICA DE OXIGENO (DBO5),float64,528,26,502,4.92,95.08,19,7,0.0,D - Baja,No recomendable para entrenamiento
