@@ -9,7 +9,19 @@ Framework para la gestion hidrica del Rio Bogota con capas biofisicas, hidraulic
 - `DATA/MACHINE_LEARNING`: transformaciones, diagnosticos y secuencias para modelado.
 - `DATA/EVALUACIONES`: resultados del experimento predictivo.
 - `NOTEBOOKS`: memoria metodologica y notebooks del flujo.
-- `app.py`: visor Streamlit del experimento y de las capas.
+- `src/framework_v7`: modulos reutilizables del proyecto.
+- `app.py`: entrada principal del visor Streamlit.
+- `main.py`: entrada de consola para revisar el estado del proyecto.
+
+## Anatomia del codigo
+
+- `catalog.py`: anatomia del negocio, capas, archivos maestros y grupos de variables.
+- `data_access.py`: carga cacheada de CSV, Excel y metadata.
+- `profiling.py`: funciones de perfilado, cobertura y transformaciones ligeras.
+- `visualizations.py`: componentes visuales reutilizables.
+- `views.py`: pantallas Streamlit por seccion.
+- `paths.py`: rutas canonicas del repositorio.
+- `utils.py`: utilidades generales.
 
 ## App Streamlit
 
@@ -28,6 +40,18 @@ La aplicacion muestra:
 ```bash
 pip install -r requirements.txt
 streamlit run app.py
+```
+
+Si se quiere instalar el paquete localmente:
+
+```bash
+pip install -e .
+```
+
+Para una revision rapida por consola:
+
+```bash
+python main.py
 ```
 
 ## Archivos principales
