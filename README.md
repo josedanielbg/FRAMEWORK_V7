@@ -2,16 +2,26 @@
 
 Framework para la gestion hidrica del Rio Bogota con capas biofisicas, hidraulicas, de percepcion y gobernanza.
 
+## Estructura
+
+- `DATA/RAW`: fuentes originales.
+- `DATA/MASTER`: datasets consolidados por capa y datasets maestros.
+- `DATA/MACHINE_LEARNING`: transformaciones, diagnosticos y secuencias para modelado.
+- `DATA/EVALUACIONES`: resultados del experimento predictivo.
+- `NOTEBOOKS`: memoria metodologica y notebooks del flujo.
+- `app.py`: visor Streamlit del experimento y de las capas.
+
 ## App Streamlit
 
-La aplicacion `app.py` muestra los resultados del primer experimento (`Exp01`):
+La aplicacion muestra:
 
-- metadata de la prediccion;
-- serie y distribucion de predicciones;
+- dashboard ejecutivo del sistema multicapa;
+- mapa visual de flujo desde capas hasta modelo;
+- predicciones de `Exp01`;
 - dataset transformado para machine learning;
-- diagnostico estadistico;
-- lectura por capas sistemicas;
-- dataset maestro con imputaciones.
+- tabs por cada capa del framework;
+- datasets maestros y cobertura de variables;
+- indice de notebooks.
 
 ## Ejecucion local
 
