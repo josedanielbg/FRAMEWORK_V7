@@ -1,0 +1,36 @@
+﻿Variable,Origen,Categoria,Unidad,Cobertura (%),Archivo
+Precipitacion_mm,IDEAM,Climatología,mm,100.0,Precipitacion_mm.png
+Temp_Max_C,IDEAM,Climatología,°C,100.0,Temp_Max_C.png
+Temp_Min_C,IDEAM,Climatología,°C,100.0,Temp_Min_C.png
+Temp_Media_C,IDEAM,Climatología,°C,100.0,Temp_Media_C.png
+Humedad_Relativa,IDEAM,Climatología,%,100.0,Humedad_Relativa.png
+Velocidad_Viento,IDEAM,Climatología,m/s,100.0,Velocidad_Viento.png
+Radiacion_Solar,IDEAM,Climatología,W/m²,100.0,Radiacion_Solar.png
+Anio,Framework,Temporal,Año,100.0,Anio.png
+Mes,Framework,Temporal,Mes,100.0,Mes.png
+ONI,NOAA,ENSO,Índice,100.0,ONI.png
+VolumenUtilDiarioMasa,CAR,Hidrología,m³,100.0,VolumenUtilDiarioMasa.png
+irca,SIVICAP,Agua Potable,%,100.0,irca.png
+POBLACION TOTAL,DANE,Demografía,Habitantes,100.0,POBLACION_TOTAL.png
+DENSIDAD POBLACIONAL,DANE,Demografía,Hab/km²,100.0,DENSIDAD_POBLACIONAL.png
+INDICE DE DESEMPENO INSTITUCIONAL,DNP,Gobernanza,Índice,9.09,INDICE_DE_DESEMPENO_INSTITUCIONAL.png
+ACCESO A AGUA POTABLE ADECUADO,No definido,No definida,-,100.0,ACCESO_A_AGUA_POTABLE_ADECUADO.png
+PORCENTAJE DE LA POBLACION CON ACCESO A METODOS DE SANEAMIENTO ADECUADOS,No definido,No definida,-,100.0,PORCENTAJE_DE_LA_POBLACION_CON_ACCESO_A_METODOS_DE_SANEAMIENTO_ADECUADOS.png
+COBERTURA DE ACUEDUCTO URBANO,TerriData,Infraestructura,%,100.0,COBERTURA_DE_ACUEDUCTO_URBANO.png
+COBERTURA DE ACUEDUCTO RURAL,TerriData,Infraestructura,%,100.0,COBERTURA_DE_ACUEDUCTO_RURAL.png
+COBERTURA DE ALCANTARILLADO URBANO,TerriData,Infraestructura,%,100.0,COBERTURA_DE_ALCANTARILLADO_URBANO.png
+COBERTURA DE ALCANTARILLADO RURAL,TerriData,Infraestructura,%,100.0,COBERTURA_DE_ALCANTARILLADO_RURAL.png
+CONTINUIDAD DE ACUEDUCTO URBANO,TerriData,Infraestructura,Horas/día,18.18,CONTINUIDAD_DE_ACUEDUCTO_URBANO.png
+CALIDAD DEL AGUA,TerriData,Agua Potable,Índice,18.18,CALIDAD_DEL_AGUA.png
+AGUAS RESIDUALES TRATADAS,TerriData,Saneamiento,%,18.18,AGUAS_RESIDUALES_TRATADAS.png
+Nivel_Minimo,CAR,Hidrología,m,16.48,Nivel_Minimo.png
+CONDUCTIVIDAD ELECTRICA,CAR,Calidad del Agua,µS/cm,9.47,CONDUCTIVIDAD_ELECTRICA.png
+DEMANDA BIOQUIMICA DE OXIGENO (DBO5),CAR,Calidad del Agua,mg/L,4.92,DEMANDA_BIOQUIMICA_DE_OXIGENO_DBO5.png
+DEMANDA QUIMICA DE OXIGENO (DQO),CAR,Calidad del Agua,mg/L,9.28,DEMANDA_QUIMICA_DE_OXIGENO_DQO.png
+FOSFORO TOTAL,CAR,Calidad del Agua,mg/L,9.28,FOSFORO_TOTAL.png
+NITROGENO TOTAL,CAR,Calidad del Agua,mg/L,5.49,NITROGENO_TOTAL.png
+OXIGENO DISUELTO (OD),CAR,Calidad del Agua,mg/L,9.47,OXIGENO_DISUELTO_OD.png
+SOLIDOS SUSPENDIDOS TOTALES,CAR,Calidad del Agua,mg/L,9.47,SOLIDOS_SUSPENDIDOS_TOTALES.png
+TEMPERATURA,CAR,Calidad del Agua,°C,9.47,TEMPERATURA.png
+TURBIDEZ,CAR,Calidad del Agua,NTU,6.44,TURBIDEZ.png
+pH,CAR,Calidad del Agua,pH,9.47,pH.png
