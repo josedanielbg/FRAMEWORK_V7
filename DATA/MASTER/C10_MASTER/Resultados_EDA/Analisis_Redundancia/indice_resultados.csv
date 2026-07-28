@@ -1,0 +1,8 @@
+﻿Archivo,Descripción
+redundancia_variables.csv,Diagnóstico completo por variable
+redundancia_variables.xlsx,Diagnóstico completo por variable
+ranking_redundancia.csv,Ranking del Índice de Redundancia
+ranking_redundancia.xlsx,Ranking del Índice de Redundancia
+ranking_redundancia.png,Gráfico del ranking de redundancia
+red_redundancia.png,Red de redundancia estructural
+Informe_Redundancia.md,Informe técnico automático
