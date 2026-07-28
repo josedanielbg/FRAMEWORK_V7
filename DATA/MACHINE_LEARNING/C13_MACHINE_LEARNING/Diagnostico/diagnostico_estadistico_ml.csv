@@ -1,0 +1,10 @@
+﻿Variable,Asimetria,Outliers,Recomendacion
+Precipitacion_mm,0.657,7.0,Evaluar estandarización.
+ONI,0.891,12.0,Evaluar estandarización.
+Radiacion_Solar,0.436,16.0,No requiere transformación.
+Humedad_Relativa,-1.056,6.0,Considerar escalamiento robusto.
+Temp_Min_C,-0.216,0.0,No requiere transformación.
+Mes,0.0,0.0,No requiere transformación.
+Velocidad_Viento,0.68,5.0,Evaluar estandarización.
+irca,2.854,,Variable binaria. No requiere transformación.
+VolumenUtilDiarioMasa,3.024,,Variable binaria. No requiere transformación.
