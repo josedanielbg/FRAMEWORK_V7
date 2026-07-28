@@ -1,0 +1,36 @@
+﻿Variable,Tipo,Relaciones_Fuertes,Indice_Redundancia,Nivel_Redundancia,Diagnostico_Redundancia,VIF,Estado_VIF,Diagnostico_VIF,Recomendacion_VIF
+PORCENTAJE DE LA POBLACION CON ACCESO A METODOS DE SANEAMIENTO ADECUADOS,Numérica,6,1.0,Muy Alta,Variable altamente redundante respecto al conjunto.,inf,Perfecta,Información completamente redundante respecto al resto de variables.,Evaluar cuál variable conservar mediante el IPML.
+ACCESO A AGUA POTABLE ADECUADO,Numérica,6,1.0,Muy Alta,Variable altamente redundante respecto al conjunto.,inf,Perfecta,Información completamente redundante respecto al resto de variables.,Evaluar cuál variable conservar mediante el IPML.
+DENSIDAD POBLACIONAL,Numérica,6,1.0,Muy Alta,Variable altamente redundante respecto al conjunto.,inf,Perfecta,Información completamente redundante respecto al resto de variables.,Evaluar cuál variable conservar mediante el IPML.
+COBERTURA DE ALCANTARILLADO URBANO,Numérica,6,1.0,Muy Alta,Variable altamente redundante respecto al conjunto.,inf,Perfecta,Información completamente redundante respecto al resto de variables.,Evaluar cuál variable conservar mediante el IPML.
+COBERTURA DE ACUEDUCTO URBANO,Numérica,6,1.0,Muy Alta,Variable altamente redundante respecto al conjunto.,inf,Perfecta,Información completamente redundante respecto al resto de variables.,Evaluar cuál variable conservar mediante el IPML.
+COBERTURA DE ACUEDUCTO RURAL,Numérica,6,1.0,Muy Alta,Variable altamente redundante respecto al conjunto.,inf,Perfecta,Información completamente redundante respecto al resto de variables.,Evaluar cuál variable conservar mediante el IPML.
+COBERTURA DE ALCANTARILLADO RURAL,Numérica,6,1.0,Muy Alta,Variable altamente redundante respecto al conjunto.,inf,Perfecta,Información completamente redundante respecto al resto de variables.,Evaluar cuál variable conservar mediante el IPML.
+CONTINUIDAD DE ACUEDUCTO URBANO,Numérica,0,0.0,Muy Baja,Variable prácticamente independiente.,2354914.55,Muy Alta,Comparte gran parte de su información con otras variables.,Revisar antes del entrenamiento de modelos.
+Temp_Media_C,Numérica,1,0.167,Muy Baja,Variable prácticamente independiente.,36.048,Muy Alta,Comparte gran parte de su información con otras variables.,Revisar antes del entrenamiento de modelos.
+Temp_Max_C,Numérica,1,0.167,Muy Baja,Variable prácticamente independiente.,31.915,Muy Alta,Comparte gran parte de su información con otras variables.,Revisar antes del entrenamiento de modelos.
+CONDUCTIVIDAD ELECTRICA,Numérica,2,0.333,Baja,Baja redundancia estructural.,22.078,Muy Alta,Comparte gran parte de su información con otras variables.,Revisar antes del entrenamiento de modelos.
+FOSFORO TOTAL,Numérica,1,0.167,Muy Baja,Variable prácticamente independiente.,14.153,Alta,Presenta una dependencia considerable con otras variables.,Analizar conjuntamente con otras variables.
+irca,Numérica,1,0.167,Muy Baja,Variable prácticamente independiente.,13.982,Alta,Presenta una dependencia considerable con otras variables.,Analizar conjuntamente con otras variables.
+VolumenUtilDiarioMasa,Numérica,1,0.167,Muy Baja,Variable prácticamente independiente.,11.557,Alta,Presenta una dependencia considerable con otras variables.,Analizar conjuntamente con otras variables.
+Temp_Min_C,Numérica,0,0.0,Muy Baja,Variable prácticamente independiente.,10.573,Alta,Presenta una dependencia considerable con otras variables.,Analizar conjuntamente con otras variables.
+NITROGENO TOTAL,Numérica,1,0.167,Muy Baja,Variable prácticamente independiente.,10.296,Alta,Presenta una dependencia considerable con otras variables.,Analizar conjuntamente con otras variables.
+OXIGENO DISUELTO (OD),Numérica,1,0.167,Muy Baja,Variable prácticamente independiente.,7.427,Moderada,Existe una dependencia moderada aceptable para modelado.,Sin restricciones importantes.
+Humedad_Relativa,Numérica,0,0.0,Muy Baja,Variable prácticamente independiente.,7.128,Moderada,Existe una dependencia moderada aceptable para modelado.,Sin restricciones importantes.
+Anio,Numérica,0,0.0,Muy Baja,Variable prácticamente independiente.,5.779,Moderada,Existe una dependencia moderada aceptable para modelado.,Sin restricciones importantes.
+INDICE DE DESEMPENO INSTITUCIONAL,Numérica,5,0.833,Muy Alta,Variable altamente redundante respecto al conjunto.,4.434,Baja,Variable con baja dependencia estructural.,Variable estable para Machine Learning.
+CALIDAD DEL AGUA,Numérica,2,0.333,Baja,Baja redundancia estructural.,4.372,Baja,Variable con baja dependencia estructural.,Variable estable para Machine Learning.
+DEMANDA QUIMICA DE OXIGENO (DQO),Numérica,0,0.0,Muy Baja,Variable prácticamente independiente.,2.97,Baja,Variable con baja dependencia estructural.,Variable estable para Machine Learning.
+TEMPERATURA,Numérica,1,0.167,Muy Baja,Variable prácticamente independiente.,2.883,Baja,Variable con baja dependencia estructural.,Variable estable para Machine Learning.
+pH,Numérica,0,0.0,Muy Baja,Variable prácticamente independiente.,2.815,Baja,Variable con baja dependencia estructural.,Variable estable para Machine Learning.
+SOLIDOS SUSPENDIDOS TOTALES,Numérica,1,0.167,Muy Baja,Variable prácticamente independiente.,2.705,Baja,Variable con baja dependencia estructural.,Variable estable para Machine Learning.
+DEMANDA BIOQUIMICA DE OXIGENO (DBO5),Numérica,2,0.333,Baja,Baja redundancia estructural.,1.934,Baja,Variable con baja dependencia estructural.,Variable estable para Machine Learning.
+Precipitacion_mm,Numérica,0,0.0,Muy Baja,Variable prácticamente independiente.,1.898,Baja,Variable con baja dependencia estructural.,Variable estable para Machine Learning.
+Radiacion_Solar,Numérica,0,0.0,Muy Baja,Variable prácticamente independiente.,1.704,Baja,Variable con baja dependencia estructural.,Variable estable para Machine Learning.
+AGUAS RESIDUALES TRATADAS,Numérica,1,0.167,Muy Baja,Variable prácticamente independiente.,1.63,Baja,Variable con baja dependencia estructural.,Variable estable para Machine Learning.
+TURBIDEZ,Numérica,1,0.167,Muy Baja,Variable prácticamente independiente.,1.619,Baja,Variable con baja dependencia estructural.,Variable estable para Machine Learning.
+Velocidad_Viento,Numérica,0,0.0,Muy Baja,Variable prácticamente independiente.,1.477,Baja,Variable con baja dependencia estructural.,Variable estable para Machine Learning.
+ONI,Numérica,0,0.0,Muy Baja,Variable prácticamente independiente.,1.265,Baja,Variable con baja dependencia estructural.,Variable estable para Machine Learning.
+Mes,Numérica,0,0.0,Muy Baja,Variable prácticamente independiente.,1.152,Baja,Variable con baja dependencia estructural.,Variable estable para Machine Learning.
+Nivel_Minimo,Numérica,0,0.0,Muy Baja,Variable prácticamente independiente.,1.027,Baja,Variable con baja dependencia estructural.,Variable estable para Machine Learning.
+POBLACION TOTAL,Numérica,0,0.0,Muy Baja,Variable prácticamente independiente.,,,,

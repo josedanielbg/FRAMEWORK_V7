@@ -1,0 +1,6 @@
+﻿Archivo,Descripción
+universo_analitico_vif.csv,Universo Analítico enriquecido con VIF.
+universo_analitico_vif.xlsx,Universo Analítico enriquecido (Excel).
+ranking_vif.csv,Ranking de variables según VIF.
+ranking_vif.xlsx,Ranking de variables según VIF (Excel).
+Informe_VIF.md,Informe técnico del análisis de multicolinealidad.
