@@ -1,0 +1,52 @@
+﻿,Nulos,Total,Cobertura (%),Clasificacion
+Nodo,0,528,100.0,Excelente
+Fecha,0,528,100.0,Excelente
+Precipitacion_mm,0,528,100.0,Excelente
+Temp_Max_C,0,528,100.0,Excelente
+Temp_Min_C,0,528,100.0,Excelente
+Temp_Media_C,0,528,100.0,Excelente
+Humedad_Relativa,0,528,100.0,Excelente
+Velocidad_Viento,0,528,100.0,Excelente
+Radiacion_Solar,0,528,100.0,Excelente
+Anio,0,528,100.0,Excelente
+Mes,0,528,100.0,Excelente
+ONI,0,528,100.0,Excelente
+Estado_ENSO,0,528,100.0,Excelente
+irca,0,528,100.0,Excelente
+nivel_de_riesgo,0,528,100.0,Excelente
+DENSIDAD POBLACIONAL,0,528,100.0,Excelente
+POBLACION TOTAL,0,528,100.0,Excelente
+PORCENTAJE DE LA POBLACION CON ACCESO A METODOS DE SANEAMIENTO ADECUADOS,0,528,100.0,Excelente
+ACCESO A AGUA POTABLE ADECUADO,0,528,100.0,Excelente
+AlcantarilladoUrbano_Imputado,0,528,100.0,Excelente
+AlcantarilladoRural_Imputado,0,528,100.0,Excelente
+COBERTURA DE ACUEDUCTO URBANO,0,528,100.0,Excelente
+COBERTURA DE ACUEDUCTO RURAL,0,528,100.0,Excelente
+COBERTURA DE ALCANTARILLADO URBANO,0,528,100.0,Excelente
+COBERTURA DE ALCANTARILLADO RURAL,0,528,100.0,Excelente
+AcueductoRural_Imputado,0,528,100.0,Excelente
+AcueductoUrbano_Imputado,0,528,100.0,Excelente
+Poblacion_Imputada,0,528,100.0,Excelente
+Densidad_Imputada,0,528,100.0,Excelente
+AguaPotable_Imputada,0,528,100.0,Excelente
+Saneamiento_Imputado,0,528,100.0,Excelente
+IRCA_Imputado,0,528,100.0,Excelente
+Volumen_Imputado,0,528,100.0,Excelente
+AcueductoUrbano_Corregido,0,528,100.0,Excelente
+AlcantarilladoRural_Valor1,0,528,100.0,Excelente
+VolumenUtilDiarioMasa,192,528,63.64,Aceptable
+AGUAS RESIDUALES TRATADAS,432,528,18.18,Crítica
+CALIDAD DEL AGUA,432,528,18.18,Crítica
+CONTINUIDAD DE ACUEDUCTO URBANO,432,528,18.18,Crítica
+Nivel_Minimo,441,528,16.48,Crítica
+pH,478,528,9.47,Crítica
+OXIGENO DISUELTO (OD),478,528,9.47,Crítica
+CONDUCTIVIDAD ELECTRICA,478,528,9.47,Crítica
+TEMPERATURA,478,528,9.47,Crítica
+SOLIDOS SUSPENDIDOS TOTALES,478,528,9.47,Crítica
+DEMANDA QUIMICA DE OXIGENO (DQO),479,528,9.28,Crítica
+FOSFORO TOTAL,479,528,9.28,Crítica
+INDICE DE DESEMPENO INSTITUCIONAL,480,528,9.09,Crítica
+TURBIDEZ,494,528,6.44,Crítica
+NITROGENO TOTAL,499,528,5.49,Crítica
+DEMANDA BIOQUIMICA DE OXIGENO (DBO5),502,528,4.92,Crítica
