@@ -17,6 +17,7 @@ from .data_access import ProjectData, load_csv, load_excel, read_text
 from .layers import LAYER_MODULES
 from .paths import BASE_DIR, COVERAGE_PATH, ML_DATASET_PATH, NOTEBOOKS_DIR, PREDICTIONS_PATH, rel
 from .profiling import find_date_column, layer_summary, normalize_01, quality_badge
+from .utils import format_metric_date
 from .visualizations import (
     render_dataset_metrics,
     render_layer_images,
@@ -288,9 +289,11 @@ def render_master_dataset() -> None:
         date_col = find_date_column(dataset)
         if date_col:
             dates = pd.to_datetime(dataset[date_col], errors="coerce")
+            start_date = dates.min()
+            end_date = dates.max()
             c1, c2 = st.columns(2)
-            c1.metric("Inicio", dates.min().date() if pd.notna(dates.min()) else "-")
-            c2.metric("Fin", dates.max().date() if pd.notna(dates.max()) else "-")
+            c1.metric("Inicio", format_metric_date(start_date))
+            c2.metric("Fin", format_metric_date(end_date))
     with tab_series:
         render_time_series(dataset, "master")
     with tab_groups:
