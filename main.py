@@ -17,6 +17,7 @@ if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
 
 from framework_v7.data_access import load_project_data
+from framework_v7.layers import LAYER_MODULES
 from framework_v7.profiling import layer_summary
 
 
@@ -35,6 +36,7 @@ def main() -> None:
     print(f"Predicciones: {len(data.predictions)}")
     print(f"Dataset maestro: {data.master.shape[0]} filas x {data.master.shape[1]} columnas")
     print(f"Capas disponibles: {int(layers['Disponible'].sum())}/{len(layers)}")
+    print(f"Modulos de capa: {len(LAYER_MODULES)}")
 
 
 if __name__ == "__main__":

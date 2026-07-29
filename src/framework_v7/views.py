@@ -14,6 +14,7 @@ import streamlit as st
 
 from .catalog import FEATURE_GROUPS, LAYER_CATALOG, MASTER_FILES, SUPPORT_FILES
 from .data_access import ProjectData, load_csv, load_excel, read_text
+from .layers import LAYER_MODULES
 from .paths import BASE_DIR, COVERAGE_PATH, ML_DATASET_PATH, NOTEBOOKS_DIR, PREDICTIONS_PATH, rel
 from .profiling import find_date_column, layer_summary, normalize_01, quality_badge
 from .visualizations import (
@@ -203,12 +204,13 @@ def render_layers() -> None:
     st.subheader("Datasets de las capas")
     layers = layer_summary()
     st.dataframe(layers, use_container_width=True, hide_index=True)
-    layer_tabs = st.tabs(list(LAYER_CATALOG))
-    for tab, (layer_name, config) in zip(layer_tabs, LAYER_CATALOG.items()):
+    layer_tabs = st.tabs(list(LAYER_MODULES))
+    for tab, (layer_name, layer_module) in zip(layer_tabs, LAYER_MODULES.items()):
         with tab:
+            config = LAYER_CATALOG[layer_name]
             folder = config["folder"]
             main_path = folder / config["main"]
-            df = load_excel(main_path)
+            df = layer_module.load_dataset()
             st.markdown(f"**Rol sistemico:** {config['role']}")
             st.caption(rel(main_path))
             if df.empty:
@@ -218,10 +220,21 @@ def render_layers() -> None:
             sub_summary, sub_data, sub_visual, sub_docs = st.tabs(["Resumen", "Datos", "Visual", "Soporte"])
             with sub_summary:
                 render_dataset_metrics(df)
+                key_variables = layer_module.available_key_variables()
+                if key_variables:
+                    st.markdown("**Variables clave detectadas**")
+                    st.write(", ".join(key_variables))
+                else:
+                    st.info("No se detectaron variables clave declaradas para esta capa.")
                 render_missing_profile(df)
 
             with sub_data:
-                st.dataframe(df.head(500), use_container_width=True, hide_index=True)
+                compact = layer_module.feature_frame()
+                data_tab, compact_tab = st.tabs(["Dataset completo", "Vista compacta"])
+                with data_tab:
+                    st.dataframe(df.head(500), use_container_width=True, hide_index=True)
+                with compact_tab:
+                    st.dataframe(compact.head(500), use_container_width=True, hide_index=True)
                 st.download_button(
                     f"Descargar muestra {layer_name}",
                     data=df.head(500).to_csv(index=False).encode("utf-8"),

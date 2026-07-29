@@ -1,0 +1,61 @@
+"""C03 water-quality layer extracted from the Colab workflow."""
+
+from __future__ import annotations
+
+import pandas as pd
+
+from .base import available_key_variables as _available_key_variables
+from .base import feature_frame as _feature_frame
+from .base import load_dataset as _load_dataset
+from .base import summary as _summary
+
+
+LAYER_NAME = "C03 - Calidad de agua"
+KEY_VARIABLES = [
+    "propiedad_observada",
+    "resultado",
+    "unidad_del_resultado",
+    "corriente",
+    "municipio",
+    "nombre_del_punto_de_monitoreo",
+]
+
+
+def load_dataset() -> pd.DataFrame:
+    """Load the water-quality layer dataset.
+
+    Returns:
+        Water-quality layer DataFrame.
+    """
+
+    return _load_dataset(LAYER_NAME)
+
+
+def available_key_variables() -> list[str]:
+    """Return water-quality variables present in the dataset.
+
+    Returns:
+        List of available water-quality feature names.
+    """
+
+    return _available_key_variables(LAYER_NAME, KEY_VARIABLES)
+
+
+def feature_frame() -> pd.DataFrame:
+    """Return a compact water-quality feature frame.
+
+    Returns:
+        DataFrame with identifiers and water-quality variables.
+    """
+
+    return _feature_frame(LAYER_NAME, KEY_VARIABLES)
+
+
+def summary() -> dict[str, object]:
+    """Summarize the water-quality layer.
+
+    Returns:
+        Dictionary with profile, variables and coverage information.
+    """
+
+    return _summary(LAYER_NAME, KEY_VARIABLES)

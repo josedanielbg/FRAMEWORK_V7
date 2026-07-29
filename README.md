@@ -22,6 +22,24 @@ Framework para la gestion hidrica del Rio Bogota con capas biofisicas, hidraulic
 - `views.py`: pantallas Streamlit por seccion.
 - `paths.py`: rutas canonicas del repositorio.
 - `utils.py`: utilidades generales.
+- `layers/`: modulos reutilizables por capa de los Colabs C01-C07.
+
+## Capas modularizadas
+
+- `layers/climate.py`: capa climatica.
+- `layers/hydrology.py`: capa hidrologica.
+- `layers/water_quality.py`: capa de calidad de agua.
+- `layers/oni.py`: capa macroclimatica ONI.
+- `layers/hydraulic.py`: capa hidraulica.
+- `layers/perception.py`: capa de percepcion.
+- `layers/governance.py`: capa de gobernanza.
+
+Cada modulo de capa expone una interfaz comun:
+
+- `load_dataset()`
+- `available_key_variables()`
+- `feature_frame()`
+- `summary()`
 
 ## App Streamlit
 
