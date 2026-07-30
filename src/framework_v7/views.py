@@ -12,10 +12,21 @@ import pandas as pd
 import plotly.express as px
 import streamlit as st
 
-from .catalog import FEATURE_GROUPS, LAYER_CATALOG, MASTER_FILES, SUPPORT_FILES
+from .catalog import EXPERIMENT_DESIGN_FILES, FEATURE_GROUPS, LAYER_CATALOG, MASTER_FILES, SUPPORT_FILES
 from .data_access import ProjectData, load_csv, load_excel, read_text
 from .layers import LAYER_MODULES
-from .paths import BASE_DIR, COVERAGE_PATH, ML_DATASET_PATH, NOTEBOOKS_DIR, PREDICTIONS_PATH, rel
+from .paths import (
+    BASE_DIR,
+    COVERAGE_PATH,
+    EXPERIMENT_DESIGN_DIR,
+    ML_DATASET_PATH,
+    MODEL_ACCURACY_IMAGE_PATH,
+    MODEL_DIAGNOSTIC_PATH,
+    MODEL_LOSS_IMAGE_PATH,
+    NOTEBOOKS_DIR,
+    PREDICTIONS_PATH,
+    rel,
+)
 from .profiling import find_date_column, layer_summary, normalize_01, quality_badge
 from .utils import format_metric_date
 from .visualizations import (
@@ -46,6 +57,7 @@ def render_sidebar(data: ProjectData) -> str:
             [
                 "Dashboard",
                 "Experimento 01",
+                "Diseno experimental",
                 "Datasets por capas",
                 "Dataset maestro",
                 "Notebooks",
@@ -193,6 +205,135 @@ def render_experiment(data: ProjectData) -> None:
         if not data.diagnostic.empty:
             st.markdown("**Diagnostico estadistico**")
             st.dataframe(data.diagnostic, use_container_width=True, hide_index=True)
+
+
+def render_experiment_design(data: ProjectData) -> None:
+    """Render the experimental design view.
+
+    Args:
+        data: Loaded project datasets and metadata.
+
+    Returns:
+        None.
+    """
+
+    st.subheader("Diseno experimental")
+    readme = read_text(EXPERIMENT_DESIGN_DIR / "README.md")
+    if readme:
+        st.markdown(readme)
+
+    catalog = data.experiment_design.get("Catalogo de experimentos", pd.DataFrame())
+    config = data.experiment_design.get("Configuracion", pd.DataFrame())
+    predictors = data.experiment_design.get("Variables predictoras", pd.DataFrame())
+    status = data.experiment_design.get("Estado de experimentos", pd.DataFrame())
+
+    c1, c2, c3, c4 = st.columns(4)
+    c1.metric("Experimentos", f"{len(catalog):,}")
+    c2.metric("Ejecutados", f"{(catalog.get('Estado', pd.Series(dtype=str)) == 'Ejecutado').sum():,}")
+    c3.metric("Pendientes", f"{(catalog.get('Estado', pd.Series(dtype=str)) == 'Pendiente').sum():,}")
+    c4.metric("Predictoras", f"{len(predictors):,}")
+
+    tab_map, tab_config, tab_diagnostic, tab_files = st.tabs(
+        ["Mapa experimental", "Configuracion", "Diagnostico Exp01", "Archivos"]
+    )
+
+    with tab_map:
+        if catalog.empty:
+            render_missing_file(EXPERIMENT_DESIGN_FILES["Catalogo de experimentos"])
+        else:
+            left, right = st.columns([1, 2])
+            with left:
+                selected = st.selectbox("Experimento", catalog["Experimento"].tolist())
+                experiment = catalog[catalog["Experimento"] == selected].iloc[0]
+                st.metric("Objetivo", experiment.get("Variable_Objetivo", "-"))
+                st.metric("Tipo", experiment.get("Tipo_Problema", "-"))
+                st.metric("Estado", experiment.get("Estado", "-"))
+                st.caption(str(experiment.get("Pregunta_Investigacion", "")))
+            with right:
+                counts = catalog.groupby(["Tipo_Problema", "Estado"]).size().reset_index(name="Experimentos")
+                fig = px.bar(
+                    counts,
+                    x="Tipo_Problema",
+                    y="Experimentos",
+                    color="Estado",
+                    barmode="group",
+                    title="Plan experimental por tipo de problema",
+                    color_discrete_map={"Ejecutado": "#2A9D8F", "Pendiente": "#E9C46A"},
+                )
+                fig.update_layout(height=430, margin=dict(l=10, r=10, t=55, b=10))
+                st.plotly_chart(fig, use_container_width=True)
+            st.dataframe(catalog, use_container_width=True, hide_index=True)
+
+    with tab_config:
+        config_tab, predictors_tab, criteria_tab, status_tab = st.tabs(
+            ["Parametros", "Predictoras", "Criterios", "Estado"]
+        )
+        with config_tab:
+            st.dataframe(config, use_container_width=True, hide_index=True)
+        with predictors_tab:
+            st.dataframe(predictors, use_container_width=True, hide_index=True)
+            if not predictors.empty and "Variable" in predictors.columns:
+                st.write(", ".join(predictors["Variable"].astype(str).tolist()))
+        with criteria_tab:
+            for label in ["Criterios clasificacion", "Criterios regresion"]:
+                criteria = data.experiment_design.get(label, pd.DataFrame())
+                with st.expander(label, expanded=label == "Criterios clasificacion"):
+                    st.dataframe(criteria, use_container_width=True, hide_index=True)
+        with status_tab:
+            st.dataframe(status, use_container_width=True, hide_index=True)
+
+    with tab_diagnostic:
+        diagnostic = data.model_diagnostic.copy()
+        recommendations = data.model_recommendations.copy()
+        if diagnostic.empty:
+            render_missing_file(MODEL_DIAGNOSTIC_PATH)
+        else:
+            st.markdown("**Resultado del modelo Exp01**")
+            metric_values = diagnostic.copy()
+            metric_values["Valor_Numerico"] = pd.to_numeric(metric_values["Valor"], errors="coerce")
+            chart_values = metric_values.dropna(subset=["Valor_Numerico"])
+            if not chart_values.empty:
+                fig = px.bar(
+                    chart_values,
+                    x="Indicador",
+                    y="Valor_Numerico",
+                    color="Estado",
+                    title="Metricas de clasificacion Exp01",
+                    color_discrete_map={"Excelente": "#2A9D8F", "Aceptable": "#E9C46A", "Baja": "#F4A261", "Critico": "#E76F51"},
+                )
+                fig.update_layout(height=430, margin=dict(l=10, r=10, t=55, b=10))
+                st.plotly_chart(fig, use_container_width=True)
+            st.dataframe(diagnostic, use_container_width=True, hide_index=True)
+
+        if not recommendations.empty and "Recomendacion" in recommendations.columns:
+            st.markdown("**Recomendaciones metodologicas**")
+            for recommendation in recommendations["Recomendacion"].dropna().astype(str):
+                st.write(recommendation)
+
+        images = [path for path in [MODEL_ACCURACY_IMAGE_PATH, MODEL_LOSS_IMAGE_PATH] if path.exists()]
+        if images:
+            cols = st.columns(len(images))
+            for column, image in zip(cols, images):
+                with column:
+                    st.image(str(image), caption=image.name, use_container_width=True)
+
+    with tab_files:
+        selected_label = st.selectbox("Dataset de diseno", list(EXPERIMENT_DESIGN_FILES))
+        selected_path = EXPERIMENT_DESIGN_FILES[selected_label]
+        dataset = data.experiment_design.get(selected_label, pd.DataFrame())
+        st.caption(rel(selected_path))
+        if dataset.empty:
+            render_missing_file(selected_path)
+        else:
+            render_dataset_metrics(dataset)
+            st.dataframe(dataset, use_container_width=True, hide_index=True)
+            st.download_button(
+                "Descargar dataset",
+                data=dataset.to_csv(index=False).encode("utf-8"),
+                file_name=selected_path.name,
+                mime="text/csv",
+                key=f"download_design_{selected_label}",
+            )
 
 
 def render_layers() -> None:

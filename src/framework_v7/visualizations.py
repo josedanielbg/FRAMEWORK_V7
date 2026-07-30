@@ -176,6 +176,7 @@ def render_system_map() -> None:
         "Percepcion",
         "Gobernanza",
         "Dataset maestro",
+        "Diseno experimental",
         "Modelo Exp01",
         "IRCA",
     ]
@@ -188,6 +189,7 @@ def render_system_map() -> None:
         ("Percepcion", "Dataset maestro", 2),
         ("Gobernanza", "Dataset maestro", 2),
         ("Dataset maestro", "Modelo Exp01", 6),
+        ("Diseno experimental", "Modelo Exp01", 3),
         ("Modelo Exp01", "IRCA", 6),
     ]
     index = {name: position for position, name in enumerate(nodes)}
@@ -207,6 +209,7 @@ def render_system_map() -> None:
                         "#8E7DBE",
                         "#6A994E",
                         "#A8DADC",
+                        "#B56576",
                         "#1D3557",
                         "#E63946",
                     ],

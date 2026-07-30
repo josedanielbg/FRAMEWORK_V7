@@ -14,7 +14,17 @@ from pathlib import Path
 
 import pandas as pd
 
-from .paths import COVERAGE_PATH, DIAGNOSTIC_PATH, MASTER_PATH, METADATA_PATH, ML_DATASET_PATH, PREDICTIONS_PATH
+from .catalog import EXPERIMENT_DESIGN_FILES
+from .paths import (
+    COVERAGE_PATH,
+    DIAGNOSTIC_PATH,
+    MASTER_PATH,
+    METADATA_PATH,
+    ML_DATASET_PATH,
+    MODEL_DIAGNOSTIC_PATH,
+    MODEL_RECOMMENDATIONS_PATH,
+    PREDICTIONS_PATH,
+)
 
 
 @dataclass(frozen=True)
@@ -28,6 +38,9 @@ class ProjectData:
         diagnostic: Statistical diagnostic table.
         master: Master dataset with imputations.
         coverage: Precomputed variable coverage report.
+        experiment_design: Design datasets keyed by artifact label.
+        model_diagnostic: Exp01 model diagnostic table.
+        model_recommendations: Exp01 recommendation table.
         meta: Metadata as a key-value dictionary.
     """
 
@@ -37,6 +50,9 @@ class ProjectData:
     diagnostic: pd.DataFrame
     master: pd.DataFrame
     coverage: pd.DataFrame
+    experiment_design: dict[str, pd.DataFrame]
+    model_diagnostic: pd.DataFrame
+    model_recommendations: pd.DataFrame
     meta: dict[str, str]
 
 
@@ -111,6 +127,7 @@ def load_project_data() -> ProjectData:
     """
 
     metadata = load_csv(METADATA_PATH)
+    experiment_design = {label: load_csv(path) for label, path in EXPERIMENT_DESIGN_FILES.items()}
     return ProjectData(
         metadata=metadata,
         predictions=load_csv(PREDICTIONS_PATH),
@@ -118,5 +135,8 @@ def load_project_data() -> ProjectData:
         diagnostic=load_csv(DIAGNOSTIC_PATH),
         master=load_csv(MASTER_PATH),
         coverage=load_csv(COVERAGE_PATH),
+        experiment_design=experiment_design,
+        model_diagnostic=load_csv(MODEL_DIAGNOSTIC_PATH),
+        model_recommendations=load_csv(MODEL_RECOMMENDATIONS_PATH),
         meta=metadata_dict(metadata),
     )

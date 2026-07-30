@@ -37,6 +37,11 @@ def main() -> None:
     print(f"Dataset maestro: {data.master.shape[0]} filas x {data.master.shape[1]} columnas")
     print(f"Capas disponibles: {int(layers['Disponible'].sum())}/{len(layers)}")
     print(f"Modulos de capa: {len(LAYER_MODULES)}")
+    design_catalog = data.experiment_design.get("Catalogo de experimentos")
+    if design_catalog is not None:
+        print(f"Experimentos disenados: {len(design_catalog)}")
+    if not data.model_diagnostic.empty:
+        print(f"Diagnostico modelo Exp01: {len(data.model_diagnostic)} indicadores")
 
 
 if __name__ == "__main__":

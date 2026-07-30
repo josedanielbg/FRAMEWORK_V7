@@ -8,7 +8,7 @@ without loading data or rendering UI.
 
 from __future__ import annotations
 
-from .paths import COVERAGE_PATH, MASTER_DIR, MASTER_PATH
+from .paths import COVERAGE_PATH, EXPERIMENT_DESIGN_DIR, MASTER_DIR, MASTER_PATH
 
 
 LAYER_CATALOG = {
@@ -70,6 +70,15 @@ MASTER_FILES = {
     "Maestro IRCA": MASTER_DIR / "C09_MASTER" / "Dataset_Maestro_Framework_v02_Irca.csv",
     "Volumen": MASTER_DIR / "C09_MASTER" / "Dataset_Maestro_Framework_v03_Volumen.csv",
     "Cobertura variables": COVERAGE_PATH,
+}
+
+EXPERIMENT_DESIGN_FILES = {
+    "Catalogo de experimentos": EXPERIMENT_DESIGN_DIR / "catalogo_experimentos.csv",
+    "Configuracion": EXPERIMENT_DESIGN_DIR / "configuracion_experimentos.csv",
+    "Variables predictoras": EXPERIMENT_DESIGN_DIR / "variables_predictoras.csv",
+    "Estado de experimentos": EXPERIMENT_DESIGN_DIR / "estado_experimentos.csv",
+    "Criterios clasificacion": EXPERIMENT_DESIGN_DIR / "criterios_clasificacion.csv",
+    "Criterios regresion": EXPERIMENT_DESIGN_DIR / "criterios_regresion.csv",
 }
 
 FEATURE_GROUPS = {

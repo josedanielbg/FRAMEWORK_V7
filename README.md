@@ -8,6 +8,8 @@ Framework para la gestion hidrica del Rio Bogota con capas biofisicas, hidraulic
 - `DATA/MASTER`: datasets consolidados por capa y datasets maestros.
 - `DATA/MACHINE_LEARNING`: transformaciones, diagnosticos y secuencias para modelado.
 - `DATA/EVALUACIONES`: resultados del experimento predictivo.
+- `DATA/DISENO_EXPERIMENTAL`: catalogo, configuracion, criterios y estado de los experimentos.
+- `DATA/MODELADO`: tensores, registros, metricas, modelos y diagnosticos de entrenamiento.
 - `NOTEBOOKS`: memoria metodologica y notebooks del flujo.
 - `src/framework_v7`: modulos reutilizables del proyecto.
 - `app.py`: entrada principal del visor Streamlit.
@@ -48,6 +50,8 @@ La aplicacion muestra:
 - dashboard ejecutivo del sistema multicapa;
 - mapa visual de flujo desde capas hasta modelo;
 - predicciones de `Exp01`;
+- diseno experimental de `Exp01` a `Exp08`;
+- diagnostico y recomendaciones del modelo `Exp01`;
 - dataset transformado para machine learning;
 - tabs por cada capa del framework;
 - datasets maestros y cobertura de variables;
@@ -76,6 +80,10 @@ python main.py
 
 - `DATA/EVALUACIONES/Exp01/predicciones.csv`
 - `DATA/EVALUACIONES/Exp01/metadata_prediccion.csv`
+- `DATA/DISENO_EXPERIMENTAL/catalogo_experimentos.csv`
+- `DATA/DISENO_EXPERIMENTAL/configuracion_experimentos.csv`
+- `DATA/MODELADO/Diagnosticos/Exp01/diagnostico_modelo_Exp01.csv`
+- `DATA/MODELADO/Diagnosticos/Exp01/recomendaciones_Exp01.csv`
 - `DATA/MACHINE_LEARNING/C13_MACHINE_LEARNING/Transformaciones/Exp01/dataset_machine_learning_transformado.csv`
 - `DATA/MASTER/C09_MASTER/Dataset_Maestro_Framework_v03_Con_Imputaciones.csv`
 

@@ -14,6 +14,7 @@ if str(SRC_DIR) not in sys.path:
 from framework_v7.data_access import load_project_data
 from framework_v7.views import (
     render_dashboard,
+    render_experiment_design,
     render_experiment,
     render_layers,
     render_master_dataset,
@@ -38,6 +39,8 @@ if section == "Dashboard":
     render_dashboard(data)
 elif section == "Experimento 01":
     render_experiment(data)
+elif section == "Diseno experimental":
+    render_experiment_design(data)
 elif section == "Datasets por capas":
     render_layers()
 elif section == "Dataset maestro":
