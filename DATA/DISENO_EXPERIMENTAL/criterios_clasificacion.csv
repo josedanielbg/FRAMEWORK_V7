@@ -1,0 +1,6 @@
+Metrica,Valor_Minimo,Descripcion
+Accuracy,0.85,Exactitud global
+Precision,0.7,Capacidad para evitar falsos positivos
+Recall,0.7,Capacidad para detectar positivos
+F1-Score,0.7,Equilibrio entre Precision y Recall
+Accuracy Balanceada,0.7,Control del desbalance
