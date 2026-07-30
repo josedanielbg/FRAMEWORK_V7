@@ -1,0 +1,11 @@
+﻿Parametro,Valor
+Experimento,Exp01-V3
+Dominio,Gestión Hídrica
+Variable Objetivo,irca
+Modelo,modelo_Exp01-V3_irca.keras
+Metodo Transformacion,Escalado MinMax
+Ventana,12
+Variables Predictoras,8
+Registros Procesados,528
+Predicciones Generadas,517
+Fecha Ejecucion,2026-07-30 22:34
