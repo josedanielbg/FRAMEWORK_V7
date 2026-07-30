@@ -8,11 +8,16 @@ import pandas as pd
 def classify_variable(series: pd.Series) -> str:
     """Classify a variable by dtype and cardinality.
 
+    This classification supports the C10 catalog of domain knowledge by
+    separating date, continuous numeric, discrete numeric and categorical
+    variables.
+
     Args:
-        series: Variable values.
+        series (pd.Series): Values for one dataset variable.
 
     Returns:
-        Variable type label.
+        str: One of ``fecha``, ``numerica_continua``,
+        ``numerica_discreta`` or ``categorica``.
     """
 
     if pd.api.types.is_datetime64_any_dtype(series):
@@ -24,13 +29,14 @@ def classify_variable(series: pd.Series) -> str:
 
 
 def build_variable_catalog(df: pd.DataFrame) -> pd.DataFrame:
-    """Build a reusable catalog of variables.
+    """Build a reusable catalog of dataset variables.
 
     Args:
-        df: Dataset to catalog.
+        df (pd.DataFrame): Dataset to catalog.
 
     Returns:
-        DataFrame with type, nulls, coverage and distinct values per variable.
+        pd.DataFrame: Catalog with variable name, dtype, inferred variable type,
+        null count, coverage percentage and number of unique values.
     """
 
     rows = []
@@ -51,19 +57,30 @@ def build_variable_catalog(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def assign_domain_layer(catalog: pd.DataFrame, layer_keywords: dict[str, list[str]]) -> pd.DataFrame:
-    """Assign a domain layer to catalog variables using keywords.
+    """Assign a domain layer to catalog variables using keyword rules.
 
     Args:
-        catalog: Variable catalog with a ``Variable`` column.
-        layer_keywords: Mapping of layer names to lowercase keywords.
+        catalog (pd.DataFrame): Variable catalog with a ``Variable`` column.
+        layer_keywords (dict[str, list[str]]): Mapping of domain-layer labels to
+            keywords searched in variable names.
 
     Returns:
-        Catalog copy with ``Capa_Dominio``.
+        pd.DataFrame: Catalog copy with a ``Capa_Dominio`` column.
     """
 
     output = catalog.copy()
 
     def resolve_layer(variable: str) -> str:
+        """Resolve a domain layer label for one variable name.
+
+        Args:
+            variable (str): Variable name to classify.
+
+        Returns:
+            str: Matching domain layer, or ``Sin clasificar`` when no keyword
+            matches.
+        """
+
         normalized = variable.lower()
         for layer, keywords in layer_keywords.items():
             if any(keyword.lower() in normalized for keyword in keywords):
@@ -78,10 +95,11 @@ def catalog_summary(catalog: pd.DataFrame) -> pd.DataFrame:
     """Summarize a variable catalog by type and domain layer.
 
     Args:
-        catalog: Output from ``build_variable_catalog``.
+        catalog (pd.DataFrame): Output from ``build_variable_catalog`` or a
+            compatible catalog table.
 
     Returns:
-        Summary table.
+        pd.DataFrame: Summary table with counts by available grouping columns.
     """
 
     if catalog.empty:

@@ -9,24 +9,27 @@ from framework_v7.data_access import load_csv
 
 
 def load_design_artifacts() -> dict[str, pd.DataFrame]:
-    """Load every experimental-design artifact.
+    """Load every experimental-design artifact declared in the catalog.
 
     Returns:
-        Dictionary keyed by artifact label.
+        dict[str, pd.DataFrame]: Dictionary keyed by artifact label. Missing
+        files are represented as empty DataFrames by ``load_csv``.
     """
 
     return {label: load_csv(path) for label, path in EXPERIMENT_DESIGN_FILES.items()}
 
 
 def active_predictors(predictors: pd.DataFrame, variable_col: str = "Variable") -> list[str]:
-    """Return ordered predictor variable names.
+    """Return ordered predictor variable names from a design table.
 
     Args:
-        predictors: Predictors table.
-        variable_col: Variable column name.
+        predictors (pd.DataFrame): Predictors table, usually
+            ``variables_predictoras.csv``.
+        variable_col (str): Column containing predictor names.
 
     Returns:
-        Ordered predictor names.
+        list[str]: Ordered predictor names. Returns an empty list when
+        ``variable_col`` is absent.
     """
 
     if variable_col not in predictors.columns:
@@ -38,14 +41,15 @@ def active_predictors(predictors: pd.DataFrame, variable_col: str = "Variable") 
 
 
 def experiment_plan(catalog: pd.DataFrame, config: pd.DataFrame) -> pd.DataFrame:
-    """Join experiment catalog and configuration.
+    """Join the experiment catalog with model configuration.
 
     Args:
-        catalog: Experiment catalog table.
-        config: Experiment configuration table.
+        catalog (pd.DataFrame): Experiment catalog table.
+        config (pd.DataFrame): Model and training configuration table.
 
     Returns:
-        Combined experiment plan.
+        pd.DataFrame: Combined experiment plan. If configuration is missing,
+        returns a copy of the catalog.
     """
 
     if catalog.empty:
@@ -59,10 +63,11 @@ def experiment_status_summary(status: pd.DataFrame) -> pd.DataFrame:
     """Summarize experiments by execution state and problem type.
 
     Args:
-        status: Experiment status table.
+        status (pd.DataFrame): Experiment status table.
 
     Returns:
-        Summary table.
+        pd.DataFrame: Count table grouped by available ``Tipo_Problema`` and
+        ``Estado`` columns.
     """
 
     if status.empty:
@@ -72,13 +77,16 @@ def experiment_status_summary(status: pd.DataFrame) -> pd.DataFrame:
 
 
 def design_summary(artifacts: dict[str, pd.DataFrame] | None = None) -> pd.DataFrame:
-    """Build a high-level summary of design artifacts.
+    """Build a high-level summary of experimental-design artifacts.
 
     Args:
-        artifacts: Optional artifact dictionary. Loads files when omitted.
+        artifacts (dict[str, pd.DataFrame] | None): Optional artifact
+            dictionary. When omitted, files are loaded from
+            ``EXPERIMENT_DESIGN_FILES``.
 
     Returns:
-        Summary table.
+        pd.DataFrame: Table with artifact name, row count, column count and
+        availability flag.
     """
 
     artifacts = artifacts or load_design_artifacts()

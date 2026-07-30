@@ -15,14 +15,21 @@ def select_model_columns(
 ) -> pd.DataFrame:
     """Select identity, predictor and target columns for modeling.
 
+    This function keeps the C12 notebook focused on experiment decisions while
+    centralizing column selection and validation.
+
     Args:
-        df: Source dataset.
-        predictors: Candidate predictor columns.
-        target: Target variable.
-        identity_columns: Optional identifier/date columns to keep.
+        df (pd.DataFrame): Source master or engineered dataset.
+        predictors (list[str]): Candidate predictor columns requested by the
+            experiment design.
+        target (str): Target variable to predict.
+        identity_columns (list[str] | None): Optional identifier/date columns to
+            keep. Defaults to ``Fecha``, ``Nodo``, ``Anio`` and ``Mes`` when
+            present.
 
     Returns:
-        Prepared modeling DataFrame.
+        pd.DataFrame: DataFrame with available identity columns, available
+        predictors and the target column.
 
     Raises:
         ValueError: If the target variable is missing.
@@ -36,14 +43,17 @@ def select_model_columns(
 
 
 def drop_rows_without_target(df: pd.DataFrame, target: str) -> pd.DataFrame:
-    """Remove rows where the target variable is missing.
+    """Remove observations where the target variable is missing.
 
     Args:
-        df: Modeling dataset.
-        target: Target variable.
+        df (pd.DataFrame): Modeling dataset.
+        target (str): Target variable used by the experiment.
 
     Returns:
-        Filtered dataset.
+        pd.DataFrame: Filtered dataset with non-null target values.
+
+    Raises:
+        ValueError: If ``target`` is not present.
     """
 
     if target not in df.columns:
@@ -52,14 +62,15 @@ def drop_rows_without_target(df: pd.DataFrame, target: str) -> pd.DataFrame:
 
 
 def modeling_dataset_diagnostic(df: pd.DataFrame, target: str) -> pd.DataFrame:
-    """Build a structural diagnostic for a modeling dataset.
+    """Build structural diagnostics for a modeling dataset.
 
     Args:
-        df: Modeling dataset.
-        target: Target variable.
+        df (pd.DataFrame): Modeling dataset.
+        target (str): Target variable used by the experiment.
 
     Returns:
-        Diagnostic table.
+        pd.DataFrame: Diagnostic table with rows, columns, numeric predictors,
+        total nulls and target nulls.
     """
 
     numeric_predictors = [column for column in df.select_dtypes(include="number").columns if column != target]
@@ -77,13 +88,18 @@ def modeling_dataset_diagnostic(df: pd.DataFrame, target: str) -> pd.DataFrame:
 def build_modeling_dataset(df: pd.DataFrame, predictors: list[str], target: str) -> pd.DataFrame:
     """Run the default C12 modeling dataset preparation flow.
 
+    The flow selects available modeling columns and removes rows without the
+    target variable. It does not scale values or build temporal sequences; those
+    steps belong to C13.
+
     Args:
-        df: Source master dataset.
-        predictors: Predictor columns.
-        target: Target variable.
+        df (pd.DataFrame): Source master dataset.
+        predictors (list[str]): Predictor columns requested by the experiment.
+        target (str): Target variable.
 
     Returns:
-        Dataset ready for sequence construction or tabular modeling.
+        pd.DataFrame: Dataset ready for C13 transformation or sequence
+        construction.
     """
 
     selected = select_model_columns(df, predictors, target)

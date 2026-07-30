@@ -1,150 +1,183 @@
 # FRAMEWORK V7
 
-Framework para la gestion hidrica del Rio Bogota con capas biofisicas, hidraulicas, de percepcion y gobernanza.
+Framework para la aplicacion de tecnologias 4.0 y ciencia de datos en la
+gestion hidrica del Rio Bogota. El proyecto organiza datos biofisicos,
+hidraulicos, sociales e institucionales en un flujo multicapa que permite
+explorar informacion, documentar experimentos y evaluar un primer modelo
+predictivo sobre indicadores del agua.
 
-## Estructura
+## Objetivo
 
-- `DATA/RAW`: fuentes originales.
-- `DATA/MASTER`: datasets consolidados por capa y datasets maestros.
-- `DATA/MACHINE_LEARNING`: transformaciones, diagnosticos y secuencias para modelado.
-- `DATA/EVALUACIONES`: resultados del experimento predictivo.
-- `DATA/DISENO_EXPERIMENTAL`: catalogo, configuracion, criterios y estado de los experimentos.
-- `DATA/MODELADO`: tensores, registros, metricas, modelos y diagnosticos de entrenamiento.
-- `NOTEBOOKS`: memoria metodologica y notebooks del flujo.
-- `src/framework_v7`: modulos reutilizables del proyecto.
-- `app.py`: entrada principal del visor Streamlit.
-- `main.py`: entrada de consola para revisar el estado del proyecto.
+El objetivo del repositorio es convertir el trabajo exploratorio de notebooks
+en un proyecto reproducible, modular y consultable. Para eso separa:
 
-## Anatomia del codigo
+- datos fuente y datos consolidados en `DATA`;
+- memoria metodologica en `NOTEBOOKS`;
+- funciones reutilizables en `src/framework_v7`;
+- visualizacion de resultados en `app.py`;
+- validacion y ejecucion ligera en `main.py`.
 
-- `catalog.py`: anatomia del negocio, capas, archivos maestros y grupos de variables.
-- `data_access.py`: carga cacheada de CSV, Excel y metadata.
-- `profiling.py`: funciones de perfilado, cobertura y transformaciones ligeras.
-- `visualizations.py`: componentes visuales reutilizables.
-- `views.py`: pantallas Streamlit por seccion.
-- `paths.py`: rutas canonicas del repositorio.
-- `utils.py`: utilidades generales.
-- `layers/`: modulos reutilizables por capa de los Colabs C01-C07.
-- `pipeline/`: funciones reutilizables extraidas de los notebooks C08-C15 y diseno experimental.
+## Estructura Del Repositorio
 
-## Capas modularizadas
+```text
+FRAMEWORK_V7/
+├── DATA/
+│   ├── RAW/
+│   ├── MASTER/
+│   ├── MACHINE_LEARNING/
+│   ├── MODELADO/
+│   ├── EVALUACIONES/
+│   └── DISENO_EXPERIMENTAL/
+├── NOTEBOOKS/
+├── src/
+│   └── framework_v7/
+│       ├── layers/
+│       └── pipeline/
+├── app.py
+├── main.py
+├── pyproject.toml
+└── requirements.txt
+```
 
-- `layers/climate.py`: capa climatica.
-- `layers/hydrology.py`: capa hidrologica.
-- `layers/water_quality.py`: capa de calidad de agua.
-- `layers/oni.py`: capa macroclimatica ONI.
-- `layers/hydraulic.py`: capa hidraulica.
-- `layers/perception.py`: capa de percepcion.
-- `layers/governance.py`: capa de gobernanza.
+## Capas Del Framework
 
-Cada modulo de capa expone una interfaz comun:
+El sistema esta organizado en siete capas principales:
+
+- `C01 - Climatica`: precipitacion, temperatura, humedad, radiacion y viento.
+- `C02 - Hidrologica`: respuesta fisica del rio y niveles hidricos.
+- `C03 - Calidad de agua`: variables fisicoquimicas y sanitarias.
+- `C04 - ONI`: variabilidad macroclimatica asociada a ENSO.
+- `C05 - Hidraulica`: disponibilidad y operacion hidraulica.
+- `C06 - Percepcion`: lectura social del problema hidrico.
+- `C07 - Gobernanza`: capacidad institucional, cobertura y gestion publica.
+
+Cada capa tiene un modulo en `src/framework_v7/layers` con una interfaz comun:
 
 - `load_dataset()`
 - `available_key_variables()`
 - `feature_frame()`
 - `summary()`
 
-## Notebooks modularizados
+## Pipeline Modular De Notebooks
 
-Los notebooks se conservan como memoria metodologica, pero la logica reutilizable vive en `src/framework_v7/pipeline`. Esta separacion evita que el proyecto dependa de ejecutar celdas manuales y permite reutilizar funciones desde notebooks, scripts o validaciones automatizadas.
+Los notebooks se conservan como memoria metodologica, pero la logica
+reutilizable vive en `src/framework_v7/pipeline`. Esta separacion permite que
+los notebooks importen funciones, en vez de concentrar toda la logica en celdas
+manuales.
 
 Mapa de modulos:
 
-- `pipeline/integration.py`: integracion C08 y construccion de llaves `Fecha`/`Nodo`.
-- `pipeline/feature_engineering.py`: preparacion C09, variables temporales, imputacion y cobertura.
+- `pipeline/utils.py`: lectura, escritura y validaciones comunes.
+- `pipeline/integration.py`: integracion C08 y construccion de llaves
+  `Fecha`/`Nodo`.
+- `pipeline/feature_engineering.py`: preparacion C09, temporalidad, imputacion
+  y cobertura.
 - `pipeline/domain_knowledge.py`: catalogo de conocimiento C10.
-- `pipeline/ipml.py`: calculo del indice de pertinencia para machine learning C11.
-- `pipeline/ml_preparation.py`: seleccion de predictoras y dataset de modelado C12.
-- `pipeline/machine_learning.py`: escalamiento, diagnostico y secuencias temporales C13.
-- `pipeline/modeling.py`: configuracion experimental, validacion de tensores y salidas de prediccion C14.
-- `pipeline/evaluation.py`: metricas de clasificacion/regresion y recomendaciones C15.
-- `pipeline/experiment_design.py`: carga, resumen y plan de diseno experimental.
-- `pipeline/utils.py`: lectura/escritura de tablas y validaciones comunes.
-- `pipeline/main.py`: ejecucion ligera del pipeline modular sin usar Streamlit.
+- `pipeline/ipml.py`: indice de pertinencia para machine learning C11.
+- `pipeline/ml_preparation.py`: seleccion de predictoras y target C12.
+- `pipeline/machine_learning.py`: escalamiento, diagnostico y secuencias C13.
+- `pipeline/modeling.py`: configuracion, tensores y predicciones C14.
+- `pipeline/evaluation.py`: metricas y recomendaciones C15.
+- `pipeline/experiment_design.py`: diseno experimental y plan de experimentos.
+- `pipeline/main.py`: validacion ligera del pipeline modular.
 
-Uso desde un notebook:
+Ejemplo de uso desde un notebook:
 
 ```python
 from framework_v7.pipeline.ml_preparation import build_modeling_dataset
 from framework_v7.pipeline.machine_learning import create_temporal_sequences
 ```
 
-Ejecucion por consola:
+Ejemplo de ejecucion del pipeline modular:
 
 ```bash
-python main.py
+python -m framework_v7.pipeline.main
 ```
 
-## App Streamlit
+## Diseno Experimental
 
-La aplicacion muestra:
-
-- dashboard ejecutivo del sistema multicapa;
-- mapa visual de flujo desde capas hasta modelo;
-- predicciones de `Exp01`;
-- diseno experimental de `Exp01` a `Exp08`;
-- diagnostico y recomendaciones del modelo `Exp01`;
-- dataset transformado para machine learning;
-- tabs por cada capa del framework;
-- datasets maestros y cobertura de variables;
-- indice de notebooks.
-
-## Diseno experimental
-
-La carpeta `DATA/DISENO_EXPERIMENTAL` define la planeacion de los experimentos del framework. Su objetivo es separar la memoria metodologica de los datos operativos para que cada experimento tenga pregunta, objetivo, variable objetivo, tipo de problema, modelo, ventana temporal, horizonte predictivo y estado de ejecucion.
+La carpeta `DATA/DISENO_EXPERIMENTAL` define la planeacion de los experimentos
+del framework. Cada experimento declara pregunta de investigacion, objetivo,
+variable objetivo, tipo de problema, ventana temporal, horizonte predictivo,
+modelo y estado.
 
 Artefactos principales:
 
-- `catalogo_experimentos.csv`: inventario de `Exp01` a `Exp08`, con pregunta de investigacion, objetivo, variable objetivo y estado.
-- `configuracion_experimentos.csv`: parametros comunes de entrenamiento, como modelo, ventana, horizonte, transformacion, optimizador, learning rate, batch size, epochs, loss y metrica.
-- `variables_predictoras.csv`: variables usadas como entrada inicial del experimento.
-- `estado_experimentos.csv`: bitacora de avance, resultados y observaciones por experimento.
-- `criterios_clasificacion.csv`: reglas de evaluacion para experimentos de clasificacion.
-- `criterios_regresion.csv`: reglas de evaluacion para experimentos de regresion.
+- `catalogo_experimentos.csv`: inventario de `Exp01` a `Exp08`.
+- `configuracion_experimentos.csv`: parametros de entrenamiento.
+- `variables_predictoras.csv`: variables de entrada iniciales.
+- `estado_experimentos.csv`: bitacora y avance de experimentos.
+- `criterios_clasificacion.csv`: criterios para evaluar clasificacion.
+- `criterios_regresion.csv`: criterios para evaluar regresion.
 
-El primer experimento (`Exp01`) predice `irca` como problema de clasificacion usando una ventana temporal de 12 registros y un horizonte de 1. Los experimentos pendientes amplian el framework hacia calidad del agua, nivel minimo, volumen util, DBO5, DQO, oxigeno disuelto y pH.
+`Exp01` usa `irca` como variable objetivo y se plantea como problema de
+clasificacion con ventana temporal de 12 registros y horizonte de 1. Los
+experimentos siguientes amplian el analisis hacia calidad general del agua,
+nivel minimo, volumen util, DBO5, DQO, oxigeno disuelto y pH.
 
-La app Streamlit incluye la seccion `Diseno experimental`, donde se puede revisar:
+## Aplicacion Streamlit
 
-- mapa experimental por tipo de problema y estado;
-- configuracion de modelos;
-- variables predictoras;
-- criterios de evaluacion;
-- diagnostico del modelo `Exp01`;
-- recomendaciones metodologicas para mejorar el siguiente entrenamiento.
+La aplicacion `app.py` permite explorar el proyecto sin ejecutar notebooks.
+Incluye:
 
-La memoria de este flujo esta en `NOTEBOOKS/DISENO_EXPERIMENTAL/FW7_Diseño_Experimental.ipynb`.
+- dashboard ejecutivo multicapa;
+- mapa del flujo desde capas hasta modelo;
+- predicciones del experimento `Exp01`;
+- diseno experimental de `Exp01` a `Exp08`;
+- diagnostico y recomendaciones del modelo `Exp01`;
+- explorador de datasets por capa;
+- explorador del dataset maestro;
+- indice de notebooks.
 
-## Ejecucion local
+Ejecucion local:
 
 ```bash
 pip install -r requirements.txt
 streamlit run app.py
 ```
 
-Si se quiere instalar el paquete localmente:
+## Ejecucion Por Consola
 
-```bash
-pip install -e .
-```
-
-Para una revision rapida por consola:
+Para una validacion rapida del proyecto:
 
 ```bash
 python main.py
 ```
 
-## Archivos principales
+La salida resume datos cargados, capas disponibles, experimentos disenados,
+diagnosticos y modulos del pipeline de notebooks.
 
+## Instalacion Como Paquete Local
+
+```bash
+pip install -e .
+```
+
+Esto permite importar los modulos desde notebooks o scripts:
+
+```python
+from framework_v7.pipeline.experiment_design import load_design_artifacts
+```
+
+## Artefactos Principales
+
+- `DATA/MASTER/C09_MASTER/Dataset_Maestro_Framework_v03_Con_Imputaciones.csv`
+- `DATA/MACHINE_LEARNING/C13_MACHINE_LEARNING/Transformaciones/Exp01/dataset_machine_learning_transformado.csv`
 - `DATA/EVALUACIONES/Exp01/predicciones.csv`
 - `DATA/EVALUACIONES/Exp01/metadata_prediccion.csv`
-- `DATA/DISENO_EXPERIMENTAL/catalogo_experimentos.csv`
-- `DATA/DISENO_EXPERIMENTAL/configuracion_experimentos.csv`
 - `DATA/MODELADO/Diagnosticos/Exp01/diagnostico_modelo_Exp01.csv`
 - `DATA/MODELADO/Diagnosticos/Exp01/recomendaciones_Exp01.csv`
-- `DATA/MACHINE_LEARNING/C13_MACHINE_LEARNING/Transformaciones/Exp01/dataset_machine_learning_transformado.csv`
-- `DATA/MASTER/C09_MASTER/Dataset_Maestro_Framework_v03_Con_Imputaciones.csv`
+- `DATA/DISENO_EXPERIMENTAL/catalogo_experimentos.csv`
 
-## Objetivo del experimento
+## Convenciones De Desarrollo
 
-La metadata actual define `irca` como variable objetivo. La app interpreta este primer experimento como una primera salida predictiva para evaluar el comportamiento del indicador de riesgo/calidad dentro del enfoque multicapa del framework.
+- Mantener notebooks como evidencia y explicacion metodologica.
+- Mover funciones reutilizables a `src/framework_v7/pipeline`.
+- Mantener salidas consolidadas en `DATA`.
+- Evitar que `app.py` contenga logica de transformacion pesada.
+- Usar `main.py` y `python -m framework_v7.pipeline.main` como chequeos
+  ligeros antes de publicar cambios.
+
+## Autores
+
+Proyecto desarrollado por Jose Barreto y Juan Riataga.

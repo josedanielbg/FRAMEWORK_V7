@@ -8,12 +8,17 @@ import pandas as pd
 def minmax_score(series: pd.Series, higher_is_better: bool = True) -> pd.Series:
     """Scale a numeric series to a 0-1 score.
 
+    The helper is used by the IPML stage to turn heterogeneous diagnostic
+    measures into comparable scores.
+
     Args:
-        series: Numeric values.
-        higher_is_better: Whether high raw values should receive high scores.
+        series (pd.Series): Numeric values to scale.
+        higher_is_better (bool): Whether high raw values should receive high
+            scores. Set to ``False`` for penalties such as VIF.
 
     Returns:
-        Scaled score series.
+        pd.Series: Score values between 0 and 1. Constant or invalid inputs
+        return a score of 1.0 for every row.
     """
 
     values = pd.to_numeric(series, errors="coerce")
@@ -32,17 +37,27 @@ def compute_ipml(
     vif_col: str | None = None,
     domain_weight_col: str | None = None,
 ) -> pd.DataFrame:
-    """Compute a lightweight IPML score for candidate variables.
+    """Compute an IPML score for candidate modeling variables.
+
+    IPML combines data coverage, multicollinearity and domain relevance into a
+    single ranking metric. Missing optional components receive neutral scores
+    so the function can run with partial notebook artifacts.
 
     Args:
-        variables: Candidate variables table.
-        variable_col: Variable-name column.
-        coverage_col: Coverage percentage column.
-        vif_col: Optional VIF column. Lower VIF receives higher score.
-        domain_weight_col: Optional domain-relevance weight column.
+        variables (pd.DataFrame): Candidate variables table.
+        variable_col (str): Column containing variable names.
+        coverage_col (str): Column containing coverage percentages.
+        vif_col (str | None): Optional VIF column. Lower VIF receives a higher
+            score.
+        domain_weight_col (str | None): Optional column with domain-relevance
+            weights.
 
     Returns:
-        Variables table with IPML components and final score.
+        pd.DataFrame: Candidate variables sorted by descending ``IPML`` with
+        component score columns.
+
+    Raises:
+        ValueError: If ``variable_col`` is not present.
     """
 
     output = variables.copy()
@@ -73,14 +88,15 @@ def compute_ipml(
 
 
 def select_variables_by_ipml(ipml_table: pd.DataFrame, threshold: float = 0.6) -> list[str]:
-    """Select variables with IPML above a threshold.
+    """Select variables whose IPML score meets a threshold.
 
     Args:
-        ipml_table: Output from ``compute_ipml``.
-        threshold: Minimum score.
+        ipml_table (pd.DataFrame): Output from ``compute_ipml``.
+        threshold (float): Minimum accepted IPML score.
 
     Returns:
-        Ordered variable names.
+        list[str]: Ordered variable names. Returns an empty list when required
+        columns are absent.
     """
 
     if "Variable" not in ipml_table.columns or "IPML" not in ipml_table.columns:

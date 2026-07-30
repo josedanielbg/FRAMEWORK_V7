@@ -9,14 +9,21 @@ import pandas as pd
 
 
 def read_table(path: Path, **kwargs) -> pd.DataFrame:
-    """Read CSV or Excel artifacts with one function.
+    """Read a tabular artifact from disk.
+
+    Centralizes notebook IO for CSV and Excel files. Missing files return an
+    empty DataFrame so exploratory notebooks can continue and decide how to
+    report missing artifacts.
 
     Args:
-        path: File path to read.
-        **kwargs: Extra arguments passed to pandas readers.
+        path (Path): File path to read. Supported suffixes are ``.csv``,
+            ``.xlsx`` and ``.xls``.
+        **kwargs: Extra keyword arguments forwarded to ``pandas.read_csv`` or
+            ``pandas.read_excel``.
 
     Returns:
-        Loaded DataFrame, or an empty DataFrame when the file does not exist.
+        pd.DataFrame: Loaded table. Returns an empty DataFrame when ``path``
+        does not exist.
 
     Raises:
         ValueError: If the suffix is not supported.
@@ -34,12 +41,19 @@ def read_table(path: Path, **kwargs) -> pd.DataFrame:
 
 
 def ensure_columns(df: pd.DataFrame, required_columns: Iterable[str], dataset_name: str = "dataset") -> None:
-    """Validate that a DataFrame contains required columns.
+    """Validate the presence of required columns.
+
+    This helper is used by notebook modules before joins, model preparation or
+    sequence construction so errors fail with a clear stage-specific message.
 
     Args:
-        df: Dataset to validate.
-        required_columns: Required column names.
-        dataset_name: Human-readable dataset label for error messages.
+        df (pd.DataFrame): Dataset to validate.
+        required_columns (Iterable[str]): Column names that must be present.
+        dataset_name (str): Human-readable dataset label included in the error
+            message.
+
+    Returns:
+        None: The function only validates inputs.
 
     Raises:
         ValueError: If at least one required column is missing.
@@ -51,28 +65,29 @@ def ensure_columns(df: pd.DataFrame, required_columns: Iterable[str], dataset_na
 
 
 def existing_columns(df: pd.DataFrame, columns: Iterable[str]) -> list[str]:
-    """Return columns that exist in a DataFrame preserving order.
+    """Filter a candidate column list to columns present in a DataFrame.
 
     Args:
-        df: Dataset to inspect.
-        columns: Candidate columns.
+        df (pd.DataFrame): Dataset to inspect.
+        columns (Iterable[str]): Candidate column names.
 
     Returns:
-        Ordered list of columns present in ``df``.
+        list[str]: Ordered list with only the columns found in ``df``.
     """
 
     return [column for column in columns if column in df.columns]
 
 
 def save_table(df: pd.DataFrame, path: Path) -> Path:
-    """Save a table as CSV or Excel depending on the suffix.
+    """Save a table using the format implied by its file suffix.
 
     Args:
-        df: Dataset to write.
-        path: Destination path.
+        df (pd.DataFrame): Dataset to persist.
+        path (Path): Destination path. Supported suffixes are ``.csv``,
+            ``.xlsx`` and ``.xls``.
 
     Returns:
-        Written path.
+        Path: Path written to disk.
 
     Raises:
         ValueError: If the suffix is not supported.
@@ -90,15 +105,15 @@ def save_table(df: pd.DataFrame, path: Path) -> Path:
 
 
 def save_csv_and_excel(df: pd.DataFrame, csv_path: Path, excel_path: Path | None = None) -> list[Path]:
-    """Save a DataFrame as CSV and optionally Excel.
+    """Save a dataset as CSV and optionally as Excel.
 
     Args:
-        df: Dataset to persist.
-        csv_path: CSV destination.
-        excel_path: Optional Excel destination.
+        df (pd.DataFrame): Dataset to persist.
+        csv_path (Path): CSV destination path.
+        excel_path (Path | None): Optional Excel destination path.
 
     Returns:
-        List of written paths.
+        list[Path]: Paths written by the function.
     """
 
     written = [save_table(df, csv_path)]
