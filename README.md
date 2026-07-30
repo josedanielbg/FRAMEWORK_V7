@@ -57,6 +57,32 @@ La aplicacion muestra:
 - datasets maestros y cobertura de variables;
 - indice de notebooks.
 
+## Diseno experimental
+
+La carpeta `DATA/DISENO_EXPERIMENTAL` define la planeacion de los experimentos del framework. Su objetivo es separar la memoria metodologica de los datos operativos para que cada experimento tenga pregunta, objetivo, variable objetivo, tipo de problema, modelo, ventana temporal, horizonte predictivo y estado de ejecucion.
+
+Artefactos principales:
+
+- `catalogo_experimentos.csv`: inventario de `Exp01` a `Exp08`, con pregunta de investigacion, objetivo, variable objetivo y estado.
+- `configuracion_experimentos.csv`: parametros comunes de entrenamiento, como modelo, ventana, horizonte, transformacion, optimizador, learning rate, batch size, epochs, loss y metrica.
+- `variables_predictoras.csv`: variables usadas como entrada inicial del experimento.
+- `estado_experimentos.csv`: bitacora de avance, resultados y observaciones por experimento.
+- `criterios_clasificacion.csv`: reglas de evaluacion para experimentos de clasificacion.
+- `criterios_regresion.csv`: reglas de evaluacion para experimentos de regresion.
+
+El primer experimento (`Exp01`) predice `irca` como problema de clasificacion usando una ventana temporal de 12 registros y un horizonte de 1. Los experimentos pendientes amplian el framework hacia calidad del agua, nivel minimo, volumen util, DBO5, DQO, oxigeno disuelto y pH.
+
+La app Streamlit incluye la seccion `Diseno experimental`, donde se puede revisar:
+
+- mapa experimental por tipo de problema y estado;
+- configuracion de modelos;
+- variables predictoras;
+- criterios de evaluacion;
+- diagnostico del modelo `Exp01`;
+- recomendaciones metodologicas para mejorar el siguiente entrenamiento.
+
+La memoria de este flujo esta en `NOTEBOOKS/DISENO_EXPERIMENTAL/FW7_Diseño_Experimental.ipynb`.
+
 ## Ejecucion local
 
 ```bash
