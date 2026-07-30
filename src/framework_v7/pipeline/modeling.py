@@ -10,7 +10,16 @@ import pandas as pd
 
 @dataclass(frozen=True)
 class ExperimentConfig:
-    """Configuration for one modeling experiment."""
+    """Configuration for one modeling experiment.
+
+    Attributes:
+        experiment (str): Experiment identifier, for example ``Exp01``.
+        target (str): Target variable to predict.
+        model (str): Model family or algorithm name.
+        window (int): Number of time steps used as input.
+        horizon (int): Forecast horizon measured in rows.
+        problem_type (str): Problem type, such as classification or regression.
+    """
 
     experiment: str
     target: str
@@ -21,13 +30,15 @@ class ExperimentConfig:
 
 
 def config_from_row(row: pd.Series) -> ExperimentConfig:
-    """Create an experiment config from a catalog row.
+    """Create an experiment configuration from a catalog row.
 
     Args:
-        row: Row from ``catalogo_experimentos.csv``.
+        row (pd.Series): Row from ``catalogo_experimentos.csv`` or a compatible
+            experiment catalog.
 
     Returns:
-        ExperimentConfig instance.
+        ExperimentConfig: Parsed configuration with defaults for missing
+        fields.
     """
 
     return ExperimentConfig(
@@ -41,14 +52,16 @@ def config_from_row(row: pd.Series) -> ExperimentConfig:
 
 
 def validate_tensors(x_values: np.ndarray, y_values: np.ndarray) -> pd.DataFrame:
-    """Validate tensor shapes before training.
+    """Validate tensor shapes before model training.
 
     Args:
-        x_values: Predictor tensor.
-        y_values: Target tensor.
+        x_values (np.ndarray): Predictor tensor, usually shaped as
+            ``samples x window x features``.
+        y_values (np.ndarray): Target tensor or vector.
 
     Returns:
-        Diagnostic table.
+        pd.DataFrame: Diagnostic table with tensor dimensions, sample counts
+        and alignment status.
     """
 
     return pd.DataFrame(
@@ -69,13 +82,17 @@ def temporal_split(
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
     """Split tensors preserving temporal order.
 
+    Unlike random splits, this function keeps older observations in train and
+    newer observations in test, which is appropriate for forecasting workflows.
+
     Args:
-        x_values: Predictor tensor.
-        y_values: Target tensor.
-        train_fraction: Fraction assigned to train.
+        x_values (np.ndarray): Predictor tensor.
+        y_values (np.ndarray): Target tensor or vector.
+        train_fraction (float): Fraction assigned to the training partition.
 
     Returns:
-        Tuple ``X_train, X_test, y_train, y_test``.
+        tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]: Tuple
+        ``X_train, X_test, y_train, y_test``.
     """
 
     split_index = int(len(x_values) * train_fraction)
@@ -90,12 +107,13 @@ def prediction_frame(
     """Create a standard prediction output table.
 
     Args:
-        predictions: Predicted values.
-        start_index: First record id.
-        column: Prediction column name.
+        predictions (np.ndarray | list[float]): Predicted values from a model.
+        start_index (int): First record identifier assigned to predictions.
+        column (str): Prediction column name.
 
     Returns:
-        Prediction DataFrame.
+        pd.DataFrame: Prediction table with ``Registro`` and the configured
+        prediction column.
     """
 
     values = np.asarray(predictions).reshape(-1)

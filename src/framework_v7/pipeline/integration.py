@@ -11,15 +11,20 @@ from .utils import ensure_columns
 
 
 def build_node(df: pd.DataFrame, municipality_col: str = "municipio", station_col: str | None = None) -> pd.Series:
-    """Build the integration node used by layer datasets.
+    """Build the normalized integration node used by layer datasets.
+
+    The C08 notebook creates a common spatial key before joining hydrology,
+    water-quality, hydraulic and governance layers. This function reproduces
+    that key construction in a reusable form.
 
     Args:
-        df: Input dataset.
-        municipality_col: Municipality column name.
-        station_col: Optional station column name.
+        df (pd.DataFrame): Input layer dataset.
+        municipality_col (str): Column containing municipality names.
+        station_col (str | None): Optional station column appended to the node
+            when it exists and is not empty.
 
     Returns:
-        Series with uppercase, stripped node labels.
+        pd.Series: Uppercase, stripped node labels suitable for joins.
     """
 
     ensure_columns(df, [municipality_col], "layer dataset")
@@ -33,12 +38,15 @@ def build_node(df: pd.DataFrame, municipality_col: str = "municipio", station_co
 def standardize_date_column(df: pd.DataFrame, date_col: str = "Fecha") -> pd.DataFrame:
     """Convert a date-like column to monthly timestamps.
 
+    Dates are coerced with pandas and then normalized to the first day of each
+    month. This matches the temporal grain used by the master dataset.
+
     Args:
-        df: Input dataset.
-        date_col: Date column name.
+        df (pd.DataFrame): Input dataset.
+        date_col (str): Date column name to normalize.
 
     Returns:
-        Copy with standardized dates.
+        pd.DataFrame: Copy of ``df`` with standardized monthly dates.
     """
 
     ensure_columns(df, [date_col], "layer dataset")
@@ -54,17 +62,23 @@ def standardize_layer_keys(
     municipality_col: str | None = None,
     station_col: str | None = None,
 ) -> pd.DataFrame:
-    """Ensure a dataset has the common keys used by the master dataset.
+    """Ensure a layer dataset has the common master keys.
+
+    The function standardizes temporal keys, creates ``Nodo`` when a
+    municipality column is available and normalizes node text for reliable
+    outer joins across layers.
 
     Args:
-        df: Input layer dataset.
-        date_col: Date column name.
-        node_col: Output node column name.
-        municipality_col: Optional municipality column for node creation.
-        station_col: Optional station column for node creation.
+        df (pd.DataFrame): Input layer dataset.
+        date_col (str): Name of the source date column.
+        node_col (str): Name of the source or output node column.
+        municipality_col (str | None): Municipality column used when ``node_col``
+            is not already present.
+        station_col (str | None): Optional station column used to enrich nodes.
 
     Returns:
-        DataFrame with standardized ``Fecha`` and ``Nodo`` keys when possible.
+        pd.DataFrame: Copy with standardized ``Fecha`` and ``Nodo`` columns when
+        source columns are available.
     """
 
     output = df.copy()
@@ -82,14 +96,19 @@ def standardize_layer_keys(
 
 
 def merge_layer_frames(frames: Mapping[str, pd.DataFrame], keys: list[str] | None = None) -> pd.DataFrame:
-    """Merge multiple layer frames into one master dataset.
+    """Merge standardized layer frames into one master dataset.
+
+    Empty frames are skipped. Non-empty frames must contain every merge key;
+    otherwise a clear validation error is raised before the join.
 
     Args:
-        frames: Mapping of layer labels to DataFrames.
-        keys: Merge keys. Defaults to ``Fecha`` and ``Nodo``.
+        frames (Mapping[str, pd.DataFrame]): Mapping of layer label to
+            DataFrame.
+        keys (list[str] | None): Merge keys. Defaults to ``["Fecha", "Nodo"]``.
 
     Returns:
-        Merged master DataFrame.
+        pd.DataFrame: Outer-joined master dataset. Returns an empty DataFrame
+        when all inputs are empty.
     """
 
     keys = keys or ["Fecha", "Nodo"]
@@ -105,14 +124,16 @@ def merge_layer_frames(frames: Mapping[str, pd.DataFrame], keys: list[str] | Non
 
 
 def integration_quality(master: pd.DataFrame, keys: list[str] | None = None) -> pd.DataFrame:
-    """Build a simple quality report for the integrated master dataset.
+    """Build structural quality indicators for the integrated dataset.
 
     Args:
-        master: Integrated dataset.
-        keys: Key columns used for duplicate checks.
+        master (pd.DataFrame): Integrated master dataset.
+        keys (list[str] | None): Key columns used for duplicate checks.
+            Defaults to ``["Fecha", "Nodo"]``.
 
     Returns:
-        DataFrame with structural quality indicators.
+        pd.DataFrame: Table with row count, column count, nulls and duplicate
+        indicators.
     """
 
     keys = keys or ["Fecha", "Nodo"]

@@ -7,6 +7,8 @@ the same business logic again.
 
 from __future__ import annotations
 
+from types import ModuleType
+
 from . import (
     domain_knowledge,
     evaluation,
@@ -35,15 +37,15 @@ PIPELINE_MODULES = {
 }
 
 
-def get_pipeline_module(stage_name: str):
-    """Return the module that implements a notebook stage.
+def get_pipeline_module(stage_name: str) -> ModuleType:
+    """Return the module that implements a registered notebook stage.
 
     Args:
-        stage_name: Human-readable stage name registered in
+        stage_name (str): Human-readable stage name registered in
             ``PIPELINE_MODULES``.
 
     Returns:
-        Python module implementing the requested notebook stage.
+        ModuleType: Python module implementing the requested notebook stage.
 
     Raises:
         KeyError: If the stage is not registered.

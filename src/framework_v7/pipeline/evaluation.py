@@ -9,12 +9,20 @@ import pandas as pd
 def classification_metrics(y_true: list[int] | np.ndarray, y_pred: list[int] | np.ndarray) -> pd.DataFrame:
     """Compute binary-classification metrics without external dependencies.
 
+    The function intentionally avoids scikit-learn so evaluation notebooks can
+    run with the lightweight dependency set defined by the repository.
+
     Args:
-        y_true: True binary labels.
-        y_pred: Predicted binary labels.
+        y_true (list[int] | np.ndarray): True binary labels encoded as 0 or 1.
+        y_pred (list[int] | np.ndarray): Predicted binary labels encoded as 0
+            or 1.
 
     Returns:
-        Metrics table.
+        pd.DataFrame: Metrics table with accuracy, precision, recall, F1,
+        specificity, balanced accuracy and confusion-matrix counts.
+
+    Raises:
+        ValueError: If ``y_true`` and ``y_pred`` have different lengths.
     """
 
     true = np.asarray(y_true).astype(int)
@@ -54,11 +62,14 @@ def regression_metrics(y_true: list[float] | np.ndarray, y_pred: list[float] | n
     """Compute common regression metrics without external dependencies.
 
     Args:
-        y_true: True numeric values.
-        y_pred: Predicted numeric values.
+        y_true (list[float] | np.ndarray): True numeric target values.
+        y_pred (list[float] | np.ndarray): Predicted numeric values.
 
     Returns:
-        Metrics table.
+        pd.DataFrame: Metrics table with MAE, RMSE and R2.
+
+    Raises:
+        ValueError: If ``y_true`` and ``y_pred`` have different lengths.
     """
 
     true = np.asarray(y_true, dtype=float)
@@ -80,27 +91,34 @@ def regression_metrics(y_true: list[float] | np.ndarray, y_pred: list[float] | n
 
 
 def threshold_predictions(predictions: list[float] | np.ndarray, threshold: float = 0.5) -> np.ndarray:
-    """Convert probabilities or scores into binary labels.
+    """Convert probabilities or continuous scores into binary labels.
 
     Args:
-        predictions: Numeric scores.
-        threshold: Decision threshold.
+        predictions (list[float] | np.ndarray): Numeric scores or
+            probabilities.
+        threshold (float): Decision threshold. Values greater than or equal to
+            this threshold are mapped to 1.
 
     Returns:
-        Binary numpy array.
+        np.ndarray: Binary label array.
     """
 
     return (np.asarray(predictions, dtype=float) >= threshold).astype(int)
 
 
 def recommendations_from_metrics(metrics: pd.DataFrame) -> pd.DataFrame:
-    """Generate basic recommendations from diagnostic metrics.
+    """Generate modeling recommendations from metric diagnostics.
+
+    The rules encode the first evaluation lessons from Exp01: low recall,
+    zero precision or weak balanced accuracy indicate imbalance, threshold or
+    feature-selection issues.
 
     Args:
-        metrics: Metrics table with ``Indicador`` and ``Valor`` columns.
+        metrics (pd.DataFrame): Metrics table with ``Indicador`` and ``Valor``
+            columns.
 
     Returns:
-        Recommendation table.
+        pd.DataFrame: One-column table named ``Recomendacion``.
     """
 
     values = dict(zip(metrics["Indicador"], pd.to_numeric(metrics["Valor"], errors="coerce")))

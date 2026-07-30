@@ -8,14 +8,19 @@ from framework_v7.profiling import missing_profile
 
 
 def add_temporal_features(df: pd.DataFrame, date_col: str = "Fecha") -> pd.DataFrame:
-    """Add common temporal features to a master dataset.
+    """Add temporal features derived from a date column.
+
+    This function mirrors the C09 feature-engineering notebook by deriving
+    calendar fields that can support grouped imputations, diagnostics and
+    modeling.
 
     Args:
-        df: Dataset with a date column.
-        date_col: Date column name.
+        df (pd.DataFrame): Dataset containing a date-like column.
+        date_col (str): Date column used to derive temporal attributes.
 
     Returns:
-        Copy with ``Anio``, ``Mes`` and ``Trimestre`` when dates are valid.
+        pd.DataFrame: Copy with ``Anio``, ``Mes`` and ``Trimestre`` when the
+        date column exists. Returns an unchanged copy otherwise.
     """
 
     output = df.copy()
@@ -29,15 +34,16 @@ def add_temporal_features(df: pd.DataFrame, date_col: str = "Fecha") -> pd.DataF
 
 
 def add_missing_flags(df: pd.DataFrame, columns: list[str] | None = None, suffix: str = "_faltante") -> pd.DataFrame:
-    """Create binary indicators for missing values.
+    """Create binary missing-value indicators.
 
     Args:
-        df: Input dataset.
-        columns: Columns to inspect. Defaults to all columns.
-        suffix: Suffix for generated flag columns.
+        df (pd.DataFrame): Input dataset.
+        columns (list[str] | None): Columns to inspect. Defaults to all
+            columns in ``df``.
+        suffix (str): Suffix appended to generated flag columns.
 
     Returns:
-        Copy with missing-value flags.
+        pd.DataFrame: Copy with one binary flag per selected column.
     """
 
     output = df.copy()
@@ -49,14 +55,19 @@ def add_missing_flags(df: pd.DataFrame, columns: list[str] | None = None, suffix
 
 
 def impute_numeric_by_group(df: pd.DataFrame, group_cols: list[str] | None = None) -> pd.DataFrame:
-    """Impute numeric columns using grouped medians and global medians.
+    """Impute numeric columns using grouped and global medians.
+
+    When group columns are supplied, missing values are first filled with the
+    median inside each group. Remaining missing values are filled with the
+    global median for the variable.
 
     Args:
-        df: Input dataset.
-        group_cols: Optional group columns, for example ``Nodo`` or ``Mes``.
+        df (pd.DataFrame): Input dataset.
+        group_cols (list[str] | None): Optional grouping columns, such as
+            ``Nodo`` or ``Mes``.
 
     Returns:
-        Copy with numeric missing values imputed.
+        pd.DataFrame: Copy with numeric missing values imputed.
     """
 
     output = df.copy()
@@ -71,13 +82,14 @@ def impute_numeric_by_group(df: pd.DataFrame, group_cols: list[str] | None = Non
 
 
 def coverage_report(df: pd.DataFrame) -> pd.DataFrame:
-    """Compute complete coverage for every variable.
+    """Compute variable-level coverage for a dataset.
 
     Args:
-        df: Dataset to profile.
+        df (pd.DataFrame): Dataset to profile.
 
     Returns:
-        DataFrame with variable, null count and coverage percentage.
+        pd.DataFrame: Table with variable name, null count and coverage
+        percentage for every column.
     """
 
     return missing_profile(df, limit=len(df.columns) if not df.empty else 0)
@@ -88,15 +100,20 @@ def build_engineered_master(
     date_col: str = "Fecha",
     group_cols: list[str] | None = None,
 ) -> pd.DataFrame:
-    """Run the default C09 engineering flow.
+    """Run the default C09 feature-engineering flow.
+
+    The current flow adds temporal features and imputes numeric values. It is
+    intentionally lightweight so notebooks can compose it with additional
+    domain-specific transformations when needed.
 
     Args:
-        df: Master dataset.
-        date_col: Date column name.
-        group_cols: Optional group columns for imputation.
+        df (pd.DataFrame): Master dataset.
+        date_col (str): Date column used for temporal features.
+        group_cols (list[str] | None): Optional group columns used during
+            numeric imputation.
 
     Returns:
-        Engineered master dataset.
+        pd.DataFrame: Engineered master dataset.
     """
 
     engineered = add_temporal_features(df, date_col=date_col)

@@ -7,14 +7,17 @@ import pandas as pd
 
 
 def fit_minmax(df: pd.DataFrame, columns: list[str]) -> pd.DataFrame:
-    """Fit min-max parameters for selected columns.
+    """Fit min-max scaling parameters for selected columns.
+
+    Parameters are stored as a small DataFrame so notebooks can export and
+    reuse the exact transformation applied to training data.
 
     Args:
-        df: Source dataset.
-        columns: Numeric columns to scale.
+        df (pd.DataFrame): Source dataset.
+        columns (list[str]): Numeric columns to scale.
 
     Returns:
-        DataFrame with ``Variable``, ``Min`` and ``Max``.
+        pd.DataFrame: Table with ``Variable``, ``Min`` and ``Max`` columns.
     """
 
     rows = []
@@ -25,14 +28,16 @@ def fit_minmax(df: pd.DataFrame, columns: list[str]) -> pd.DataFrame:
 
 
 def apply_minmax(df: pd.DataFrame, scaler: pd.DataFrame) -> pd.DataFrame:
-    """Apply min-max scaling from a parameter table.
+    """Apply min-max scaling from fitted parameters.
 
     Args:
-        df: Source dataset.
-        scaler: Output from ``fit_minmax``.
+        df (pd.DataFrame): Source dataset to transform.
+        scaler (pd.DataFrame): Parameter table produced by ``fit_minmax`` with
+            ``Variable``, ``Min`` and ``Max`` columns.
 
     Returns:
-        Scaled dataset copy.
+        pd.DataFrame: Copy of ``df`` with scaled variables where matching
+        parameters are available.
     """
 
     output = df.copy()
@@ -57,15 +62,23 @@ def create_temporal_sequences(
 ) -> tuple[np.ndarray, np.ndarray]:
     """Create temporal tensors for sequence models.
 
+    Rows must already be sorted in temporal order. The function builds rolling
+    windows for recurrent or sequence-based models such as LSTM.
+
     Args:
-        df: Ordered modeling dataset.
-        predictors: Predictor columns.
-        target: Target column.
-        window: Number of past rows per sequence.
-        horizon: Forecast horizon measured in rows.
+        df (pd.DataFrame): Ordered modeling dataset.
+        predictors (list[str]): Predictor columns used as model features.
+        target (str): Target column to forecast.
+        window (int): Number of past rows per sequence.
+        horizon (int): Forecast horizon measured in rows.
 
     Returns:
-        Tuple ``(X, y)`` where X has shape ``samples x window x features``.
+        tuple[np.ndarray, np.ndarray]: Tuple ``(X, y)`` where ``X`` has shape
+        ``samples x window x features`` and ``y`` has one target value per
+        sample.
+
+    Raises:
+        ValueError: If any predictor or target column is missing.
     """
 
     missing = [column for column in predictors + [target] if column not in df.columns]
@@ -85,13 +98,14 @@ def create_temporal_sequences(
 
 
 def transformation_diagnostic(df: pd.DataFrame) -> pd.DataFrame:
-    """Build a diagnostic table for transformed ML data.
+    """Build diagnostics for transformed machine-learning data.
 
     Args:
-        df: Transformed modeling dataset.
+        df (pd.DataFrame): Transformed modeling dataset.
 
     Returns:
-        Diagnostic table.
+        pd.DataFrame: Diagnostic table with dimensions, numeric variable count,
+        constant variable count and null count.
     """
 
     numeric_cols = df.select_dtypes(include="number").columns
