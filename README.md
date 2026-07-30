@@ -25,6 +25,7 @@ Framework para la gestion hidrica del Rio Bogota con capas biofisicas, hidraulic
 - `paths.py`: rutas canonicas del repositorio.
 - `utils.py`: utilidades generales.
 - `layers/`: modulos reutilizables por capa de los Colabs C01-C07.
+- `pipeline/`: funciones reutilizables extraidas de los notebooks C08-C15 y diseno experimental.
 
 ## Capas modularizadas
 
@@ -42,6 +43,37 @@ Cada modulo de capa expone una interfaz comun:
 - `available_key_variables()`
 - `feature_frame()`
 - `summary()`
+
+## Notebooks modularizados
+
+Los notebooks se conservan como memoria metodologica, pero la logica reutilizable vive en `src/framework_v7/pipeline`. Esta separacion evita que el proyecto dependa de ejecutar celdas manuales y permite reutilizar funciones desde notebooks, scripts o validaciones automatizadas.
+
+Mapa de modulos:
+
+- `pipeline/integration.py`: integracion C08 y construccion de llaves `Fecha`/`Nodo`.
+- `pipeline/feature_engineering.py`: preparacion C09, variables temporales, imputacion y cobertura.
+- `pipeline/domain_knowledge.py`: catalogo de conocimiento C10.
+- `pipeline/ipml.py`: calculo del indice de pertinencia para machine learning C11.
+- `pipeline/ml_preparation.py`: seleccion de predictoras y dataset de modelado C12.
+- `pipeline/machine_learning.py`: escalamiento, diagnostico y secuencias temporales C13.
+- `pipeline/modeling.py`: configuracion experimental, validacion de tensores y salidas de prediccion C14.
+- `pipeline/evaluation.py`: metricas de clasificacion/regresion y recomendaciones C15.
+- `pipeline/experiment_design.py`: carga, resumen y plan de diseno experimental.
+- `pipeline/utils.py`: lectura/escritura de tablas y validaciones comunes.
+- `pipeline/main.py`: ejecucion ligera del pipeline modular sin usar Streamlit.
+
+Uso desde un notebook:
+
+```python
+from framework_v7.pipeline.ml_preparation import build_modeling_dataset
+from framework_v7.pipeline.machine_learning import create_temporal_sequences
+```
+
+Ejecucion por consola:
+
+```bash
+python main.py
+```
 
 ## App Streamlit
 

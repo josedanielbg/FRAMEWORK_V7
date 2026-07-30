@@ -18,6 +18,8 @@ if str(SRC_DIR) not in sys.path:
 
 from framework_v7.data_access import load_project_data
 from framework_v7.layers import LAYER_MODULES
+from framework_v7.pipeline import PIPELINE_MODULES
+from framework_v7.pipeline.main import run_pipeline_summary
 from framework_v7.profiling import layer_summary
 
 
@@ -42,6 +44,11 @@ def main() -> None:
         print(f"Experimentos disenados: {len(design_catalog)}")
     if not data.model_diagnostic.empty:
         print(f"Diagnostico modelo Exp01: {len(data.model_diagnostic)} indicadores")
+    print(f"Modulos de pipeline notebook: {len(PIPELINE_MODULES)}")
+    print()
+    pipeline_summary = run_pipeline_summary(data)
+    for row in pipeline_summary.to_dict("records"):
+        print(f"{row['Etapa']}: {row['Resultado']}")
 
 
 if __name__ == "__main__":
