@@ -1,0 +1,9 @@
+Experimento,Variable_Objetivo,Tipo_Problema,Dominio,Ventana,Horizonte,Modelo,Estado,Objetivo,Estado_Modelo,Accuracy,Precision,Recall,F1,Fecha_Ejecucion,Observaciones
+Exp01,irca,Clasificación,Gestión Hídrica,12,1,LSTM,Ejecutado,Evaluar la capacidad del Framework para predecir el riesgo sanitario del agua.,,,,,,,
+Exp02,CALIDAD_AGUA,Clasificación,Gestión Hídrica,12,1,LSTM,Pendiente,Evaluar el comportamiento general de la calidad del recurso hídrico.,,,,,,,
+Exp03,Nivel_Minimo,Regresión,Gestión Hídrica,12,1,LSTM,Pendiente,Validar la capacidad predictiva sobre la disponibilidad del recurso hídrico.,,,,,,,
+Exp04,VolumenUtilDiarioMasa,Regresión,Gestión Hídrica,12,1,LSTM,Pendiente,Validar la predicción del volumen útil disponible.,,,,,,,
+Exp05,DBO5,Regresión,Gestión Hídrica,12,1,LSTM,Pendiente,Evaluar contaminación orgánica.,,,,,,,
+Exp06,DQO,Regresión,Gestión Hídrica,12,1,LSTM,Pendiente,Evaluar contaminación química.,,,,,,,
+Exp07,Oxigeno_Disuelto,Regresión,Gestión Hídrica,12,1,LSTM,Pendiente,Evaluar el estado ecológico del recurso.,,,,,,,
+Exp08,pH,Regresión,Gestión Hídrica,12,1,LSTM,Pendiente,Evaluar el comportamiento fisicoquímico del agua.,,,,,,,

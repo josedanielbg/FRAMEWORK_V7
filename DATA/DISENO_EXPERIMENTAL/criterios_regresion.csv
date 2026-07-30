@@ -1,0 +1,4 @@
+Metrica,Criterio,Descripcion
+MAE,Minimizar,Error Absoluto Medio
+RMSE,Minimizar,Raíz del Error Cuadrático Medio
+R2,Mayor o igual a 0.70,Coeficiente de Determinación

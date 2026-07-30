@@ -1,0 +1,5 @@
+Experimento,Modelo,Ventana,Horizonte,Transformacion,Optimizador,LearningRate,BatchSize,Epochs,EarlyStopping,Loss,Metrica
+Exp01,LSTM,12,1,MinMaxScaler,Adam,0.001,32,100,10,binary_crossentropy,Accuracy
+Exp02,LSTM,12,1,MinMaxScaler,Adam,0.001,32,100,10,binary_crossentropy,Accuracy
+Exp03,LSTM,12,1,MinMaxScaler,Adam,0.001,32,100,10,mse,RMSE
+Exp04,LSTM,12,1,MinMaxScaler,Adam,0.001,32,100,10,mse,RMSE
