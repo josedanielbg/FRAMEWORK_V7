@@ -1,0 +1,8 @@
+﻿Indicador,Valor,Estado
+Accuracy,0.9487,Aceptable
+Precision,1.0000,Aceptable
+Recall,0.6364,Aceptable
+F1 Score,0.7778,Aceptable
+Especificidad,1.0000,Excelente
+Accuracy Balanceada,0.82,Aceptable
+Estado General,MODELO APROBADO,Aceptable
