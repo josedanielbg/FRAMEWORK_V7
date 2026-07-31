@@ -1,5 +1,8 @@
 ﻿Parametro,Valor
+Experimento,Exp04
 Dominio,Gestión Hídrica
+Tipo Problema,Regresión
+Modelo,LSTM
 Variable Objetivo,VolumenUtilDiarioMasa
 Ventana,12
 Horizonte,1
