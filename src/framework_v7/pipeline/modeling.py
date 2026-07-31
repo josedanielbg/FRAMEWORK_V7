@@ -3,9 +3,20 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
+
+from framework_v7.paths import MODELING_DIR
+
+from .utils import artifact_inventory, discover_experiments, read_key_value_table, read_table
+
+
+TENSORS_DIR = MODELING_DIR / "Tensores"
+MODELS_DIR = MODELING_DIR / "Modelos"
+DIAGNOSTICS_DIR = MODELING_DIR / "Diagnosticos"
+LOGS_DIR = MODELING_DIR / "Bitacoras"
 
 
 @dataclass(frozen=True)
@@ -118,3 +129,132 @@ def prediction_frame(
 
     values = np.asarray(predictions).reshape(-1)
     return pd.DataFrame({"Registro": range(start_index, start_index + len(values)), column: values})
+
+
+def load_tensor_metadata(experiment: str, tensors_dir: Path | None = None) -> dict[str, str]:
+    """Load tensor metadata exported by notebook C14.
+
+    Args:
+        experiment (str): Experiment identifier.
+        tensors_dir (Path | None): Optional tensor artifact root.
+
+    Returns:
+        dict[str, str]: Tensor metadata as key-value pairs. Returns an empty
+        dictionary when the metadata file is absent.
+    """
+
+    root = tensors_dir or TENSORS_DIR
+    return read_key_value_table(root / experiment / "metadata_tensor.csv")
+
+
+def load_model_record(experiment: str, models_dir: Path | None = None) -> pd.DataFrame:
+    """Load the modeling record for one experiment.
+
+    Args:
+        experiment (str): Experiment identifier.
+        models_dir (Path | None): Optional model artifact root.
+
+    Returns:
+        pd.DataFrame: Modeling record table, usually one row. Returns an empty
+        DataFrame when the CSV is missing.
+    """
+
+    root = models_dir or MODELS_DIR
+    return read_table(root / experiment / f"registro_{experiment}.csv")
+
+
+def load_model_diagnostic(experiment: str, diagnostics_dir: Path | None = None) -> pd.DataFrame:
+    """Load the model diagnostic table for one experiment.
+
+    Args:
+        experiment (str): Experiment identifier.
+        diagnostics_dir (Path | None): Optional diagnostics artifact root.
+
+    Returns:
+        pd.DataFrame: Diagnostic indicators exported by C14/C15.
+    """
+
+    root = diagnostics_dir or DIAGNOSTICS_DIR
+    return read_table(root / experiment / f"diagnostico_modelo_{experiment}.csv")
+
+
+def load_model_recommendations(experiment: str, diagnostics_dir: Path | None = None) -> pd.DataFrame:
+    """Load model recommendations for one experiment.
+
+    Args:
+        experiment (str): Experiment identifier.
+        diagnostics_dir (Path | None): Optional diagnostics artifact root.
+
+    Returns:
+        pd.DataFrame: Recommendation table exported by the modeling notebook.
+    """
+
+    root = diagnostics_dir or DIAGNOSTICS_DIR
+    return read_table(root / experiment / f"recomendaciones_{experiment}.csv")
+
+
+def load_experiment_log(experiment: str, logs_dir: Path | None = None) -> pd.DataFrame:
+    """Load the modeling experiment log.
+
+    Args:
+        experiment (str): Experiment identifier.
+        logs_dir (Path | None): Optional bitacora artifact root.
+
+    Returns:
+        pd.DataFrame: Experiment log table for the selected experiment.
+    """
+
+    root = logs_dir or LOGS_DIR
+    return read_table(root / experiment / "bitacora_maestra_experimentos.csv")
+
+
+def summarize_modeling_experiments(modeling_dir: Path | None = None) -> pd.DataFrame:
+    """Summarize model artifacts across available experiments.
+
+    Args:
+        modeling_dir (Path | None): Optional ``DATA/MODELADO`` root.
+
+    Returns:
+        pd.DataFrame: One row per experiment with tensor availability, model
+        record fields and diagnostic status.
+    """
+
+    root = modeling_dir or MODELING_DIR
+    experiments = sorted(
+        set(discover_experiments(root / "Tensores"))
+        | set(discover_experiments(root / "Modelos"))
+        | set(discover_experiments(root / "Diagnosticos"))
+    )
+    rows = []
+    for experiment in experiments:
+        metadata = load_tensor_metadata(experiment, root / "Tensores")
+        record = load_model_record(experiment, root / "Modelos")
+        diagnostic = load_model_diagnostic(experiment, root / "Diagnosticos")
+        record_row = record.iloc[0].to_dict() if not record.empty else {}
+        rows.append(
+            {
+                "Experimento": experiment,
+                "Variable_Objetivo": metadata.get("Variable Objetivo", record_row.get("Variable_Objetivo", "")),
+                "Modelo": metadata.get("Modelo", record_row.get("Modelo", "")),
+                "Tensores": bool(metadata),
+                "Registro": not record.empty,
+                "Diagnostico": not diagnostic.empty,
+                "Muestras": metadata.get("Numero de Secuencias", record_row.get("Muestras", "")),
+                "Estado_General": record_row.get("Estado_General", ""),
+            }
+        )
+    return pd.DataFrame(rows)
+
+
+def modeling_artifact_inventory(experiment: str | None = None) -> pd.DataFrame:
+    """Inventory C14 modeling artifacts.
+
+    Args:
+        experiment (str | None): Optional experiment identifier used to limit
+            the recursive scan.
+
+    Returns:
+        pd.DataFrame: File inventory for modeling artifacts.
+    """
+
+    return artifact_inventory(MODELING_DIR, experiment)

@@ -2,8 +2,14 @@
 
 from __future__ import annotations
 
+from pathlib import Path
+
 import numpy as np
 import pandas as pd
+
+from framework_v7.paths import EVALUATIONS_DIR
+
+from .utils import artifact_inventory, discover_experiments, read_key_value_table, read_table
 
 
 def classification_metrics(y_true: list[int] | np.ndarray, y_pred: list[int] | np.ndarray) -> pd.DataFrame:
@@ -132,3 +138,107 @@ def recommendations_from_metrics(metrics: pd.DataFrame) -> pd.DataFrame:
     if not recommendations:
         recommendations.append("Mantener el modelo como linea base y validar con nuevos periodos.")
     return pd.DataFrame({"Recomendacion": recommendations})
+
+
+def load_prediction_metadata(experiment: str, evaluations_dir: Path | None = None) -> dict[str, str]:
+    """Load prediction metadata for one experiment.
+
+    Args:
+        experiment (str): Experiment identifier.
+        evaluations_dir (Path | None): Optional evaluations artifact root.
+
+    Returns:
+        dict[str, str]: Prediction metadata as key-value pairs. Returns an
+        empty dictionary when the artifact is missing.
+    """
+
+    root = evaluations_dir or EVALUATIONS_DIR
+    return read_key_value_table(root / experiment / "metadata_prediccion.csv")
+
+
+def load_predictions(experiment: str, evaluations_dir: Path | None = None) -> pd.DataFrame:
+    """Load prediction outputs for one experiment.
+
+    Args:
+        experiment (str): Experiment identifier.
+        evaluations_dir (Path | None): Optional evaluations artifact root.
+
+    Returns:
+        pd.DataFrame: Prediction table with at least ``Registro`` and
+        ``Prediccion`` when available.
+    """
+
+    root = evaluations_dir or EVALUATIONS_DIR
+    return read_table(root / experiment / "predicciones.csv")
+
+
+def prediction_distribution(predictions: pd.DataFrame, column: str = "Prediccion") -> pd.DataFrame:
+    """Describe prediction values for model-auditing notebooks.
+
+    Args:
+        predictions (pd.DataFrame): Prediction output table.
+        column (str): Numeric prediction column to summarize.
+
+    Returns:
+        pd.DataFrame: One-row table with count, min, max, mean and standard
+        deviation. Returns an empty table when the column is unavailable.
+    """
+
+    if predictions.empty or column not in predictions.columns:
+        return pd.DataFrame(columns=["Conteo", "Minimo", "Maximo", "Media", "Desviacion"])
+    values = pd.to_numeric(predictions[column], errors="coerce").dropna()
+    return pd.DataFrame(
+        [
+            {
+                "Conteo": len(values),
+                "Minimo": values.min(),
+                "Maximo": values.max(),
+                "Media": values.mean(),
+                "Desviacion": values.std(),
+            }
+        ]
+    )
+
+
+def summarize_evaluation_experiments(evaluations_dir: Path | None = None) -> pd.DataFrame:
+    """Summarize prediction artifacts by experiment.
+
+    Args:
+        evaluations_dir (Path | None): Optional evaluations artifact root.
+
+    Returns:
+        pd.DataFrame: One row per experiment with prediction counts and key
+        metadata exported by notebook C15.
+    """
+
+    root = evaluations_dir or EVALUATIONS_DIR
+    rows = []
+    for experiment in discover_experiments(root):
+        metadata = load_prediction_metadata(experiment, root)
+        predictions = load_predictions(experiment, root)
+        rows.append(
+            {
+                "Experimento": experiment,
+                "Variable_Objetivo": metadata.get("Variable Objetivo", ""),
+                "Modelo": metadata.get("Modelo", ""),
+                "Metodo_Transformacion": metadata.get("Metodo Transformacion", ""),
+                "Ventana": metadata.get("Ventana", ""),
+                "Predicciones": len(predictions),
+                "Archivo_Predicciones": not predictions.empty,
+            }
+        )
+    return pd.DataFrame(rows)
+
+
+def evaluation_artifact_inventory(experiment: str | None = None) -> pd.DataFrame:
+    """Inventory C15 prediction and evaluation artifacts.
+
+    Args:
+        experiment (str | None): Optional experiment identifier used to limit
+            the recursive scan.
+
+    Returns:
+        pd.DataFrame: File inventory for evaluation artifacts.
+    """
+
+    return artifact_inventory(EVALUATIONS_DIR, experiment)

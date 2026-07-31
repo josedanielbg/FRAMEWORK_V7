@@ -7,7 +7,8 @@ Esta carpeta conserva la memoria metodologica del proyecto, siguiendo la separac
 - `C01` a `C07`: extraccion y framework por capa.
 - `C08` y `C09`: integracion y preparacion del dataset maestro.
 - `C10` y `C11`: catalogo de conocimiento e indicadores.
-- `C12` a `C15`: preparacion de machine learning, modelado y evaluacion.
+- `C12` a `C16`: preparacion de machine learning, modelado, evaluacion e
+  interpretacion de resultados.
 
 ## Uso recomendado
 
@@ -29,6 +30,7 @@ reutilizables en `src/framework_v7/pipeline`:
 - `C13_MACHINE_LEARNING` usa `pipeline/machine_learning.py`.
 - `C14_MODELADO` usa `pipeline/modeling.py`.
 - `C15_EVALUACION` usa `pipeline/evaluation.py`.
+- `C16_INTERPRETACION_RESULTADOS` usa `pipeline/interpretation.py`.
 - `DISENO_EXPERIMENTAL` usa `pipeline/experiment_design.py`.
 
 Patron recomendado dentro de cada notebook:
@@ -36,9 +38,10 @@ Patron recomendado dentro de cada notebook:
 ```python
 from framework_v7.pipeline.feature_engineering import build_engineered_master
 from framework_v7.pipeline.machine_learning import create_temporal_sequences
+from framework_v7.pipeline.interpretation import summarize_interpretation_experiments
 ```
 
 El archivo `src/framework_v7/pipeline/utils.py` contiene funciones de ayuda
-para lectura, escritura y validacion de columnas. El archivo
+para lectura, escritura, metadata, inventarios y validacion de columnas. El archivo
 `src/framework_v7/pipeline/main.py` ejecuta una validacion ligera del pipeline
 sin depender de la app Streamlit.

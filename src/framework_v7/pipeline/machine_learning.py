@@ -2,8 +2,18 @@
 
 from __future__ import annotations
 
+from pathlib import Path
+
 import numpy as np
 import pandas as pd
+
+from framework_v7.paths import MACHINE_LEARNING_DIR
+
+from .utils import artifact_inventory, discover_experiments, read_key_value_table, read_table
+
+
+TRANSFORMATIONS_DIR = MACHINE_LEARNING_DIR / "Transformaciones"
+DIAGNOSTIC_DIR = MACHINE_LEARNING_DIR / "Diagnostico"
 
 
 def fit_minmax(df: pd.DataFrame, columns: list[str]) -> pd.DataFrame:
@@ -119,3 +129,120 @@ def transformation_diagnostic(df: pd.DataFrame) -> pd.DataFrame:
             {"Indicador": "nulos", "Valor": int(df.isna().sum().sum())},
         ]
     )
+
+
+def load_transformed_dataset(experiment: str, transformations_dir: Path | None = None) -> pd.DataFrame:
+    """Load the transformed dataset for one experiment.
+
+    Args:
+        experiment (str): Experiment identifier, for example ``Exp04``.
+        transformations_dir (Path | None): Optional root directory containing
+            transformation outputs. When omitted, the repository C13 path is
+            used.
+
+    Returns:
+        pd.DataFrame: Transformed machine-learning dataset. Returns an empty
+        DataFrame when the CSV artifact is unavailable.
+    """
+
+    root = transformations_dir or TRANSFORMATIONS_DIR
+    path = root / experiment / "dataset_machine_learning_transformado.csv"
+    return read_table(path)
+
+
+def load_sequence_metadata(experiment: str, transformations_dir: Path | None = None) -> dict[str, str]:
+    """Load sequence-preparation metadata for one experiment.
+
+    Args:
+        experiment (str): Experiment identifier.
+        transformations_dir (Path | None): Optional C13 transformations root.
+
+    Returns:
+        dict[str, str]: Metadata exported by the sequence preparation notebook.
+    """
+
+    root = transformations_dir or TRANSFORMATIONS_DIR
+    return read_key_value_table(root / experiment / "metadata_secuencias.csv")
+
+
+def load_preparation_record(experiment: str, transformations_dir: Path | None = None) -> dict[str, str]:
+    """Load the C13 preparation record for one experiment.
+
+    Args:
+        experiment (str): Experiment identifier.
+        transformations_dir (Path | None): Optional C13 transformations root.
+
+    Returns:
+        dict[str, str]: Key-value preparation record. Returns an empty
+        dictionary when the artifact is missing.
+    """
+
+    root = transformations_dir or TRANSFORMATIONS_DIR
+    return read_key_value_table(root / experiment / "registro_preparacion.csv")
+
+
+def load_ml_diagnostic(experiment: str, diagnostic_dir: Path | None = None) -> pd.DataFrame:
+    """Load the statistical machine-learning diagnostic for an experiment.
+
+    Args:
+        experiment (str): Experiment identifier.
+        diagnostic_dir (Path | None): Optional C13 diagnostic root.
+
+    Returns:
+        pd.DataFrame: Diagnostic table exported by C13. Returns an empty
+        DataFrame when the artifact is absent.
+    """
+
+    root = diagnostic_dir or DIAGNOSTIC_DIR
+    path = root / experiment / "diagnostico_estadistico_ml.csv"
+    fallback = root / "diagnostico_estadistico_ml.csv"
+    return read_table(path) if path.exists() else read_table(fallback)
+
+
+def summarize_ml_experiments(transformations_dir: Path | None = None) -> pd.DataFrame:
+    """Summarize transformed datasets and sequence metadata by experiment.
+
+    Args:
+        transformations_dir (Path | None): Optional C13 transformations root.
+
+    Returns:
+        pd.DataFrame: One row per experiment with availability flags, dataset
+        dimensions and selected metadata values.
+    """
+
+    root = transformations_dir or TRANSFORMATIONS_DIR
+    rows = []
+    for experiment in discover_experiments(root):
+        dataset = load_transformed_dataset(experiment, root)
+        metadata = load_sequence_metadata(experiment, root)
+        record = load_preparation_record(experiment, root)
+        rows.append(
+            {
+                "Experimento": experiment,
+                "Dataset": not dataset.empty,
+                "Filas": len(dataset),
+                "Columnas": dataset.shape[1],
+                "Variable_Objetivo": metadata.get("Variable Objetivo", record.get("Variable Objetivo", "")),
+                "Ventana": metadata.get("Ventana", record.get("Ventana Temporal", "")),
+                "Horizonte": metadata.get("Horizonte", record.get("Horizonte", "")),
+                "Metodo_Transformacion": record.get(
+                    "Metodo de Transformacion",
+                    record.get("Metodo de Transformaci\u00f3n", ""),
+                ),
+            }
+        )
+    return pd.DataFrame(rows)
+
+
+def ml_artifact_inventory(experiment: str | None = None) -> pd.DataFrame:
+    """Inventory C13 machine-learning artifacts.
+
+    Args:
+        experiment (str | None): Optional experiment identifier used to limit
+            the recursive scan.
+
+    Returns:
+        pd.DataFrame: File inventory for transformation artifacts.
+    """
+
+    return artifact_inventory(TRANSFORMATIONS_DIR, experiment)
