@@ -1,0 +1,11 @@
+﻿Parametro,Valor
+Experimento,Exp04
+Dominio,Gestión Hídrica
+Variable Objetivo,VolumenUtilDiarioMasa
+Modelo,modelo_Exp04_VolumenUtilDiarioMasa.keras
+Metodo Transformacion,RobustScaler
+Ventana,12
+Variables Predictoras,8
+Registros Procesados,528
+Predicciones Generadas,517
+Fecha Ejecucion,2026-07-31 02:42
