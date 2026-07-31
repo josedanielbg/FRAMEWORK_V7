@@ -1,8 +1,9 @@
 Experimento,Variable_Objetivo,Tipo_Problema,Dominio,Ventana,Horizonte,Modelo,Estado,Objetivo,Estado_Modelo,Accuracy,Precision,Recall,F1,Fecha_Ejecucion,Observaciones
-Exp01,irca,Clasificación,Gestión Hídrica,12,1,LSTM,Ejecutado,Evaluar la capacidad del Framework para predecir el riesgo sanitario del agua.,,,,,,,
+Exp01,irca,Clasificación,Gestión Hídrica,12,1,LSTM,Ejecutado,Evaluar la capacidad del Framework para predecir el riesgo sanitario del agua.,No apto para detectar objetivo,0.8462,0.0000,0.0000,0.0000,2026-07-29,"Línea base de clasificación IRCA; accuracy global aceptable, pero precision/recall nulos por desbalance o umbral."
+Exp01-V3,irca,Clasificación,Gestión Hídrica,12,1,LSTM,Ejecutado,Validar una versión mejorada del experimento IRCA con ajustes de preparación y evaluación.,Capacidad predictiva parcial,0.9226,0.5645,0.7292,0.6364,2026-07-30,Versión mejorada de clasificación IRCA; mayor recall y F1 frente a la línea base Exp01.
 Exp02,CALIDAD_AGUA,Clasificación,Gestión Hídrica,12,1,LSTM,Pendiente,Evaluar el comportamiento general de la calidad del recurso hídrico.,,,,,,,
 Exp03,Nivel_Minimo,Regresión,Gestión Hídrica,12,1,LSTM,Pendiente,Validar la capacidad predictiva sobre la disponibilidad del recurso hídrico.,,,,,,,
-Exp04,VolumenUtilDiarioMasa,Regresión,Gestión Hídrica,12,1,LSTM,Pendiente,Validar la predicción del volumen útil disponible.,,,,,,,
+Exp04,VolumenUtilDiarioMasa,Regresión,Gestión Hídrica,12,1,LSTM,Ejecutado,Validar la predicción del volumen útil disponible.,Aceptable,,,,,2026-07-31,"Regresión de VolumenUtilDiarioMasa con MAE=0.0824, RMSE=0.1470, MAPE=23.8944 y R2=0.7225."
 Exp05,DBO5,Regresión,Gestión Hídrica,12,1,LSTM,Pendiente,Evaluar contaminación orgánica.,,,,,,,
 Exp06,DQO,Regresión,Gestión Hídrica,12,1,LSTM,Pendiente,Evaluar contaminación química.,,,,,,,
 Exp07,Oxigeno_Disuelto,Regresión,Gestión Hídrica,12,1,LSTM,Pendiente,Evaluar el estado ecológico del recurso.,,,,,,,
