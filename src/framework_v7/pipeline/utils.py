@@ -40,6 +40,116 @@ def read_table(path: Path, **kwargs) -> pd.DataFrame:
     raise ValueError(f"Unsupported table format: {path.suffix}")
 
 
+def read_key_value_table(
+    path: Path,
+    key_column: str = "Parametro",
+    value_column: str = "Valor",
+) -> dict[str, str]:
+    """Read a two-column metadata table as a dictionary.
+
+    Notebook stages C13 to C16 export metadata as CSV or Excel files with a
+    parameter column and a value column. This helper normalizes that repeated
+    pattern so downstream code can retrieve values by semantic key.
+
+    Args:
+        path (Path): Path to the metadata table.
+        key_column (str): Name of the column containing metadata keys.
+        value_column (str): Name of the column containing metadata values.
+
+    Returns:
+        dict[str, str]: Mapping from key names to string values. Returns an
+        empty dictionary when the file or required columns are missing.
+    """
+
+    table = read_table(path)
+    if table.empty or not {key_column, value_column}.issubset(table.columns):
+        return {}
+    clean = table[[key_column, value_column]].dropna(subset=[key_column])
+    return dict(zip(clean[key_column].astype(str), clean[value_column].astype(str)))
+
+
+def discover_experiment_dirs(root: Path) -> list[Path]:
+    """List experiment directories below an artifact root.
+
+    Args:
+        root (Path): Directory that contains experiment-specific subfolders,
+            for example ``DATA/EVALUACIONES`` or ``DATA/MODELADO/Tensores``.
+
+    Returns:
+        list[Path]: Sorted list of existing experiment directories. Missing
+        roots return an empty list.
+    """
+
+    if not root.exists():
+        return []
+    return sorted(path for path in root.iterdir() if path.is_dir())
+
+
+def discover_experiments(root: Path) -> list[str]:
+    """List experiment identifiers available below an artifact root.
+
+    Args:
+        root (Path): Directory containing one subdirectory per experiment.
+
+    Returns:
+        list[str]: Sorted experiment identifiers such as ``Exp01`` or
+        ``Exp04``.
+    """
+
+    return [path.name for path in discover_experiment_dirs(root)]
+
+
+def latest_existing_path(paths: Iterable[Path]) -> Path | None:
+    """Return the first path from a candidate sequence that exists.
+
+    Args:
+        paths (Iterable[Path]): Ordered candidate paths.
+
+    Returns:
+        Path | None: First existing path, or ``None`` when no candidate exists.
+    """
+
+    for path in paths:
+        if path.exists():
+            return path
+    return None
+
+
+def artifact_inventory(root: Path, experiment: str | None = None) -> pd.DataFrame:
+    """Build an inventory of files produced by notebook experiments.
+
+    Args:
+        root (Path): Artifact directory to scan recursively.
+        experiment (str | None): Optional experiment folder name used to limit
+            the inventory.
+
+    Returns:
+        pd.DataFrame: Inventory with relative path, suffix, size in bytes and
+        inferred experiment identifier.
+    """
+
+    scan_root = root / experiment if experiment else root
+    if not scan_root.exists():
+        return pd.DataFrame(columns=["Experimento", "Archivo", "Formato", "Bytes"])
+
+    rows = []
+    for file_path in sorted(path for path in scan_root.rglob("*") if path.is_file()):
+        try:
+            relative_path = file_path.relative_to(root)
+        except ValueError:
+            relative_path = file_path.name
+        parts = Path(relative_path).parts
+        rows.append(
+            {
+                "Experimento": parts[0] if parts else experiment,
+                "Archivo": str(relative_path).replace("\\", "/"),
+                "Formato": file_path.suffix.lower() or "sin_extension",
+                "Bytes": file_path.stat().st_size,
+            }
+        )
+    return pd.DataFrame(rows)
+
+
 def ensure_columns(df: pd.DataFrame, required_columns: Iterable[str], dataset_name: str = "dataset") -> None:
     """Validate the presence of required columns.
 

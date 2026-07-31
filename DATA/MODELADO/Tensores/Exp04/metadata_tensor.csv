@@ -1,0 +1,13 @@
+﻿Parametro,Valor
+Experimento,Exp04
+Dominio,Gestión Hídrica
+Variable Objetivo,VolumenUtilDiarioMasa
+Ventana,12
+Horizonte,1
+Variables Predictoras,8
+Variables Modelo,Precipitacion_mm;ONI;Radiacion_Solar;Humedad_Relativa;Temp_Min_C;Mes;Velocidad_Viento;irca
+Metodo Transformacion,RobustScaler
+Numero Secuencias,516
+Fecha Generacion,2026-07-31 02:23
+Tensor X,tensor_X.npy
+Tensor y,tensor_y.npy

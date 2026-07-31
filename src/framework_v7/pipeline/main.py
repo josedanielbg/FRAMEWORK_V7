@@ -6,7 +6,7 @@ import pandas as pd
 
 from framework_v7.data_access import ProjectData, load_project_data
 
-from . import experiment_design, machine_learning, ml_preparation
+from . import evaluation, experiment_design, interpretation, machine_learning, ml_preparation, modeling
 
 
 def run_pipeline_summary(data: ProjectData | None = None) -> pd.DataFrame:
@@ -77,6 +77,46 @@ def run_pipeline_summary(data: ProjectData | None = None) -> pd.DataFrame:
                 "Etapa": "C14-C15",
                 "Modulo": "modeling.py / evaluation.py",
                 "Resultado": f"{len(data.model_diagnostic)} indicadores de diagnostico Exp01",
+            }
+        )
+
+    ml_summary = machine_learning.summarize_ml_experiments()
+    if not ml_summary.empty:
+        rows.append(
+            {
+                "Etapa": "C13",
+                "Modulo": "machine_learning.py",
+                "Resultado": f"{len(ml_summary)} experimentos con artefactos de transformacion",
+            }
+        )
+
+    modeling_summary = modeling.summarize_modeling_experiments()
+    if not modeling_summary.empty:
+        rows.append(
+            {
+                "Etapa": "C14",
+                "Modulo": "modeling.py",
+                "Resultado": f"{len(modeling_summary)} experimentos con artefactos de modelado",
+            }
+        )
+
+    evaluation_summary = evaluation.summarize_evaluation_experiments()
+    if not evaluation_summary.empty:
+        rows.append(
+            {
+                "Etapa": "C15",
+                "Modulo": "evaluation.py",
+                "Resultado": f"{len(evaluation_summary)} experimentos con predicciones exportadas",
+            }
+        )
+
+    interpretation_summary = interpretation.summarize_interpretation_experiments()
+    if not interpretation_summary.empty:
+        rows.append(
+            {
+                "Etapa": "C16",
+                "Modulo": "interpretation.py",
+                "Resultado": f"{len(interpretation_summary)} resumenes de interpretacion consolidados",
             }
         )
 

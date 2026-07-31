@@ -1,4 +1,4 @@
-"""Reusable pipeline modules extracted from notebooks C08-C15.
+"""Reusable pipeline modules extracted from notebooks C08-C16.
 
 The notebooks remain as methodological memory. This package contains the
 functions that should be reused when a notebook, script or app needs to execute
@@ -15,6 +15,7 @@ from . import (
     experiment_design,
     feature_engineering,
     integration,
+    interpretation,
     ipml,
     machine_learning,
     ml_preparation,
@@ -32,6 +33,7 @@ PIPELINE_MODULES = {
     "C13 - Machine Learning": machine_learning,
     "C14 - Modelado": modeling,
     "C15 - Evaluacion": evaluation,
+    "C16 - Interpretacion": interpretation,
     "Diseno experimental": experiment_design,
     "Utilidades": utils,
 }

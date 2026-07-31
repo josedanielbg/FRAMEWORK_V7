@@ -1,0 +1,7 @@
+﻿Recomendacion
+• Incrementar la capacidad predictiva del modelo ajustando su arquitectura.
+• Reducir el error absoluto revisando la selección de variables predictoras.
+• Mejorar la precisión relativa mediante ajuste de hiperparámetros.
+"• Comparar el desempeño del modelo LSTM con Random Forest, XGBoost y Redes Dense."
+• Evaluar el modelo utilizando validación cruzada temporal.
+• Documentar todos los experimentos para garantizar la reproducibilidad.

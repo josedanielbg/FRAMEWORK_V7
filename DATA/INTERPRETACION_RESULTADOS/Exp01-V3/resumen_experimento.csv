@@ -1,0 +1,2 @@
+Experimento,Variable_Objetivo,Accuracy,Precision,Recall,F1,Conclusion
+Exp01-V3,irca,0.9226,0.5645,0.7292,0.6364,Modelo con capacidad predictiva parcial.

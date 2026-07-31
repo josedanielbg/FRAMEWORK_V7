@@ -1,0 +1,2 @@
+Experimento,Variable_Objetivo,MAE,RMSE,MAPE,R2,Conclusion
+Exp04,VolumenUtilDiarioMasa,0.0824,0.147,23.8944,0.7225,Modelo con capacidad predictiva aceptable.
