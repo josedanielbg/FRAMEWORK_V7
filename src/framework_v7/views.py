@@ -18,14 +18,44 @@ from .layers import LAYER_MODULES
 from .paths import (
     BASE_DIR,
     COVERAGE_PATH,
+    EVALUATIONS_DIR,
     EXPERIMENT_DESIGN_DIR,
+    INTERPRETATION_DIR,
+    MACHINE_LEARNING_DIR,
     ML_DATASET_PATH,
     MODEL_ACCURACY_IMAGE_PATH,
     MODEL_DIAGNOSTIC_PATH,
     MODEL_LOSS_IMAGE_PATH,
+    MODELING_DIR,
     NOTEBOOKS_DIR,
     PREDICTIONS_PATH,
     rel,
+)
+from .pipeline.evaluation import (
+    evaluation_artifact_inventory,
+    load_prediction_metadata,
+    load_predictions,
+    prediction_distribution,
+    summarize_evaluation_experiments,
+)
+from .pipeline.interpretation import (
+    dimension_coverage,
+    interpretation_artifact_inventory,
+    load_interpretation_summary,
+    summarize_interpretation_experiments,
+)
+from .pipeline.machine_learning import (
+    load_sequence_metadata,
+    load_transformed_dataset,
+    ml_artifact_inventory,
+    summarize_ml_experiments,
+)
+from .pipeline.modeling import (
+    load_model_diagnostic,
+    load_model_record,
+    load_model_recommendations,
+    modeling_artifact_inventory,
+    summarize_modeling_experiments,
 )
 from .profiling import find_date_column, layer_summary, normalize_01, quality_badge
 from .utils import format_metric_date
@@ -38,6 +68,92 @@ from .visualizations import (
     render_system_map,
     render_time_series,
 )
+
+
+def _experiment_names(*frames: pd.DataFrame) -> list[str]:
+    """Return sorted experiment identifiers from summary tables.
+
+    Args:
+        *frames: DataFrames that may contain an ``Experimento`` column.
+
+    Returns:
+        Sorted list of unique experiment names.
+    """
+
+    names = set()
+    for frame in frames:
+        if not frame.empty and "Experimento" in frame.columns:
+            names.update(frame["Experimento"].dropna().astype(str))
+    return sorted(names)
+
+
+def _numeric_metric_frame(summary: pd.DataFrame) -> pd.DataFrame:
+    """Convert wide experiment metrics into a long chart-ready table.
+
+    Args:
+        summary: Experiment summary with metric columns.
+
+    Returns:
+        DataFrame with ``Experimento``, ``Metrica`` and ``Valor`` columns.
+    """
+
+    metric_columns = ["Accuracy", "Precision", "Recall", "F1", "MAE", "RMSE", "MAPE", "R2"]
+    available = [column for column in metric_columns if column in summary.columns]
+    if summary.empty or not available or "Experimento" not in summary.columns:
+        return pd.DataFrame(columns=["Experimento", "Metrica", "Valor"])
+
+    metrics = summary[["Experimento", *available]].melt(
+        id_vars="Experimento",
+        var_name="Metrica",
+        value_name="Valor",
+    )
+    metrics["Valor"] = pd.to_numeric(metrics["Valor"], errors="coerce")
+    return metrics.dropna(subset=["Valor"])
+
+
+def _prediction_view(experiment: str) -> pd.DataFrame:
+    """Load prediction rows and attach the experiment name.
+
+    Args:
+        experiment: Experiment identifier.
+
+    Returns:
+        Prediction DataFrame prepared for plotting.
+    """
+
+    predictions = load_predictions(experiment).copy()
+    if predictions.empty or "Prediccion" not in predictions.columns:
+        return pd.DataFrame()
+    if "Registro" not in predictions.columns:
+        predictions["Registro"] = range(1, len(predictions) + 1)
+    predictions["Prediccion"] = pd.to_numeric(predictions["Prediccion"], errors="coerce")
+    predictions["Experimento"] = experiment
+    predictions["Tendencia"] = predictions["Prediccion"].rolling(12, min_periods=1).mean()
+    predictions["Intensidad"] = normalize_01(predictions["Prediccion"])
+    return predictions
+
+
+def _artifact_inventory() -> pd.DataFrame:
+    """Build a consolidated artifact inventory for executed experiments.
+
+    Returns:
+        DataFrame with stage, experiment, file path, format and size.
+    """
+
+    inventories = [
+        ("C13 Machine Learning", ml_artifact_inventory()),
+        ("C14 Modelado", modeling_artifact_inventory()),
+        ("C15 Evaluacion", evaluation_artifact_inventory()),
+        ("C16 Interpretacion", interpretation_artifact_inventory()),
+    ]
+    frames = []
+    for stage, inventory in inventories:
+        if inventory.empty:
+            continue
+        frame = inventory.copy()
+        frame.insert(0, "Etapa", stage)
+        frames.append(frame)
+    return pd.concat(frames, ignore_index=True) if frames else pd.DataFrame()
 
 
 def render_sidebar(data: ProjectData) -> str:
@@ -56,7 +172,7 @@ def render_sidebar(data: ProjectData) -> str:
             "Vista",
             [
                 "Dashboard",
-                "Experimento 01",
+                "Experimentos",
                 "Diseno experimental",
                 "Datasets por capas",
                 "Dataset maestro",
@@ -64,10 +180,11 @@ def render_sidebar(data: ProjectData) -> str:
             ],
         )
         st.divider()
-        st.caption("Experimento activo")
+        evaluation_summary = summarize_evaluation_experiments()
+        st.caption("Experimentos evaluados")
+        st.write(str(len(evaluation_summary)) if not evaluation_summary.empty else "1")
+        st.caption("Base historica")
         st.write(data.meta.get("Experimento", "Exp01"))
-        st.caption("Variable objetivo")
-        st.write(data.meta.get("Variable Objetivo", "irca"))
         st.caption("Fecha ejecucion")
         st.write(data.meta.get("Fecha Ejecucion", "-"))
     return section
@@ -85,30 +202,55 @@ def render_dashboard(data: ProjectData) -> None:
 
     st.subheader("Resumen ejecutivo")
     layers = layer_summary()
+    evaluation_summary = summarize_evaluation_experiments()
+    interpretation_summary = summarize_interpretation_experiments()
     c1, c2, c3, c4 = st.columns(4)
     c1.metric("Capas sistemicas", f"{int(layers['Disponible'].sum())}/{len(layers)}")
     c2.metric("Dataset maestro", f"{len(data.master):,} filas")
     c3.metric("Variables maestro", f"{data.master.shape[1]:,}")
-    c4.metric("Predicciones Exp01", data.meta.get("Predicciones Generadas", str(len(data.predictions))))
+    c4.metric("Experimentos evaluados", f"{len(evaluation_summary):,}")
 
     tab_map, tab_pred, tab_layers, tab_quality = st.tabs(
         ["Mapa del sistema", "Predicciones", "Capas", "Calidad de datos"]
     )
     with tab_map:
         render_system_map()
-        st.dataframe(layers[["Capa", "Rol sistemico", "Filas", "Columnas", "Nulos"]], use_container_width=True, hide_index=True)
+        st.dataframe(
+            layers[["Capa", "Rol sistemico", "Filas", "Columnas", "Nulos"]],
+            use_container_width=True,
+            hide_index=True,
+        )
 
     with tab_pred:
-        if data.predictions.empty:
+        experiments = _experiment_names(evaluation_summary)
+        prediction_frames = [_prediction_view(experiment) for experiment in experiments]
+        prediction_frames = [frame for frame in prediction_frames if not frame.empty]
+        if not prediction_frames and data.predictions.empty:
             render_missing_file(PREDICTIONS_PATH)
         else:
-            view = data.predictions.copy()
-            if "Prediccion" in view.columns:
-                view["Prediccion"] = pd.to_numeric(view["Prediccion"], errors="coerce")
-                view["Prediccion_suavizada"] = view["Prediccion"].rolling(12, min_periods=1).mean()
-                fig = px.line(view, x="Registro", y=["Prediccion", "Prediccion_suavizada"], title="Prediccion y tendencia movil")
-                fig.update_layout(height=430, margin=dict(l=10, r=10, t=55, b=10))
-                st.plotly_chart(fig, use_container_width=True)
+            view = pd.concat(prediction_frames, ignore_index=True) if prediction_frames else data.predictions.copy()
+            fig = px.line(
+                view,
+                x="Registro",
+                y="Prediccion",
+                color="Experimento" if "Experimento" in view.columns else None,
+                title="Predicciones por experimento",
+            )
+            fig.update_layout(height=430, margin=dict(l=10, r=10, t=55, b=10))
+            st.plotly_chart(fig, use_container_width=True)
+            if not interpretation_summary.empty:
+                metrics = _numeric_metric_frame(interpretation_summary)
+                if not metrics.empty:
+                    fig = px.bar(
+                        metrics,
+                        x="Experimento",
+                        y="Valor",
+                        color="Metrica",
+                        barmode="group",
+                        title="Metricas consolidadas de interpretacion",
+                    )
+                    fig.update_layout(height=430, margin=dict(l=10, r=10, t=55, b=10))
+                    st.plotly_chart(fig, use_container_width=True)
 
     with tab_layers:
         fig = px.bar(
@@ -127,6 +269,245 @@ def render_dashboard(data: ProjectData) -> None:
             st.dataframe(data.coverage, use_container_width=True, hide_index=True)
         else:
             render_missing_profile(data.master)
+
+
+def render_experiments(data: ProjectData) -> None:
+    """Render a multi-experiment analysis center.
+
+    Args:
+        data: Loaded project datasets and metadata.
+
+    Returns:
+        None.
+    """
+
+    st.subheader("Centro de experimentos")
+    ml_summary = summarize_ml_experiments()
+    modeling_summary = summarize_modeling_experiments()
+    evaluation_summary = summarize_evaluation_experiments()
+    interpretation_summary = summarize_interpretation_experiments()
+    experiments = _experiment_names(ml_summary, modeling_summary, evaluation_summary, interpretation_summary)
+
+    if not experiments:
+        render_experiment(data)
+        return
+
+    c1, c2, c3, c4 = st.columns(4)
+    c1.metric("Experimentos", f"{len(experiments):,}")
+    c2.metric("Con predicciones", f"{len(evaluation_summary):,}")
+    c3.metric("Con modelado", f"{len(modeling_summary):,}")
+    c4.metric("Interpretados", f"{len(interpretation_summary):,}")
+
+    selected_experiment = st.selectbox("Experimento", experiments, key="experiment_center_selected")
+    tab_compare, tab_detail, tab_predictions, tab_modeling, tab_interpretation, tab_artifacts = st.tabs(
+        ["Comparativo", "Detalle", "Predicciones", "Modelado", "Interpretacion", "Artefactos"]
+    )
+
+    with tab_compare:
+        left, right = st.columns([1, 1])
+        with left:
+            if evaluation_summary.empty:
+                render_missing_file(EVALUATIONS_DIR)
+            else:
+                fig = px.bar(
+                    evaluation_summary,
+                    x="Experimento",
+                    y="Predicciones",
+                    color="Variable_Objetivo",
+                    title="Predicciones generadas por experimento",
+                )
+                fig.update_layout(height=420, margin=dict(l=10, r=10, t=55, b=10))
+                st.plotly_chart(fig, use_container_width=True)
+        with right:
+            metrics = _numeric_metric_frame(interpretation_summary)
+            if metrics.empty:
+                render_missing_file(INTERPRETATION_DIR)
+            else:
+                fig = px.bar(
+                    metrics,
+                    x="Experimento",
+                    y="Valor",
+                    color="Metrica",
+                    barmode="group",
+                    title="Metricas comparables C16",
+                )
+                fig.update_layout(height=420, margin=dict(l=10, r=10, t=55, b=10))
+                st.plotly_chart(fig, use_container_width=True)
+
+        summary_tabs = st.tabs(["Preparacion ML", "Modelado", "Evaluacion", "Interpretacion"])
+        with summary_tabs[0]:
+            st.caption(rel(MACHINE_LEARNING_DIR / "Transformaciones"))
+            st.dataframe(ml_summary, use_container_width=True, hide_index=True)
+        with summary_tabs[1]:
+            st.caption(rel(MODELING_DIR))
+            st.dataframe(modeling_summary, use_container_width=True, hide_index=True)
+        with summary_tabs[2]:
+            st.caption(rel(EVALUATIONS_DIR))
+            st.dataframe(evaluation_summary, use_container_width=True, hide_index=True)
+        with summary_tabs[3]:
+            st.caption(rel(INTERPRETATION_DIR))
+            st.dataframe(interpretation_summary, use_container_width=True, hide_index=True)
+
+    with tab_detail:
+        metadata = load_prediction_metadata(selected_experiment)
+        sequence_metadata = load_sequence_metadata(selected_experiment)
+        ml_dataset = load_transformed_dataset(selected_experiment)
+        model_record = load_model_record(selected_experiment)
+        predictions = load_predictions(selected_experiment)
+        target = metadata.get("Variable Objetivo", sequence_metadata.get("Variable Objetivo", "-"))
+
+        d1, d2, d3, d4 = st.columns(4)
+        d1.metric("Variable objetivo", target)
+        d2.metric("Ventana", metadata.get("Ventana", sequence_metadata.get("Ventana", "-")))
+        d3.metric("Filas ML", f"{len(ml_dataset):,}")
+        d4.metric("Predicciones", f"{len(predictions):,}")
+
+        left, right = st.columns([1, 1])
+        with left:
+            st.markdown("**Metadata de prediccion**")
+            metadata_table = pd.DataFrame(
+                [{"Parametro": key, "Valor": value} for key, value in metadata.items()]
+            )
+            st.dataframe(metadata_table, use_container_width=True, hide_index=True)
+        with right:
+            st.markdown("**Registro de modelado**")
+            if model_record.empty:
+                render_missing_file(MODELING_DIR / "Modelos" / selected_experiment)
+            else:
+                st.dataframe(model_record, use_container_width=True, hide_index=True)
+
+        if not ml_dataset.empty:
+            with st.expander("Dataset transformado C13", expanded=False):
+                render_dataset_metrics(ml_dataset)
+                st.dataframe(ml_dataset.head(300), use_container_width=True, hide_index=True)
+
+    with tab_predictions:
+        prediction_view = _prediction_view(selected_experiment)
+        if prediction_view.empty:
+            render_missing_file(EVALUATIONS_DIR / selected_experiment / "predicciones.csv")
+        else:
+            p1, p2, p3, p4 = st.columns(4)
+            distribution = prediction_distribution(prediction_view)
+            row = distribution.iloc[0].to_dict() if not distribution.empty else {}
+            p1.metric("Conteo", f"{int(row.get('Conteo', len(prediction_view))):,}")
+            p2.metric("Media", f"{row.get('Media', 0):.3f}")
+            p3.metric("Minimo", f"{row.get('Minimo', 0):.3f}")
+            p4.metric("Maximo", f"{row.get('Maximo', 0):.3f}")
+
+            left, right = st.columns([2, 1])
+            with left:
+                fig = px.line(
+                    prediction_view,
+                    x="Registro",
+                    y=["Prediccion", "Tendencia"],
+                    title=f"Serie de prediccion {selected_experiment}",
+                )
+                fig.update_layout(height=430, margin=dict(l=10, r=10, t=55, b=10))
+                st.plotly_chart(fig, use_container_width=True)
+            with right:
+                prediction_view["Categoria"] = prediction_view["Intensidad"].apply(quality_badge)
+                counts = prediction_view["Categoria"].value_counts().reset_index()
+                counts.columns = ["Categoria", "Registros"]
+                fig = px.pie(
+                    counts,
+                    names="Categoria",
+                    values="Registros",
+                    hole=0.45,
+                    title="Intensidad relativa",
+                )
+                fig.update_layout(height=430, margin=dict(l=10, r=10, t=55, b=10))
+                st.plotly_chart(fig, use_container_width=True)
+
+            st.dataframe(prediction_view, use_container_width=True, hide_index=True)
+
+    with tab_modeling:
+        diagnostic = load_model_diagnostic(selected_experiment)
+        recommendations = load_model_recommendations(selected_experiment)
+        if diagnostic.empty:
+            render_missing_file(MODELING_DIR / "Diagnosticos" / selected_experiment)
+        else:
+            metric_values = diagnostic.copy()
+            metric_values["Valor_Numerico"] = pd.to_numeric(metric_values["Valor"], errors="coerce")
+            chart_values = metric_values.dropna(subset=["Valor_Numerico"])
+            if not chart_values.empty:
+                fig = px.bar(
+                    chart_values,
+                    x="Indicador",
+                    y="Valor_Numerico",
+                    color="Estado" if "Estado" in chart_values.columns else None,
+                    title=f"Diagnostico del modelo {selected_experiment}",
+                    color_discrete_map={
+                        "Excelente": "#2A9D8F",
+                        "Aceptable": "#E9C46A",
+                        "Baja": "#F4A261",
+                        "Critico": "#E76F51",
+                        "Crítico": "#E76F51",
+                    },
+                )
+                fig.update_layout(height=430, margin=dict(l=10, r=10, t=55, b=10))
+                st.plotly_chart(fig, use_container_width=True)
+            st.dataframe(diagnostic, use_container_width=True, hide_index=True)
+
+        if not recommendations.empty:
+            st.markdown("**Recomendaciones**")
+            st.dataframe(recommendations, use_container_width=True, hide_index=True)
+
+        metric_images = sorted((MODELING_DIR / "Metricas" / selected_experiment).glob("*.png"))
+        if metric_images:
+            cols = st.columns(min(3, len(metric_images)))
+            for index, image in enumerate(metric_images):
+                with cols[index % len(cols)]:
+                    st.image(str(image), caption=image.name, use_container_width=True)
+
+    with tab_interpretation:
+        summary = load_interpretation_summary(selected_experiment)
+        interpreted = interpretation_summary[
+            interpretation_summary.get("Experimento", pd.Series(dtype=str)).astype(str) == selected_experiment
+        ]
+        if summary.empty and interpreted.empty:
+            render_missing_file(INTERPRETATION_DIR / selected_experiment / "resumen_experimento.csv")
+        else:
+            view = interpreted if not interpreted.empty else summary
+            st.dataframe(view, use_container_width=True, hide_index=True)
+            if "Interpretacion_Tecnica" in view.columns:
+                st.info(str(view["Interpretacion_Tecnica"].iloc[0]))
+
+            sequence_metadata = load_sequence_metadata(selected_experiment)
+            variables = str(sequence_metadata.get("Variables Predictoras", "")).split(";")
+            variables = [variable.strip() for variable in variables if variable.strip()]
+            coverage = dimension_coverage(variables)
+            if not coverage.empty:
+                fig = px.bar(
+                    coverage,
+                    x="Dimension",
+                    y="Variables",
+                    color="Dimension",
+                    title="Cobertura sistemica de variables predictoras",
+                )
+                fig.update_layout(height=420, margin=dict(l=10, r=10, t=55, b=10))
+                st.plotly_chart(fig, use_container_width=True)
+                st.dataframe(coverage, use_container_width=True, hide_index=True)
+
+    with tab_artifacts:
+        inventory = _artifact_inventory()
+        if inventory.empty:
+            render_missing_file(BASE_DIR / "DATA")
+        else:
+            filtered = inventory[inventory["Experimento"].astype(str) == selected_experiment]
+            if filtered.empty:
+                filtered = inventory
+            counts = filtered.groupby(["Etapa", "Formato"]).size().reset_index(name="Archivos")
+            fig = px.bar(
+                counts,
+                x="Etapa",
+                y="Archivos",
+                color="Formato",
+                barmode="group",
+                title="Artefactos disponibles por etapa",
+            )
+            fig.update_layout(height=430, margin=dict(l=10, r=10, t=55, b=10))
+            st.plotly_chart(fig, use_container_width=True)
+            st.dataframe(filtered, use_container_width=True, hide_index=True)
 
 
 def render_experiment(data: ProjectData) -> None:
@@ -171,7 +552,13 @@ def render_experiment(data: ProjectData) -> None:
                 (int(view["Registro"].min()), int(view["Registro"].max())),
             )
             view = view[(view["Registro"] >= selected[0]) & (view["Registro"] <= selected[1])]
-            fig = px.area(view, x="Registro", y="Normalizada", color="Categoria", title="Intensidad relativa de prediccion")
+            fig = px.area(
+                view,
+                x="Registro",
+                y="Normalizada",
+                color="Categoria",
+                title="Intensidad relativa de prediccion",
+            )
             fig.update_layout(height=430, margin=dict(l=10, r=10, t=55, b=10))
             st.plotly_chart(fig, use_container_width=True)
             st.dataframe(view, use_container_width=True, hide_index=True)
@@ -299,7 +686,12 @@ def render_experiment_design(data: ProjectData) -> None:
                     y="Valor_Numerico",
                     color="Estado",
                     title="Metricas de clasificacion Exp01",
-                    color_discrete_map={"Excelente": "#2A9D8F", "Aceptable": "#E9C46A", "Baja": "#F4A261", "Critico": "#E76F51"},
+                    color_discrete_map={
+                        "Excelente": "#2A9D8F",
+                        "Aceptable": "#E9C46A",
+                        "Baja": "#F4A261",
+                        "Critico": "#E76F51",
+                    },
                 )
                 fig.update_layout(height=430, margin=dict(l=10, r=10, t=55, b=10))
                 st.plotly_chart(fig, use_container_width=True)
@@ -438,7 +830,10 @@ def render_master_dataset() -> None:
     with tab_series:
         render_time_series(dataset, "master")
     with tab_groups:
-        available_groups = {group: [col for col in cols if col in dataset.columns] for group, cols in FEATURE_GROUPS.items()}
+        available_groups = {
+            group: [col for col in cols if col in dataset.columns]
+            for group, cols in FEATURE_GROUPS.items()
+        }
         group = st.selectbox("Grupo", [name for name, cols in available_groups.items() if cols])
         cols = available_groups[group]
         render_numeric_overview(dataset[cols], f"master_group_{group}")
@@ -466,12 +861,19 @@ def render_notebooks() -> None:
 
     st.subheader("Memoria metodologica en notebooks")
     st.write(
-        "Esta carpeta conserva la exploracion y el paso a paso. La app y los datos quedan separados para que el repositorio funcione como producto reproducible."
+        "Esta carpeta conserva la exploracion y el paso a paso. La app y los "
+        "datos quedan separados para que el repositorio funcione como producto reproducible."
     )
     notebooks = sorted(NOTEBOOKS_DIR.rglob("*.ipynb"))
     rows = []
     for notebook in notebooks:
-        rows.append({"Notebook": notebook.name, "Carpeta": rel(notebook.parent), "Tamano KB": round(notebook.stat().st_size / 1024, 1)})
+        rows.append(
+            {
+                "Notebook": notebook.name,
+                "Carpeta": rel(notebook.parent),
+                "Tamano KB": round(notebook.stat().st_size / 1024, 1),
+            }
+        )
     st.dataframe(pd.DataFrame(rows), use_container_width=True, hide_index=True)
 
     md_files = sorted(NOTEBOOKS_DIR.rglob("*.md"))

@@ -15,7 +15,7 @@ from framework_v7.data_access import load_project_data
 from framework_v7.views import (
     render_dashboard,
     render_experiment_design,
-    render_experiment,
+    render_experiments,
     render_layers,
     render_master_dataset,
     render_notebooks,
@@ -24,7 +24,7 @@ from framework_v7.views import (
 
 
 st.set_page_config(
-    page_title="FRAMEWORK V7 | Experimento 01",
+    page_title="FRAMEWORK V7 | Gestion hidrica",
     page_icon="DATA/MASTER/C01_MASTER/Correlacion.png",
     layout="wide",
 )
@@ -33,12 +33,12 @@ data = load_project_data()
 section = render_sidebar(data)
 
 st.title("Framework de gestion hidrica - V7")
-st.caption("Tablero multicapa para explorar datos, resultados de Exp01 y memoria metodologica.")
+st.caption("Tablero multicapa para explorar datos, experimentos y memoria metodologica.")
 
 if section == "Dashboard":
     render_dashboard(data)
-elif section == "Experimento 01":
-    render_experiment(data)
+elif section == "Experimentos":
+    render_experiments(data)
 elif section == "Diseno experimental":
     render_experiment_design(data)
 elif section == "Datasets por capas":
