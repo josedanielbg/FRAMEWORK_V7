@@ -1,8 +1,6 @@
 ﻿Indicador,Valor,Estado
-Accuracy,0.9487,Aceptable
-Precision,1.0000,Aceptable
-Recall,0.6364,Aceptable
-F1 Score,0.7778,Aceptable
-Especificidad,1.0000,Excelente
-Accuracy Balanceada,0.82,Aceptable
-Estado General,MODELO APROBADO,Aceptable
+MAE,0.2454,Crítico
+RMSE,0.2723,Aceptable
+MAPE,24.54,Crítico
+R²,0.3880,Crítico
+Estado General,Aceptable,Crítico
