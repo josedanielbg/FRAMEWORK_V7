@@ -60,6 +60,8 @@ Los notebooks se conservan como evidencia, pero la logica reutilizable esta en
 `src/framework_v7/pipeline`. Esta separacion permite importar funciones desde
 Colab, scripts o pruebas sin repetir celdas largas.
 
+- `layer_extraction.py`: inventario, trazabilidad y resumen de calidad de los
+  notebooks C01-C07 y sus artefactos RAW/MASTER.
 - `utils.py`: lectura, escritura, validacion, metadata e inventario de
   artefactos.
 - `integration.py`: integracion C08 y llaves `Fecha`/`Nodo`.
@@ -130,6 +132,7 @@ python main.py
 Validar solo el pipeline modular de notebooks:
 
 ```bash
+set PYTHONPATH=src
 python -m framework_v7.pipeline.main
 ```
 

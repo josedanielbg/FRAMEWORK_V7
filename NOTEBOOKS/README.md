@@ -32,11 +32,14 @@ reutilizables en `src/framework_v7/pipeline`:
 - `C15_EVALUACION` usa `pipeline/evaluation.py`.
 - `C16_INTERPRETACION_RESULTADOS` usa `pipeline/interpretation.py`.
 - `DISENO_EXPERIMENTAL` usa `pipeline/experiment_design.py`.
+- `C01_CLIMATICA` a `C07_GOBERNANZA` usan `pipeline/layer_extraction.py`
+  para inventario, perfil de calidad y trazabilidad de artefactos.
 
 Patron recomendado dentro de cada notebook:
 
 ```python
 from framework_v7.pipeline.feature_engineering import build_engineered_master
+from framework_v7.pipeline.layer_extraction import layer_execution_summary
 from framework_v7.pipeline.machine_learning import create_temporal_sequences
 from framework_v7.pipeline.interpretation import summarize_interpretation_experiments
 ```
@@ -44,4 +47,5 @@ from framework_v7.pipeline.interpretation import summarize_interpretation_experi
 El archivo `src/framework_v7/pipeline/utils.py` contiene funciones de ayuda
 para lectura, escritura, metadata, inventarios y validacion de columnas. El archivo
 `src/framework_v7/pipeline/main.py` ejecuta una validacion ligera del pipeline
-sin depender de la app Streamlit.
+sin depender de la app Streamlit. Para ejecutarlo sin instalar el paquete local,
+define primero `PYTHONPATH=src`.

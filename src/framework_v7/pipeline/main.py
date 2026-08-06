@@ -6,7 +6,15 @@ import pandas as pd
 
 from framework_v7.data_access import ProjectData, load_project_data
 
-from . import evaluation, experiment_design, interpretation, machine_learning, ml_preparation, modeling
+from . import (
+    evaluation,
+    experiment_design,
+    interpretation,
+    layer_extraction,
+    machine_learning,
+    ml_preparation,
+    modeling,
+)
 
 
 def run_pipeline_summary(data: ProjectData | None = None) -> pd.DataFrame:
@@ -27,6 +35,19 @@ def run_pipeline_summary(data: ProjectData | None = None) -> pd.DataFrame:
 
     data = data or load_project_data()
     rows = []
+
+    layer_summary = layer_extraction.layer_execution_summary()
+    if not layer_summary.empty:
+        rows.append(
+            {
+                "Etapa": "C01-C07",
+                "Modulo": "layer_extraction.py",
+                "Resultado": (
+                    f"{int(layer_summary['Disponible'].sum())}/{len(layer_summary)} capas "
+                    f"con {int(layer_summary['Artefactos_MASTER'].sum())} artefactos master"
+                ),
+            }
+        )
 
     design_summary = experiment_design.design_summary(data.experiment_design)
     rows.append(
