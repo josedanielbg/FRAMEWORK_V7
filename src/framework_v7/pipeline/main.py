@@ -11,6 +11,7 @@ from . import (
     experiment_design,
     interpretation,
     layer_extraction,
+    layer_framework,
     machine_learning,
     ml_preparation,
     modeling,
@@ -45,6 +46,21 @@ def run_pipeline_summary(data: ProjectData | None = None) -> pd.DataFrame:
                 "Resultado": (
                     f"{int(layer_summary['Disponible'].sum())}/{len(layer_summary)} capas "
                     f"con {int(layer_summary['Artefactos_MASTER'].sum())} artefactos master"
+                ),
+            }
+        )
+
+    framework_notebooks = layer_framework.framework_notebook_inventory()
+    framework_outputs = layer_framework.summarize_layer_framework_outputs()
+    if not framework_notebooks.empty:
+        rows.append(
+            {
+                "Etapa": "C01-C07",
+                "Modulo": "layer_framework.py",
+                "Resultado": (
+                    f"{len(framework_notebooks)} notebooks framework y "
+                    f"{int(framework_outputs['Disponible'].sum())}/{len(framework_outputs)} "
+                    "datasets framework disponibles"
                 ),
             }
         )

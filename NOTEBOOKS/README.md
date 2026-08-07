@@ -34,12 +34,16 @@ reutilizables en `src/framework_v7/pipeline`:
 - `DISENO_EXPERIMENTAL` usa `pipeline/experiment_design.py`.
 - `C01_CLIMATICA` a `C07_GOBERNANZA` usan `pipeline/layer_extraction.py`
   para inventario, perfil de calidad y trazabilidad de artefactos.
+- `FW7_C01_Framework` a `FW7_C07_Framework` usan
+  `pipeline/layer_framework.py` para gobierno del dato, hash, metadata,
+  diccionario, auditoria, indicadores, EDA y exportacion de artefactos.
 
 Patron recomendado dentro de cada notebook:
 
 ```python
 from framework_v7.pipeline.feature_engineering import build_engineered_master
 from framework_v7.pipeline.layer_extraction import layer_execution_summary
+from framework_v7.pipeline.layer_framework import build_layer_framework_artifacts
 from framework_v7.pipeline.machine_learning import create_temporal_sequences
 from framework_v7.pipeline.interpretation import summarize_interpretation_experiments
 ```
@@ -49,3 +53,13 @@ para lectura, escritura, metadata, inventarios y validacion de columnas. El arch
 `src/framework_v7/pipeline/main.py` ejecuta una validacion ligera del pipeline
 sin depender de la app Streamlit. Para ejecutarlo sin instalar el paquete local,
 define primero `PYTHONPATH=src`.
+
+## Cambios recientes
+
+- Los notebooks de framework por capa recibieron una celda inicial de imports
+  modulares hacia `layer_framework.py`.
+- `C16_INTERPRETACION_RESULTADOS` recibio una celda inicial de imports hacia
+  `interpretation.py` para reutilizar interpretacion, metricas y cobertura
+  sistemica.
+- Las funciones comunes incluyen docstrings en formato Google con descripcion,
+  parametros y valores de retorno.

@@ -62,6 +62,9 @@ Colab, scripts o pruebas sin repetir celdas largas.
 
 - `layer_extraction.py`: inventario, trazabilidad y resumen de calidad de los
   notebooks C01-C07 y sus artefactos RAW/MASTER.
+- `layer_framework.py`: gobierno del dato, hashes, metadata, diccionario,
+  auditoria, indicadores, EDA y exportacion para los notebooks
+  `FW7_C0X_Framework`.
 - `utils.py`: lectura, escritura, validacion, metadata e inventario de
   artefactos.
 - `integration.py`: integracion C08 y llaves `Fecha`/`Nodo`.
@@ -82,6 +85,38 @@ Ejemplo desde un notebook:
 ```python
 from framework_v7.pipeline.machine_learning import summarize_ml_experiments
 from framework_v7.pipeline.interpretation import summarize_interpretation_experiments
+from framework_v7.pipeline.layer_framework import build_layer_framework_artifacts
+```
+
+### Modularizacion C01-C07
+
+Los notebooks de framework por capa conservan la trazabilidad metodologica, pero
+las funciones repetidas ahora viven en `layer_framework.py`:
+
+- `generate_record_hash`: reemplaza la funcion repetida `generar_hash`.
+- `add_framework_governance_columns`: agrega columnas de gobierno del dato.
+- `build_layer_metadata`: genera la estructura de `03_Metadata.xlsx`.
+- `build_data_dictionary`: genera la estructura de `04_Diccionario_Datos.xlsx`.
+- `audit_layer_dataset`: resume registros, variables, nulos y duplicados.
+- `quality_indicators`: calcula completitud, nulos, duplicidad y cobertura.
+- `build_layer_framework_artifacts`: produce los artefactos estandarizados de
+  una capa en memoria.
+- `export_layer_framework_artifacts`: exporta esos artefactos fuera de la app.
+
+Ejemplo minimo desde un notebook C01-C07:
+
+```python
+from framework_v7.pipeline.layer_framework import build_layer_framework_artifacts
+
+artifacts = build_layer_framework_artifacts(
+    df,
+    layer_name="C01 - Climatica",
+    layer_code="C01",
+    version="1.0",
+    responsible="Jose Barreto y Juan Riataga",
+    date_column="Fecha",
+    node_column="Nodo",
+)
 ```
 
 ## Experimentos Disponibles

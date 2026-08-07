@@ -18,6 +18,7 @@ from . import (
     interpretation,
     ipml,
     layer_extraction,
+    layer_framework,
     machine_learning,
     ml_preparation,
     modeling,
@@ -26,7 +27,8 @@ from . import (
 
 
 PIPELINE_MODULES = {
-    "C01-C07 - Capas": layer_extraction,
+    "C01-C07 - Extraccion de capas": layer_extraction,
+    "C01-C07 - Framework de capas": layer_framework,
     "C08 - Integracion": integration,
     "C09 - Ingenieria de datos": feature_engineering,
     "C10 - Catalogo de conocimiento": domain_knowledge,
