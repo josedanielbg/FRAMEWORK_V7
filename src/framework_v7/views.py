@@ -156,6 +156,120 @@ def _artifact_inventory() -> pd.DataFrame:
     return pd.concat(frames, ignore_index=True) if frames else pd.DataFrame()
 
 
+def _rubric_alignment(data: ProjectData) -> pd.DataFrame:
+    """Build a rubric-oriented self-assessment from project artifacts.
+
+    Args:
+        data: Loaded project datasets and metadata.
+
+    Returns:
+        DataFrame with rubric criteria, estimated score, evidence and next
+        improvement action. Scores are diagnostic and not an official grade.
+    """
+
+    layers = layer_summary()
+    evaluation_summary = summarize_evaluation_experiments()
+    interpretation_summary = summarize_interpretation_experiments()
+    catalog = data.experiment_design.get("Catalogo de experimentos", pd.DataFrame())
+    predictors = data.experiment_design.get("Variables predictoras", pd.DataFrame())
+    notebook_count = len(list(NOTEBOOKS_DIR.rglob("*.ipynb")))
+    artifact_count = len(_artifact_inventory())
+    pipeline_modules = len(list((BASE_DIR / "src" / "framework_v7" / "pipeline").glob("*.py")))
+
+    layers_available = int(layers["Disponible"].sum()) if not layers.empty else 0
+    experiments_available = len(evaluation_summary)
+    interpreted_experiments = len(interpretation_summary)
+    executed_designs = 0
+    if not catalog.empty and "Estado" in catalog.columns:
+        executed_designs = int((catalog["Estado"].astype(str) == "Ejecutado").sum())
+
+    rows = [
+        {
+            "Criterio": "Problema, objetivos y pertinencia",
+            "Peso": 10,
+            "Puntaje": 8.5,
+            "Evidencia": "Tema aplicado a gestion hidrica del Rio Bogota y variable objetivo documentada.",
+            "Accion": "Conectar cada objetivo con una decision concreta de gestion hidrica.",
+        },
+        {
+            "Criterio": "Pensamiento sistemico y capas",
+            "Peso": 10,
+            "Puntaje": 8.8 if layers_available == len(layers) else 7.0,
+            "Evidencia": (
+                f"{layers_available}/{len(layers)} capas disponibles: clima, "
+                "hidrologia, calidad, ONI, hidraulica, percepcion y gobernanza."
+            ),
+            "Accion": "Explicitar relaciones causa-efecto entre capas y variable objetivo.",
+        },
+        {
+            "Criterio": "Datos, calidad y trazabilidad",
+            "Peso": 15,
+            "Puntaje": 13.0 if not data.master.empty and layers_available else 10.0,
+            "Evidencia": (
+                f"Dataset maestro con {len(data.master):,} filas y "
+                f"{data.master.shape[1]:,} columnas."
+            ),
+            "Accion": "Mostrar cobertura, nulos, imputaciones y supuestos por capa.",
+        },
+        {
+            "Criterio": "Metodologia reproducible",
+            "Peso": 15,
+            "Puntaje": 13.2 if pipeline_modules >= 10 else 10.5,
+            "Evidencia": (
+                f"{pipeline_modules} modulos en src/framework_v7/pipeline y "
+                f"{notebook_count} notebooks como memoria."
+            ),
+            "Accion": "Agregar pruebas unitarias ligeras para funciones criticas del pipeline.",
+        },
+        {
+            "Criterio": "Diseno experimental",
+            "Peso": 15,
+            "Puntaje": 12.8 if len(catalog) >= 3 else 9.5,
+            "Evidencia": (
+                f"{len(catalog)} experimentos definidos y {executed_designs} "
+                "marcados como ejecutados."
+            ),
+            "Accion": "Justificar por que cada experimento cambia objetivo, arquitectura o horizonte.",
+        },
+        {
+            "Criterio": "Modelado y evaluacion",
+            "Peso": 15,
+            "Puntaje": 12.5 if experiments_available >= 3 else 10.0,
+            "Evidencia": f"{experiments_available} experimentos con predicciones y artefactos de evaluacion.",
+            "Accion": "Comparar contra modelos base simples y explicar trade-offs.",
+        },
+        {
+            "Criterio": "Interpretacion e impacto",
+            "Peso": 10,
+            "Puntaje": 8.0 if interpreted_experiments else 6.5,
+            "Evidencia": f"{interpreted_experiments} resumenes de interpretacion C16 consolidados.",
+            "Accion": "Traducir metricas a umbrales de accion y limitaciones operativas.",
+        },
+        {
+            "Criterio": "Comunicacion y sustentacion",
+            "Peso": 10,
+            "Puntaje": 8.0,
+            "Evidencia": (
+                f"{artifact_count} artefactos versionados entre ML, modelado, "
+                "evaluacion e interpretacion."
+            ),
+            "Accion": "Cerrar la historia con aporte, riesgos, limites y trabajo futuro.",
+        },
+    ]
+
+    rubric = pd.DataFrame(rows)
+    rubric["Cumplimiento"] = (rubric["Puntaje"] / rubric["Peso"] * 100).round(1)
+    rubric["Brecha"] = (rubric["Peso"] - rubric["Puntaje"]).round(1)
+    rubric["Estado"] = pd.cut(
+        rubric["Cumplimiento"],
+        bins=[0, 70, 84, 100],
+        labels=["Por reforzar", "Aceptable", "Fuerte"],
+        include_lowest=True,
+    ).astype(str)
+    rubric["Predictoras"] = len(predictors)
+    return rubric
+
+
 def render_sidebar(data: ProjectData) -> str:
     """Render the sidebar and return the selected section.
 
@@ -174,6 +288,7 @@ def render_sidebar(data: ProjectData) -> str:
                 "Dashboard",
                 "Experimentos",
                 "Diseno experimental",
+                "Rubrica y sustentacion",
                 "Datasets por capas",
                 "Dataset maestro",
                 "Notebooks",
@@ -726,6 +841,219 @@ def render_experiment_design(data: ProjectData) -> None:
                 mime="text/csv",
                 key=f"download_design_{selected_label}",
             )
+
+
+def render_rubric_alignment(data: ProjectData) -> None:
+    """Render a rubric and thesis-defense alignment view.
+
+    Args:
+        data: Loaded project datasets and metadata.
+
+    Returns:
+        None.
+    """
+
+    st.subheader("Rubrica y sustentacion")
+    rubric = _rubric_alignment(data)
+    total_score = float(rubric["Puntaje"].sum())
+    max_score = float(rubric["Peso"].sum())
+    overall = total_score / max_score * 100 if max_score else 0
+    strong_count = int((rubric["Estado"] == "Fuerte").sum())
+    critical_gap = rubric.sort_values("Brecha", ascending=False).iloc[0]
+
+    c1, c2, c3, c4 = st.columns(4)
+    c1.metric("Autoevaluacion", f"{overall:.1f}/100")
+    c2.metric("Criterios fuertes", f"{strong_count}/{len(rubric)}")
+    c3.metric("Mayor brecha", f"{float(critical_gap['Brecha']):.1f} pts")
+    c3.caption(str(critical_gap["Criterio"]))
+    c4.metric("Predictoras documentadas", f"{int(rubric['Predictoras'].iloc[0]):,}")
+
+    tab_score, tab_evidence, tab_story, tab_actions = st.tabs(
+        ["Puntaje", "Evidencias", "Sustentacion", "Plan de mejora"]
+    )
+
+    with tab_score:
+        left, right = st.columns([2, 1])
+        with left:
+            score_chart = rubric.sort_values("Cumplimiento")
+            fig = px.bar(
+                score_chart,
+                x="Cumplimiento",
+                y="Criterio",
+                color="Estado",
+                orientation="h",
+                text="Cumplimiento",
+                title="Cumplimiento estimado por criterio de rubrica",
+                color_discrete_map={
+                    "Fuerte": "#2A9D8F",
+                    "Aceptable": "#E9C46A",
+                    "Por reforzar": "#E76F51",
+                },
+            )
+            fig.update_traces(texttemplate="%{text:.1f}%", textposition="outside")
+            fig.update_layout(height=520, margin=dict(l=10, r=60, t=55, b=10), xaxis_range=[0, 105])
+            st.plotly_chart(fig, use_container_width=True)
+        with right:
+            st.progress(int(round(overall)), text=f"Preparacion general: {overall:.1f}%")
+            st.dataframe(
+                rubric[["Criterio", "Peso", "Puntaje", "Brecha", "Estado"]],
+                use_container_width=True,
+                hide_index=True,
+            )
+
+        polar = rubric.copy()
+        polar["Porcentaje"] = polar["Cumplimiento"]
+        fig = px.line_polar(
+            polar,
+            r="Porcentaje",
+            theta="Criterio",
+            line_close=True,
+            range_r=[0, 100],
+            title="Perfil de madurez para sustentacion",
+        )
+        fig.update_traces(fill="toself", line_color="#457B9D")
+        fig.update_layout(height=520, margin=dict(l=10, r=10, t=55, b=10))
+        st.plotly_chart(fig, use_container_width=True)
+
+    with tab_evidence:
+        st.markdown("**Evidencia trazable por criterio**")
+        st.dataframe(
+            rubric[["Criterio", "Peso", "Puntaje", "Estado", "Evidencia"]],
+            use_container_width=True,
+            hide_index=True,
+        )
+
+        evidence_rows = [
+            {
+                "Bloque": "Datos multicapa",
+                "Ruta": "DATA/MASTER",
+                "Uso en sustentacion": (
+                    "Demostrar integracion de clima, hidrologia, calidad, "
+                    "ONI, hidraulica, percepcion y gobernanza."
+                ),
+            },
+            {
+                "Bloque": "Diseno experimental",
+                "Ruta": "DATA/DISENO_EXPERIMENTAL",
+                "Uso en sustentacion": (
+                    "Mostrar preguntas, variables objetivo, configuraciones "
+                    "y estado de experimentos."
+                ),
+            },
+            {
+                "Bloque": "Pipeline modular",
+                "Ruta": "src/framework_v7/pipeline",
+                "Uso en sustentacion": (
+                    "Sustentar reproducibilidad, PEP8, funciones "
+                    "reutilizables y separacion notebook/app."
+                ),
+            },
+            {
+                "Bloque": "Resultados",
+                "Ruta": "DATA/EVALUACIONES",
+                "Uso en sustentacion": "Comparar salidas predictivas y metricas entre experimentos.",
+            },
+            {
+                "Bloque": "Interpretacion",
+                "Ruta": "DATA/INTERPRETACION_RESULTADOS",
+                "Uso en sustentacion": "Traducir metricas a lectura sistemica y decision hidrica.",
+            },
+            {
+                "Bloque": "Memoria metodologica",
+                "Ruta": "NOTEBOOKS",
+                "Uso en sustentacion": "Conservar trazabilidad del proceso exploratorio y experimental.",
+            },
+        ]
+        st.dataframe(pd.DataFrame(evidence_rows), use_container_width=True, hide_index=True)
+
+    with tab_story:
+        st.markdown("**Narrativa recomendada para la demo**")
+        story = pd.DataFrame(
+            [
+                {
+                    "Momento": "1. Problema",
+                    "Mensaje": (
+                        "La gestion hidrica necesita integrar variables "
+                        "biofisicas, sociales e institucionales."
+                    ),
+                    "Vista": "Dashboard",
+                },
+                {
+                    "Momento": "2. Sistema multicapa",
+                    "Mensaje": "El framework organiza el problema en capas conectadas y auditables.",
+                    "Vista": "Datasets por capas",
+                },
+                {
+                    "Momento": "3. Dataset maestro",
+                    "Mensaje": "Las capas se consolidan en una base temporal lista para modelado.",
+                    "Vista": "Dataset maestro",
+                },
+                {
+                    "Momento": "4. Experimentos",
+                    "Mensaje": "Los experimentos comparan objetivos, horizontes y artefactos predictivos.",
+                    "Vista": "Experimentos",
+                },
+                {
+                    "Momento": "5. Interpretacion",
+                    "Mensaje": "Las metricas se convierten en lectura sistemica, limites y acciones futuras.",
+                    "Vista": "Rubrica y sustentacion",
+                },
+            ]
+        )
+        st.dataframe(story, use_container_width=True, hide_index=True)
+
+        left, right = st.columns(2)
+        with left:
+            st.markdown("**Preguntas que debe responder la app**")
+            questions = [
+                "Que se esta prediciendo y por que importa para el Rio Bogota.",
+                "Que capas alimentan el modelo y cual es su rol sistemico.",
+                "Como se construyo, limpio e integro el dataset maestro.",
+                "Que diferencia hay entre los experimentos ejecutados.",
+                "Cuales son las limitaciones y el siguiente experimento necesario.",
+            ]
+            for question in questions:
+                st.write(question)
+        with right:
+            st.markdown("**Aporte diferencial**")
+            contributions = [
+                "Framework multicapa con datos tecnicos, percepcion y gobernanza.",
+                "Repositorio reproducible con notebooks como memoria y modulos en `src`.",
+                "Tablero de resultados para evaluar datos, modelos e interpretacion.",
+                "Diseno experimental versionado para ampliar el trabajo.",
+            ]
+            for contribution in contributions:
+                st.write(contribution)
+
+    with tab_actions:
+        st.markdown("**Prioridad de mejora antes de sustentar**")
+        action_view = rubric.sort_values(["Brecha", "Peso"], ascending=False)[
+            ["Criterio", "Brecha", "Accion"]
+        ]
+        fig = px.bar(
+            action_view,
+            x="Brecha",
+            y="Criterio",
+            orientation="h",
+            color="Brecha",
+            color_continuous_scale=["#2A9D8F", "#E9C46A", "#E76F51"],
+            title="Brechas estimadas por criterio",
+        )
+        fig.update_layout(height=460, margin=dict(l=10, r=10, t=55, b=10))
+        st.plotly_chart(fig, use_container_width=True)
+        st.dataframe(action_view, use_container_width=True, hide_index=True)
+
+        st.markdown("**Checklist de cierre**")
+        checklist = pd.DataFrame(
+            [
+                {"Item": "Explicar objetivo general y objetivos especificos", "Estado": "Listo"},
+                {"Item": "Mostrar trazabilidad de datos por capa", "Estado": "Listo"},
+                {"Item": "Defender el diseno de los 3 experimentos ejecutados", "Estado": "Listo"},
+                {"Item": "Agregar comparacion contra baseline simple", "Estado": "Por reforzar"},
+                {"Item": "Cerrar con limitaciones, riesgos y trabajo futuro", "Estado": "Por reforzar"},
+            ]
+        )
+        st.dataframe(checklist, use_container_width=True, hide_index=True)
 
 
 def render_layers() -> None:
