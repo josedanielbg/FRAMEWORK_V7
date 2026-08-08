@@ -214,15 +214,15 @@ def _render_pdf_preview(pdf_path, height: int = 720) -> None:
     )
 
 
-def _rubric_alignment(data: ProjectData) -> pd.DataFrame:
-    """Build a rubric-oriented self-assessment from project artifacts.
+def _research_memory(data: ProjectData) -> pd.DataFrame:
+    """Build a research-memory table from project artifacts.
 
     Args:
         data: Loaded project datasets and metadata.
 
     Returns:
-        DataFrame with rubric criteria, estimated score, evidence and next
-        improvement action. Scores are diagnostic and not an official grade.
+        DataFrame with research blocks, visible evidence and next steps for
+        the thesis defense narrative.
     """
 
     layers = layer_summary()
@@ -244,92 +244,75 @@ def _rubric_alignment(data: ProjectData) -> pd.DataFrame:
 
     rows = [
         {
-            "Criterio": "Problema, objetivos y pertinencia",
-            "Peso": 10,
-            "Puntaje": 8.5,
+            "Bloque": "Problema y pertinencia",
+            "Estado": "Consolidado",
             "Evidencia": "Tema aplicado a gestion hidrica del Rio Bogota y variable objetivo documentada.",
-            "Accion": "Conectar cada objetivo con una decision concreta de gestion hidrica.",
+            "Siguiente paso": "Conectar cada objetivo con una decision concreta de gestion hidrica.",
         },
         {
-            "Criterio": "Pensamiento sistemico y capas",
-            "Peso": 10,
-            "Puntaje": 8.8 if layers_available == len(layers) else 7.0,
+            "Bloque": "Pensamiento sistemico",
+            "Estado": "Consolidado" if layers_available == len(layers) else "Por completar",
             "Evidencia": (
                 f"{layers_available}/{len(layers)} capas disponibles: clima, "
                 "hidrologia, calidad, ONI, hidraulica, percepcion y gobernanza."
             ),
-            "Accion": "Explicitar relaciones causa-efecto entre capas y variable objetivo.",
+            "Siguiente paso": "Explicitar relaciones causa-efecto entre capas y variable objetivo.",
         },
         {
-            "Criterio": "Datos, calidad y trazabilidad",
-            "Peso": 15,
-            "Puntaje": 13.0 if not data.master.empty and layers_available else 10.0,
+            "Bloque": "Datos y trazabilidad",
+            "Estado": "Consolidado" if not data.master.empty and layers_available else "Por completar",
             "Evidencia": (
                 f"Dataset maestro con {len(data.master):,} filas y "
                 f"{data.master.shape[1]:,} columnas."
             ),
-            "Accion": "Mostrar cobertura, nulos, imputaciones y supuestos por capa.",
+            "Siguiente paso": "Mostrar cobertura, nulos, imputaciones y supuestos por capa.",
         },
         {
-            "Criterio": "Metodologia reproducible",
-            "Peso": 15,
-            "Puntaje": 13.2 if pipeline_modules >= 10 else 10.5,
+            "Bloque": "Metodologia reproducible",
+            "Estado": "Consolidado" if pipeline_modules >= 10 else "En progreso",
             "Evidencia": (
                 f"{pipeline_modules} modulos en src/framework_v7/pipeline y "
                 f"{notebook_count} notebooks como memoria."
             ),
-            "Accion": "Agregar pruebas unitarias ligeras para funciones criticas del pipeline.",
+            "Siguiente paso": "Agregar pruebas unitarias ligeras para funciones criticas del pipeline.",
         },
         {
-            "Criterio": "Diseno experimental",
-            "Peso": 15,
-            "Puntaje": 12.8 if len(catalog) >= 3 else 9.5,
+            "Bloque": "Diseno experimental",
+            "Estado": "Consolidado" if len(catalog) >= 3 else "En progreso",
             "Evidencia": (
                 f"{len(catalog)} experimentos definidos y {executed_designs} "
                 "marcados como ejecutados."
             ),
-            "Accion": "Justificar por que cada experimento cambia objetivo, arquitectura o horizonte.",
+            "Siguiente paso": "Justificar por que cada experimento cambia objetivo, arquitectura o horizonte.",
         },
         {
-            "Criterio": "Modelado y evaluacion",
-            "Peso": 15,
-            "Puntaje": 12.5 if experiments_available >= 3 else 10.0,
+            "Bloque": "Modelado y evaluacion",
+            "Estado": "Consolidado" if experiments_available >= 3 else "En progreso",
             "Evidencia": (
                 f"{experiments_available} experimentos con predicciones, "
                 f"artefactos de evaluacion y {model_card_count} model cards."
             ),
-            "Accion": "Comparar contra modelos base simples y explicar trade-offs.",
+            "Siguiente paso": "Comparar contra modelos base simples y explicar trade-offs.",
         },
         {
-            "Criterio": "Interpretacion e impacto",
-            "Peso": 10,
-            "Puntaje": 8.0 if interpreted_experiments else 6.5,
+            "Bloque": "Interpretacion e impacto",
+            "Estado": "Consolidado" if interpreted_experiments else "En progreso",
             "Evidencia": f"{interpreted_experiments} resumenes de interpretacion C16 consolidados.",
-            "Accion": "Traducir metricas a umbrales de accion y limitaciones operativas.",
+            "Siguiente paso": "Traducir metricas a umbrales de accion y limitaciones operativas.",
         },
         {
-            "Criterio": "Comunicacion y sustentacion",
-            "Peso": 10,
-            "Puntaje": 8.0,
+            "Bloque": "Comunicacion del proyecto",
+            "Estado": "En progreso",
             "Evidencia": (
                 f"{artifact_count} artefactos versionados entre ML, modelado, "
                 "evaluacion e interpretacion."
             ),
-            "Accion": "Cerrar la historia con aporte, riesgos, limites y trabajo futuro.",
+            "Siguiente paso": "Cerrar la historia con aporte, riesgos, limites y trabajo futuro.",
         },
     ]
-
-    rubric = pd.DataFrame(rows)
-    rubric["Cumplimiento"] = (rubric["Puntaje"] / rubric["Peso"] * 100).round(1)
-    rubric["Brecha"] = (rubric["Peso"] - rubric["Puntaje"]).round(1)
-    rubric["Estado"] = pd.cut(
-        rubric["Cumplimiento"],
-        bins=[0, 70, 84, 100],
-        labels=["Por reforzar", "Aceptable", "Fuerte"],
-        include_lowest=True,
-    ).astype(str)
-    rubric["Predictoras"] = len(predictors)
-    return rubric
+    memory = pd.DataFrame(rows)
+    memory["Predictoras documentadas"] = len(predictors)
+    return memory
 
 
 def render_sidebar(data: ProjectData) -> str:
@@ -350,7 +333,7 @@ def render_sidebar(data: ProjectData) -> str:
                 "Dashboard",
                 "Experimentos",
                 "Diseno experimental",
-                "Rubrica y sustentacion",
+                "Memoria de investigacion",
                 "Datasets por capas",
                 "Dataset maestro",
                 "Notebooks",
@@ -957,8 +940,8 @@ def render_experiment_design(data: ProjectData) -> None:
             )
 
 
-def render_rubric_alignment(data: ProjectData) -> None:
-    """Render a rubric and thesis-defense alignment view.
+def render_research_memory(data: ProjectData) -> None:
+    """Render research memory and thesis-defense evidence.
 
     Args:
         data: Loaded project datasets and metadata.
@@ -967,81 +950,103 @@ def render_rubric_alignment(data: ProjectData) -> None:
         None.
     """
 
-    st.subheader("Rubrica y sustentacion")
-    rubric = _rubric_alignment(data)
-    total_score = float(rubric["Puntaje"].sum())
-    max_score = float(rubric["Peso"].sum())
-    overall = total_score / max_score * 100 if max_score else 0
-    strong_count = int((rubric["Estado"] == "Fuerte").sum())
-    critical_gap = rubric.sort_values("Brecha", ascending=False).iloc[0]
+    st.subheader("Memoria de investigacion")
+    memory = _research_memory(data)
+    catalog = data.experiment_design.get("Catalogo de experimentos", pd.DataFrame())
+    model_cards = _model_card_inventory()
+    consolidated = int((memory["Estado"] == "Consolidado").sum())
+    experiments = len(summarize_evaluation_experiments())
+    layers = layer_summary()
 
     c1, c2, c3, c4 = st.columns(4)
-    c1.metric("Autoevaluacion", f"{overall:.1f}/100")
-    c2.metric("Criterios fuertes", f"{strong_count}/{len(rubric)}")
-    c3.metric("Mayor brecha", f"{float(critical_gap['Brecha']):.1f} pts")
-    c3.caption(str(critical_gap["Criterio"]))
-    c4.metric("Predictoras documentadas", f"{int(rubric['Predictoras'].iloc[0]):,}")
+    c1.metric("Bloques documentados", f"{len(memory):,}")
+    c2.metric("Bloques consolidados", f"{consolidated:,}")
+    c3.metric("Experimentos evaluados", f"{experiments:,}")
+    c4.metric("Capas disponibles", f"{int(layers['Disponible'].sum())}/{len(layers)}")
 
-    tab_score, tab_evidence, tab_story, tab_actions = st.tabs(
-        ["Puntaje", "Evidencias", "Sustentacion", "Plan de mejora"]
+    tab_context, tab_method, tab_evidence, tab_closure = st.tabs(
+        ["Planteamiento", "Metodologia", "Evidencias", "Cierre"]
     )
 
-    with tab_score:
-        left, right = st.columns([2, 1])
-        with left:
-            score_chart = rubric.sort_values("Cumplimiento")
-            fig = px.bar(
-                score_chart,
-                x="Cumplimiento",
-                y="Criterio",
-                color="Estado",
-                orientation="h",
-                text="Cumplimiento",
-                title="Cumplimiento estimado por criterio de rubrica",
-                color_discrete_map={
-                    "Fuerte": "#2A9D8F",
-                    "Aceptable": "#E9C46A",
-                    "Por reforzar": "#E76F51",
-                },
-            )
-            fig.update_traces(texttemplate="%{text:.1f}%", textposition="outside")
-            fig.update_layout(height=520, margin=dict(l=10, r=60, t=55, b=10), xaxis_range=[0, 105])
-            st.plotly_chart(fig, use_container_width=True)
-        with right:
-            st.progress(int(round(overall)), text=f"Preparacion general: {overall:.1f}%")
-            st.dataframe(
-                rubric[["Criterio", "Peso", "Puntaje", "Brecha", "Estado"]],
-                use_container_width=True,
-                hide_index=True,
-            )
-
-        polar = rubric.copy()
-        polar["Porcentaje"] = polar["Cumplimiento"]
-        fig = px.line_polar(
-            polar,
-            r="Porcentaje",
-            theta="Criterio",
-            line_close=True,
-            range_r=[0, 100],
-            title="Perfil de madurez para sustentacion",
+    with tab_context:
+        st.markdown("**Problema de investigacion**")
+        st.write(
+            "El proyecto organiza informacion ambiental, hidrica, social e "
+            "institucional para analizar y predecir variables asociadas a la "
+            "gestion hidrica del Rio Bogota."
         )
-        fig.update_traces(fill="toself", line_color="#457B9D")
-        fig.update_layout(height=520, margin=dict(l=10, r=10, t=55, b=10))
-        st.plotly_chart(fig, use_container_width=True)
-
-    with tab_evidence:
-        st.markdown("**Evidencia trazable por criterio**")
+        st.markdown("**Objetivo del tablero**")
+        st.write(
+            "Mostrar la trazabilidad entre datos, capas, diseno experimental, "
+            "modelos, resultados e interpretacion, sin mezclar la aplicacion "
+            "con la evaluacion academica."
+        )
         st.dataframe(
-            rubric[["Criterio", "Peso", "Puntaje", "Estado", "Evidencia"]],
+            memory[["Bloque", "Estado", "Evidencia"]],
             use_container_width=True,
             hide_index=True,
         )
 
+    with tab_method:
+        st.markdown("**Flujo metodologico**")
+        flow = pd.DataFrame(
+            [
+                {
+                    "Etapa": "1. Datos raw",
+                    "Salida": "Fuentes por capa en DATA/RAW",
+                    "Vista": "Datasets por capas",
+                },
+                {
+                    "Etapa": "2. Capas framework",
+                    "Salida": "C01-C07 con metadata, auditoria e indicadores",
+                    "Vista": "Datasets por capas",
+                },
+                {
+                    "Etapa": "3. Dataset maestro",
+                    "Salida": "Base integrada e imputada para modelado",
+                    "Vista": "Dataset maestro",
+                },
+                {
+                    "Etapa": "4. Diseno experimental",
+                    "Salida": "Catalogo, variables, criterios y estado",
+                    "Vista": "Diseno experimental",
+                },
+                {
+                    "Etapa": "5. Modelado y evaluacion",
+                    "Salida": "Predicciones, diagnosticos y model cards",
+                    "Vista": "Experimentos",
+                },
+                {
+                    "Etapa": "6. Interpretacion",
+                    "Salida": "Lectura sistemica y limites del resultado",
+                    "Vista": "Experimentos",
+                },
+            ]
+        )
+        st.dataframe(flow, use_container_width=True, hide_index=True)
+
+        if not catalog.empty:
+            st.markdown("**Experimentos como decisiones metodologicas**")
+            visible_columns = [
+                column
+                for column in [
+                    "Experimento",
+                    "Variable_Objetivo",
+                    "Tipo_Problema",
+                    "Estado",
+                    "Pregunta_Investigacion",
+                ]
+                if column in catalog.columns
+            ]
+            st.dataframe(catalog[visible_columns], use_container_width=True, hide_index=True)
+
+    with tab_evidence:
+        st.markdown("**Evidencias conectadas a la investigacion**")
         evidence_rows = [
             {
                 "Bloque": "Datos multicapa",
                 "Ruta": "DATA/MASTER",
-                "Uso en sustentacion": (
+                "Uso en la app": (
                     "Demostrar integracion de clima, hidrologia, calidad, "
                     "ONI, hidraulica, percepcion y gobernanza."
                 ),
@@ -1049,7 +1054,7 @@ def render_rubric_alignment(data: ProjectData) -> None:
             {
                 "Bloque": "Diseno experimental",
                 "Ruta": "DATA/DISENO_EXPERIMENTAL",
-                "Uso en sustentacion": (
+                "Uso en la app": (
                     "Mostrar preguntas, variables objetivo, configuraciones "
                     "y estado de experimentos."
                 ),
@@ -1057,7 +1062,7 @@ def render_rubric_alignment(data: ProjectData) -> None:
             {
                 "Bloque": "Pipeline modular",
                 "Ruta": "src/framework_v7/pipeline",
-                "Uso en sustentacion": (
+                "Uso en la app": (
                     "Sustentar reproducibilidad, PEP8, funciones "
                     "reutilizables y separacion notebook/app."
                 ),
@@ -1065,12 +1070,12 @@ def render_rubric_alignment(data: ProjectData) -> None:
             {
                 "Bloque": "Resultados",
                 "Ruta": "DATA/EVALUACIONES",
-                "Uso en sustentacion": "Comparar salidas predictivas y metricas entre experimentos.",
+                "Uso en la app": "Comparar salidas predictivas y metricas entre experimentos.",
             },
             {
                 "Bloque": "Model cards",
                 "Ruta": "FRAMEWORK_STREAMLIT/model_cards",
-                "Uso en sustentacion": (
+                "Uso en la app": (
                     "Presentar proposito, datos, desempeno, limitaciones y "
                     "uso responsable de cada modelo."
                 ),
@@ -1078,18 +1083,22 @@ def render_rubric_alignment(data: ProjectData) -> None:
             {
                 "Bloque": "Interpretacion",
                 "Ruta": "DATA/INTERPRETACION_RESULTADOS",
-                "Uso en sustentacion": "Traducir metricas a lectura sistemica y decision hidrica.",
+                "Uso en la app": "Traducir metricas a lectura sistemica y decision hidrica.",
             },
             {
                 "Bloque": "Memoria metodologica",
                 "Ruta": "NOTEBOOKS",
-                "Uso en sustentacion": "Conservar trazabilidad del proceso exploratorio y experimental.",
+                "Uso en la app": "Conservar trazabilidad del proceso exploratorio y experimental.",
             },
         ]
         st.dataframe(pd.DataFrame(evidence_rows), use_container_width=True, hide_index=True)
 
-    with tab_story:
-        st.markdown("**Narrativa recomendada para la demo**")
+        if not model_cards.empty:
+            st.markdown("**Model cards disponibles**")
+            st.dataframe(model_cards, use_container_width=True, hide_index=True)
+
+    with tab_closure:
+        st.markdown("**Narrativa para presentar el proyecto**")
         story = pd.DataFrame(
             [
                 {
@@ -1118,7 +1127,7 @@ def render_rubric_alignment(data: ProjectData) -> None:
                 {
                     "Momento": "5. Interpretacion",
                     "Mensaje": "Las metricas se convierten en lectura sistemica, limites y acciones futuras.",
-                    "Vista": "Rubrica y sustentacion",
+                    "Vista": "Memoria de investigacion",
                 },
             ]
         )
@@ -1147,25 +1156,7 @@ def render_rubric_alignment(data: ProjectData) -> None:
             for contribution in contributions:
                 st.write(contribution)
 
-    with tab_actions:
-        st.markdown("**Prioridad de mejora antes de sustentar**")
-        action_view = rubric.sort_values(["Brecha", "Peso"], ascending=False)[
-            ["Criterio", "Brecha", "Accion"]
-        ]
-        fig = px.bar(
-            action_view,
-            x="Brecha",
-            y="Criterio",
-            orientation="h",
-            color="Brecha",
-            color_continuous_scale=["#2A9D8F", "#E9C46A", "#E76F51"],
-            title="Brechas estimadas por criterio",
-        )
-        fig.update_layout(height=460, margin=dict(l=10, r=10, t=55, b=10))
-        st.plotly_chart(fig, use_container_width=True)
-        st.dataframe(action_view, use_container_width=True, hide_index=True)
-
-        st.markdown("**Checklist de cierre**")
+        st.markdown("**Pendientes metodologicos**")
         checklist = pd.DataFrame(
             [
                 {"Item": "Explicar objetivo general y objetivos especificos", "Estado": "Listo"},

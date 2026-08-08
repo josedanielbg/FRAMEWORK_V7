@@ -19,7 +19,7 @@ from framework_v7.views import (
     render_layers,
     render_master_dataset,
     render_notebooks,
-    render_rubric_alignment,
+    render_research_memory,
     render_sidebar,
 )
 
@@ -42,8 +42,8 @@ elif section == "Experimentos":
     render_experiments(data)
 elif section == "Diseno experimental":
     render_experiment_design(data)
-elif section == "Rubrica y sustentacion":
-    render_rubric_alignment(data)
+elif section == "Memoria de investigacion":
+    render_research_memory(data)
 elif section == "Datasets por capas":
     render_layers()
 elif section == "Dataset maestro":
