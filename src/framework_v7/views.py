@@ -8,9 +8,12 @@ functions.
 
 from __future__ import annotations
 
+import base64
+
 import pandas as pd
 import plotly.express as px
 import streamlit as st
+import streamlit.components.v1 as components
 
 from .catalog import EXPERIMENT_DESIGN_FILES, FEATURE_GROUPS, LAYER_CATALOG, MASTER_FILES, SUPPORT_FILES
 from .data_access import ProjectData, load_csv, load_excel, read_text
@@ -24,6 +27,7 @@ from .paths import (
     MACHINE_LEARNING_DIR,
     ML_DATASET_PATH,
     MODEL_ACCURACY_IMAGE_PATH,
+    MODEL_CARDS_DIR,
     MODEL_DIAGNOSTIC_PATH,
     MODEL_LOSS_IMAGE_PATH,
     MODELING_DIR,
@@ -156,6 +160,60 @@ def _artifact_inventory() -> pd.DataFrame:
     return pd.concat(frames, ignore_index=True) if frames else pd.DataFrame()
 
 
+def _model_card_inventory() -> pd.DataFrame:
+    """Build an inventory of available model-card PDF files.
+
+    Returns:
+        DataFrame with experiment label, file name, repository path and size.
+    """
+
+    if not MODEL_CARDS_DIR.exists():
+        return pd.DataFrame(columns=["Experimento", "Archivo", "Ruta", "Tamano_MB"])
+
+    rows = []
+    for pdf_path in sorted(MODEL_CARDS_DIR.glob("*.pdf")):
+        experiment = pdf_path.stem.replace("_", "-")
+        rows.append(
+            {
+                "Experimento": experiment,
+                "Archivo": pdf_path.name,
+                "Ruta": rel(pdf_path),
+                "Tamano_MB": round(pdf_path.stat().st_size / (1024 * 1024), 2),
+            }
+        )
+    return pd.DataFrame(rows)
+
+
+def _render_pdf_preview(pdf_path, height: int = 720) -> None:
+    """Render a local PDF file inside Streamlit.
+
+    Args:
+        pdf_path: Path to the PDF file.
+        height: Viewer height in pixels.
+
+    Returns:
+        None.
+    """
+
+    if not pdf_path.exists():
+        render_missing_file(pdf_path)
+        return
+
+    encoded_pdf = base64.b64encode(pdf_path.read_bytes()).decode("utf-8")
+    components.html(
+        f"""
+        <iframe
+            src="data:application/pdf;base64,{encoded_pdf}"
+            width="100%"
+            height="{height}"
+            style="border: 1px solid #D0D7DE; border-radius: 6px;"
+        ></iframe>
+        """,
+        height=height + 20,
+        scrolling=True,
+    )
+
+
 def _rubric_alignment(data: ProjectData) -> pd.DataFrame:
     """Build a rubric-oriented self-assessment from project artifacts.
 
@@ -174,6 +232,7 @@ def _rubric_alignment(data: ProjectData) -> pd.DataFrame:
     predictors = data.experiment_design.get("Variables predictoras", pd.DataFrame())
     notebook_count = len(list(NOTEBOOKS_DIR.rglob("*.ipynb")))
     artifact_count = len(_artifact_inventory())
+    model_card_count = len(_model_card_inventory())
     pipeline_modules = len(list((BASE_DIR / "src" / "framework_v7" / "pipeline").glob("*.py")))
 
     layers_available = int(layers["Disponible"].sum()) if not layers.empty else 0
@@ -235,7 +294,10 @@ def _rubric_alignment(data: ProjectData) -> pd.DataFrame:
             "Criterio": "Modelado y evaluacion",
             "Peso": 15,
             "Puntaje": 12.5 if experiments_available >= 3 else 10.0,
-            "Evidencia": f"{experiments_available} experimentos con predicciones y artefactos de evaluacion.",
+            "Evidencia": (
+                f"{experiments_available} experimentos con predicciones, "
+                f"artefactos de evaluacion y {model_card_count} model cards."
+            ),
             "Accion": "Comparar contra modelos base simples y explicar trade-offs.",
         },
         {
@@ -414,8 +476,24 @@ def render_experiments(data: ProjectData) -> None:
     c4.metric("Interpretados", f"{len(interpretation_summary):,}")
 
     selected_experiment = st.selectbox("Experimento", experiments, key="experiment_center_selected")
-    tab_compare, tab_detail, tab_predictions, tab_modeling, tab_interpretation, tab_artifacts = st.tabs(
-        ["Comparativo", "Detalle", "Predicciones", "Modelado", "Interpretacion", "Artefactos"]
+    (
+        tab_compare,
+        tab_detail,
+        tab_predictions,
+        tab_modeling,
+        tab_model_cards,
+        tab_interpretation,
+        tab_artifacts,
+    ) = st.tabs(
+        [
+            "Comparativo",
+            "Detalle",
+            "Predicciones",
+            "Modelado",
+            "Model cards",
+            "Interpretacion",
+            "Artefactos",
+        ]
     )
 
     with tab_compare:
@@ -573,6 +651,42 @@ def render_experiments(data: ProjectData) -> None:
             for index, image in enumerate(metric_images):
                 with cols[index % len(cols)]:
                     st.image(str(image), caption=image.name, use_container_width=True)
+
+    with tab_model_cards:
+        cards = _model_card_inventory()
+        if cards.empty:
+            render_missing_file(MODEL_CARDS_DIR)
+        else:
+            normalized_experiment = selected_experiment.replace("_", "-")
+            options = cards["Archivo"].tolist()
+            matched = cards[cards["Experimento"].astype(str) == normalized_experiment]
+            default_index = 0
+            if not matched.empty:
+                default_file = matched["Archivo"].iloc[0]
+                default_index = options.index(default_file)
+
+            selected_card = st.selectbox(
+                "Model card",
+                options,
+                index=default_index,
+                key=f"model_card_{selected_experiment}",
+            )
+            card_path = MODEL_CARDS_DIR / selected_card
+            c1, c2, c3 = st.columns(3)
+            card_row = cards[cards["Archivo"] == selected_card].iloc[0]
+            c1.metric("Experimento", card_row["Experimento"])
+            c2.metric("Archivo", selected_card)
+            c3.metric("Tamano", f"{float(card_row['Tamano_MB']):.2f} MB")
+            st.caption(rel(card_path))
+            _render_pdf_preview(card_path)
+            st.download_button(
+                "Descargar model card",
+                data=card_path.read_bytes(),
+                file_name=selected_card,
+                mime="application/pdf",
+                key=f"download_model_card_{selected_card}",
+            )
+            st.dataframe(cards, use_container_width=True, hide_index=True)
 
     with tab_interpretation:
         summary = load_interpretation_summary(selected_experiment)
@@ -952,6 +1066,14 @@ def render_rubric_alignment(data: ProjectData) -> None:
                 "Bloque": "Resultados",
                 "Ruta": "DATA/EVALUACIONES",
                 "Uso en sustentacion": "Comparar salidas predictivas y metricas entre experimentos.",
+            },
+            {
+                "Bloque": "Model cards",
+                "Ruta": "FRAMEWORK_STREAMLIT/model_cards",
+                "Uso en sustentacion": (
+                    "Presentar proposito, datos, desempeno, limitaciones y "
+                    "uso responsable de cada modelo."
+                ),
             },
             {
                 "Bloque": "Interpretacion",

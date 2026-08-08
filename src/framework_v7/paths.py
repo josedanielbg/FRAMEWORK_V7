@@ -13,6 +13,7 @@ repository without hunting for hard-coded strings across the interface.
 
 BASE_DIR = Path(__file__).resolve().parents[2]
 DATA_DIR = BASE_DIR / "DATA"
+FRAMEWORK_STREAMLIT_DIR = BASE_DIR / "FRAMEWORK_STREAMLIT"
 MASTER_DIR = DATA_DIR / "MASTER"
 EXPERIMENT_DESIGN_DIR = DATA_DIR / "DISENO_EXPERIMENTAL"
 EVALUATIONS_DIR = DATA_DIR / "EVALUACIONES"
@@ -44,6 +45,7 @@ MODEL_DIAGNOSTIC_PATH = MODELING_DIR / "Diagnosticos" / "Exp01" / "diagnostico_m
 MODEL_RECOMMENDATIONS_PATH = MODELING_DIR / "Diagnosticos" / "Exp01" / "recomendaciones_Exp01.csv"
 MODEL_ACCURACY_IMAGE_PATH = MODELING_DIR / "Metricas" / "Exp01" / "accuracy_experimento.png"
 MODEL_LOSS_IMAGE_PATH = MODELING_DIR / "Metricas" / "Exp01" / "loss_experimento.png"
+MODEL_CARDS_DIR = FRAMEWORK_STREAMLIT_DIR / "model_cards"
 
 
 def rel(path: Path) -> str:
