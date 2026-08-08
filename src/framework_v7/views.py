@@ -8,12 +8,11 @@ functions.
 
 from __future__ import annotations
 
-import base64
+from urllib.parse import quote
 
 import pandas as pd
 import plotly.express as px
 import streamlit as st
-import streamlit.components.v1 as components
 
 from .catalog import EXPERIMENT_DESIGN_FILES, FEATURE_GROUPS, LAYER_CATALOG, MASTER_FILES, SUPPORT_FILES
 from .data_access import ProjectData, load_csv, load_excel, read_text
@@ -72,6 +71,8 @@ from .visualizations import (
     render_system_map,
     render_time_series,
 )
+
+GITHUB_RAW_BASE_URL = "https://github.com/josedanielbg/FRAMEWORK_V7/raw/main"
 
 
 def _experiment_names(*frames: pd.DataFrame) -> list[str]:
@@ -184,34 +185,18 @@ def _model_card_inventory() -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 
-def _render_pdf_preview(pdf_path, height: int = 720) -> None:
-    """Render a local PDF file inside Streamlit.
+def _github_raw_url(file_path) -> str:
+    """Build a direct GitHub URL for a repository file.
 
     Args:
-        pdf_path: Path to the PDF file.
-        height: Viewer height in pixels.
+        file_path: Local path inside the repository.
 
     Returns:
-        None.
+        Direct URL that opens or downloads the file from GitHub.
     """
 
-    if not pdf_path.exists():
-        render_missing_file(pdf_path)
-        return
-
-    encoded_pdf = base64.b64encode(pdf_path.read_bytes()).decode("utf-8")
-    components.html(
-        f"""
-        <iframe
-            src="data:application/pdf;base64,{encoded_pdf}"
-            width="100%"
-            height="{height}"
-            style="border: 1px solid #D0D7DE; border-radius: 6px;"
-        ></iframe>
-        """,
-        height=height + 20,
-        scrolling=True,
-    )
+    relative_path = rel(file_path).replace("\\", "/")
+    return f"{GITHUB_RAW_BASE_URL}/{quote(relative_path, safe='/')}"
 
 
 def render_sidebar(data: ProjectData) -> str:
@@ -559,14 +544,26 @@ def render_experiments(data: ProjectData) -> None:
             c2.metric("Archivo", selected_card)
             c3.metric("Tamano", f"{float(card_row['Tamano_MB']):.2f} MB")
             st.caption(rel(card_path))
-            _render_pdf_preview(card_path)
-            st.download_button(
-                "Descargar model card",
-                data=card_path.read_bytes(),
-                file_name=selected_card,
-                mime="application/pdf",
-                key=f"download_model_card_{selected_card}",
-            )
+
+            if not card_path.exists():
+                render_missing_file(card_path)
+            else:
+                st.info(
+                    "La model card se abre fuera del visor embebido para evitar "
+                    "bloqueos del navegador en Streamlit Cloud."
+                )
+                action_col1, action_col2 = st.columns(2)
+                with action_col1:
+                    st.download_button(
+                        "Descargar model card",
+                        data=card_path.read_bytes(),
+                        file_name=selected_card,
+                        mime="application/pdf",
+                        key=f"download_model_card_{selected_card}",
+                    )
+                with action_col2:
+                    st.link_button("Abrir PDF en GitHub", _github_raw_url(card_path))
+
             st.dataframe(cards, use_container_width=True, hide_index=True)
 
     with tab_interpretation:
