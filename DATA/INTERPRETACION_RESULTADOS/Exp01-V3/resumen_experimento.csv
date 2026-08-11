@@ -1,2 +1,2 @@
-Experimento,Variable_Objetivo,Accuracy,Precision,Recall,F1,Conclusion
-Exp01-V3,irca,0.9226,0.5645,0.7292,0.6364,Modelo con capacidad predictiva parcial.
+﻿Experimento,Variable_Objetivo,Accuracy_Temporal,Precision_Temporal,Recall_Temporal,F1_Temporal,Accuracy_Prueba,Precision_Prueba,Recall_Prueba,F1_Prueba,Especificidad,Accuracy_Balanceada,Estado_Oficial,Conclusion
+Exp01-V3,irca,0.8665,0.3895,0.7708,0.5175,0.9487,1.0,0.6667,0.8,1.0,0.83,Excelente,El modelo presenta un comportamiento favorable sobre la serie temporal y muestra capacidad prometedora para detectar eventos de la clase positiva. Se recomienda validación adicional antes de su utilización operacional.
