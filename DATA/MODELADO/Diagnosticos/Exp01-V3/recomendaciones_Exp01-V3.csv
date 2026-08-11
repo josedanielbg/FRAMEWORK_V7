@@ -1,6 +1,5 @@
 ﻿Recomendacion
-• Optimizar la sensibilidad del modelo para mejorar la detección de eventos IRCA.
-• El conjunto presenta desbalance de clases; utilizar técnicas de balanceo antes del entrenamiento.
+• El conjunto presenta desbalance de clases; aplicar técnicas de balanceo antes del entrenamiento.
 "• Comparar el desempeño del modelo LSTM con Random Forest, XGBoost y Redes Dense."
 • Evaluar el modelo utilizando validación cruzada temporal.
 • Documentar todos los experimentos para garantizar la reproducibilidad.
