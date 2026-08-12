@@ -1,0 +1,7 @@
+﻿Recomendacion
+Validación temporal contiene una sola clase; interpretar métricas de clasificación con cautela.
+Prueba temporal contiene una sola clase. Mantener este resultado como evidencia temporal y complementar con validación walk-forward.
+"F1 bajo: revisar balanceo, arquitectura, umbral y estabilidad temporal."
+Conservar el split temporal por Nodo; no reemplazarlo por un split aleatorio.
+Conservar scaler.pkl junto al modelo porque fue ajustado solo con entrenamiento.
+Comparar variantes del modelo usando exactamente el mismo split temporal.

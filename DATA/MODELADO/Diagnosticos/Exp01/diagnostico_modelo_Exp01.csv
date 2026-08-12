@@ -1,0 +1,10 @@
+﻿Indicador,Valor
+Accuracy,1.0
+Precision,0.0
+Recall,0.0
+F1 Score,0.0
+Especificidad,1.0
+Accuracy Balanceada,0.5
+AUC ROC,
+Clases presentes en Test,1
+Estado General,EVALUACION LIMITADA - TEST CON UNA SOLA CLASE
