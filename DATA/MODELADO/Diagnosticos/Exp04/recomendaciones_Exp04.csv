@@ -1,0 +1,6 @@
+﻿Recomendacion
+R² inferior a 0.50: el modelo aún no explica suficientemente la variabilidad temporal del volumen.
+Mantener scaler_y.pkl: fue ajustado exclusivamente con y_train y es necesario para devolver las predicciones de regresión a unidades originales en C15.
+Conservar el split temporal por Nodo; no reemplazarlo por un split aleatorio.
+Conservar scaler.pkl junto al modelo porque fue ajustado solo con entrenamiento.
+Comparar variantes del modelo usando exactamente el mismo split temporal.
