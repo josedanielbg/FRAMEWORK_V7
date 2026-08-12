@@ -1,0 +1,17 @@
+﻿Parametro,Valor
+Experimento,Exp01
+Dominio,Gestión Hídrica
+Tipo de Problema,Clasificación
+Modelo,LSTM
+Variable Objetivo,nivel_de_riesgo
+Variable Objetivo Cientifico,irca
+Ventana Temporal,12
+Horizonte,1
+Variables Predictoras,8
+Lista Variables Predictoras,ONI;PORCENTAJE DE LA POBLACION CON ACCESO A METODOS DE SANEAMIENTO ADECUADOS;Precipitacion_mm;Radiacion_Solar;Humedad_Relativa;Temp_Min_C;Mes;Velocidad_Viento
+Observaciones,528
+Número de Secuencias,480
+Nodos,4
+Método de Transformación,RobustScaler
+Transformación Aplicada en C13,False
+Ajuste del Scaler,C14 - conjunto de entrenamiento
