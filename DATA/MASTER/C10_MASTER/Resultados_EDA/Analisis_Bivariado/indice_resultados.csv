@@ -1,8 +1,16 @@
-﻿Archivo,Descripción
-correlacion_pearson.csv,Matriz Pearson
-correlacion_spearman.csv,Matriz Spearman
+﻿Archivo,Descripcion
+correlacion_pearson.csv,Matriz de correlación Pearson
+correlacion_pearson.xlsx,Matriz de correlación Pearson
+correlacion_pearson.md,Matriz de correlación Pearson
+correlacion_spearman.csv,Matriz de correlación Spearman
+correlacion_spearman.xlsx,Matriz de correlación Spearman
+correlacion_spearman.md,Matriz de correlación Spearman
 heatmap_pearson.png,Mapa de calor Pearson
 heatmap_spearman.png,Mapa de calor Spearman
-ranking_correlaciones.csv,Ranking de correlaciones
-variables_redundantes.csv,Variables redundantes
-Informe_Correlaciones.md,Informe automático
+ranking_correlaciones.csv,Ranking de correlaciones con soporte muestral
+ranking_correlaciones.xlsx,Ranking de correlaciones con soporte muestral
+ranking_correlaciones.md,Ranking de correlaciones con soporte muestral
+variables_redundantes.csv,Pares con posible redundancia y n >= 30
+variables_redundantes.xlsx,Pares con posible redundancia y n >= 30
+variables_redundantes.md,Pares con posible redundancia y n >= 30
+Informe_Correlaciones.md,Informe automático de correlaciones
