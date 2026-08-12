@@ -6,6 +6,6 @@ Modelo,LSTM
 Variable Objetivo,VolumenUtilDiarioMasa
 Ventana,12
 Horizonte,1
-Variables Predictoras,Precipitacion_mm;ONI;Radiacion_Solar;Humedad_Relativa;Temp_Min_C;Mes;Velocidad_Viento;irca
-Variables Modelo,8
-Numero de Secuencias,516
+Variables Predictoras,ONI;PORCENTAJE DE LA POBLACION CON ACCESO A METODOS DE SANEAMIENTO ADECUADOS;Precipitacion_mm;Radiacion_Solar;irca;Humedad_Relativa;Temp_Min_C;Mes;Velocidad_Viento
+Variables Modelo,9
+Numero de Secuencias,336
