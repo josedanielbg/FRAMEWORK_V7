@@ -1,10 +1,10 @@
 | Indicador             |   Valor |
 |:----------------------|--------:|
 | Registros             |  528    |
-| Variables             |   42    |
-| Variables numéricas   |   35    |
+| Variables             |   52    |
+| Variables numéricas   |   45    |
 | Variables categóricas |    6    |
 | Variables fecha       |    1    |
 | Duplicados            |    0    |
-| Memoria (MB)          |    0.32 |
-| Completitud (%)       |   68.16 |
+| Memoria (MB)          |    0.36 |
+| Completitud (%)       |   73.59 |

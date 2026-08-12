@@ -1,43 +1,53 @@
 ﻿Variable,Tipo,Registros,Completos,Nulos,% Cobertura,% Nulos,Valores Únicos,Duplicados,% Ceros,Calificación,Recomendación
-Nodo,object,528,528,0,100.0,0.0,4,524,,A - Excelente,Lista para modelado
-Fecha,datetime64[ns],528,528,0,100.0,0.0,132,396,,A - Excelente,Lista para modelado
-Precipitacion_mm,float64,528,528,0,100.0,0.0,437,91,0.19,A - Excelente,Lista para modelado
-Temp_Max_C,float64,528,528,0,100.0,0.0,406,122,0.0,A - Excelente,Lista para modelado
-Temp_Min_C,float64,528,528,0,100.0,0.0,410,118,0.0,A - Excelente,Lista para modelado
-Temp_Media_C,float64,528,528,0,100.0,0.0,363,165,0.0,A - Excelente,Lista para modelado
-Humedad_Relativa,float64,528,528,0,100.0,0.0,439,89,0.0,A - Excelente,Lista para modelado
-Velocidad_Viento,float64,528,528,0,100.0,0.0,116,412,0.0,A - Excelente,Lista para modelado
-Radiacion_Solar,float64,528,528,0,100.0,0.0,358,170,0.0,A - Excelente,Lista para modelado
-Anio,int32,528,528,0,100.0,0.0,11,517,0.0,A - Excelente,Lista para modelado
-Mes,int32,528,528,0,100.0,0.0,12,516,0.0,A - Excelente,Lista para modelado
-ONI,float64,528,528,0,100.0,0.0,111,417,0.0,A - Excelente,Lista para modelado
-Estado_ENSO,object,528,528,0,100.0,0.0,3,525,,A - Excelente,Lista para modelado
-VolumenUtilDiarioMasa,int64,528,528,0,100.0,0.0,2,526,91.67,A - Excelente,Lista para modelado
-irca,int64,528,528,0,100.0,0.0,2,526,90.91,A - Excelente,Lista para modelado
-nivel_de_riesgo,object,528,528,0,100.0,0.0,2,526,,A - Excelente,Lista para modelado
-POBLACION TOTAL,int64,528,528,0,100.0,0.0,1,527,100.0,A - Excelente,Lista para modelado
-DENSIDAD POBLACIONAL,int64,528,528,0,100.0,0.0,2,526,36.36,A - Excelente,Lista para modelado
-ACCESO A AGUA POTABLE ADECUADO,int64,528,528,0,100.0,0.0,2,526,36.36,A - Excelente,Lista para modelado
-PORCENTAJE DE LA POBLACION CON ACCESO A METODOS DE SANEAMIENTO ADECUADOS,int64,528,528,0,100.0,0.0,2,526,36.36,A - Excelente,Lista para modelado
-COBERTURA DE ACUEDUCTO URBANO,int64,528,528,0,100.0,0.0,2,526,36.36,A - Excelente,Lista para modelado
-COBERTURA DE ACUEDUCTO RURAL,int64,528,528,0,100.0,0.0,2,526,36.36,A - Excelente,Lista para modelado
-COBERTURA DE ALCANTARILLADO RURAL,int64,528,528,0,100.0,0.0,2,526,36.36,A - Excelente,Lista para modelado
-COBERTURA DE ALCANTARILLADO URBANO,int64,528,528,0,100.0,0.0,2,526,36.36,A - Excelente,Lista para modelado
-Version_Dataset,object,528,528,0,100.0,0.0,1,527,,A - Excelente,Lista para modelado
-Volumen_Fuente,object,528,528,0,100.0,0.0,1,527,,A - Excelente,Lista para modelado
-IRCA_Fuente,object,528,528,0,100.0,0.0,1,527,,A - Excelente,Lista para modelado
-CONTINUIDAD DE ACUEDUCTO URBANO,float64,528,96,432,18.18,81.82,1,95,0.0,D - Baja,No recomendable para entrenamiento
-AGUAS RESIDUALES TRATADAS,float64,528,96,432,18.18,81.82,4,92,4.55,D - Baja,No recomendable para entrenamiento
-CALIDAD DEL AGUA,float64,528,96,432,18.18,81.82,8,88,2.27,D - Baja,No recomendable para entrenamiento
-Nivel_Minimo,float64,528,87,441,16.48,83.52,83,4,0.0,D - Baja,No recomendable para entrenamiento
-SOLIDOS SUSPENDIDOS TOTALES,float64,528,50,478,9.47,90.53,45,5,0.0,D - Baja,No recomendable para entrenamiento
-OXIGENO DISUELTO (OD),float64,528,50,478,9.47,90.53,46,4,0.0,D - Baja,No recomendable para entrenamiento
-CONDUCTIVIDAD ELECTRICA,float64,528,50,478,9.47,90.53,50,0,0.0,D - Baja,No recomendable para entrenamiento
-pH,float64,528,50,478,9.47,90.53,45,5,0.0,D - Baja,No recomendable para entrenamiento
-TEMPERATURA,float64,528,50,478,9.47,90.53,44,6,0.0,D - Baja,No recomendable para entrenamiento
-FOSFORO TOTAL,float64,528,49,479,9.28,90.72,45,4,0.0,D - Baja,No recomendable para entrenamiento
-DEMANDA QUIMICA DE OXIGENO (DQO),float64,528,49,479,9.28,90.72,44,5,0.0,D - Baja,No recomendable para entrenamiento
-INDICE DE DESEMPENO INSTITUCIONAL,float64,528,48,480,9.09,90.91,4,44,0.0,D - Baja,No recomendable para entrenamiento
-TURBIDEZ,float64,528,34,494,6.44,93.56,30,4,0.0,D - Baja,No recomendable para entrenamiento
-NITROGENO TOTAL,float64,528,29,499,5.49,94.51,29,0,0.0,D - Baja,No recomendable para entrenamiento
-DEMANDA BIOQUIMICA DE OXIGENO (DBO5),float64,528,26,502,4.92,95.08,19,7,0.0,D - Baja,No recomendable para entrenamiento
+Nodo,object,528,528,0,100.0,0.0,4,524,,A - Excelente,Sin tratamiento por faltantes
+Fecha,datetime64[ns],528,528,0,100.0,0.0,132,396,,A - Excelente,Sin tratamiento por faltantes
+Precipitacion_mm,float64,528,528,0,100.0,0.0,437,91,0.19,A - Excelente,Sin tratamiento por faltantes
+Temp_Max_C,float64,528,528,0,100.0,0.0,406,122,0.0,A - Excelente,Sin tratamiento por faltantes
+Temp_Min_C,float64,528,528,0,100.0,0.0,410,118,0.0,A - Excelente,Sin tratamiento por faltantes
+Temp_Media_C,float64,528,528,0,100.0,0.0,363,165,0.0,A - Excelente,Sin tratamiento por faltantes
+Humedad_Relativa,float64,528,528,0,100.0,0.0,439,89,0.0,A - Excelente,Sin tratamiento por faltantes
+Velocidad_Viento,float64,528,528,0,100.0,0.0,116,412,0.0,A - Excelente,Sin tratamiento por faltantes
+Radiacion_Solar,float64,528,528,0,100.0,0.0,358,170,0.0,A - Excelente,Sin tratamiento por faltantes
+Anio,int32,528,528,0,100.0,0.0,11,517,0.0,A - Excelente,Sin tratamiento por faltantes
+Mes,int32,528,528,0,100.0,0.0,12,516,0.0,A - Excelente,Sin tratamiento por faltantes
+ONI,float64,528,528,0,100.0,0.0,111,417,0.0,A - Excelente,Sin tratamiento por faltantes
+Estado_ENSO,object,528,528,0,100.0,0.0,3,525,,A - Excelente,Sin tratamiento por faltantes
+irca,float64,528,528,0,100.0,0.0,29,499,9.09,A - Excelente,Sin tratamiento por faltantes
+nivel_de_riesgo,object,528,528,0,100.0,0.0,2,526,,A - Excelente,Sin tratamiento por faltantes
+POBLACION TOTAL,float64,528,528,0,100.0,0.0,16,512,0.0,A - Excelente,Sin tratamiento por faltantes
+ACCESO A AGUA POTABLE ADECUADO,float64,528,528,0,100.0,0.0,7,521,0.0,A - Excelente,Sin tratamiento por faltantes
+DENSIDAD POBLACIONAL,float64,528,528,0,100.0,0.0,16,512,0.0,A - Excelente,Sin tratamiento por faltantes
+COBERTURA DE ACUEDUCTO URBANO,float64,528,528,0,100.0,0.0,2,526,0.0,A - Excelente,Sin tratamiento por faltantes
+PORCENTAJE DE LA POBLACION CON ACCESO A METODOS DE SANEAMIENTO ADECUADOS,float64,528,528,0,100.0,0.0,10,518,0.0,A - Excelente,Sin tratamiento por faltantes
+Volumen_Fuente,object,528,528,0,100.0,0.0,3,525,,A - Excelente,Sin tratamiento por faltantes
+AlcantarilladoUrbano_Imputado,int64,528,528,0,100.0,0.0,2,526,36.36,A - Excelente,Sin tratamiento por faltantes
+COBERTURA DE ACUEDUCTO RURAL,float64,528,528,0,100.0,0.0,3,525,0.0,A - Excelente,Sin tratamiento por faltantes
+COBERTURA DE ALCANTARILLADO URBANO,float64,528,528,0,100.0,0.0,9,519,0.0,A - Excelente,Sin tratamiento por faltantes
+COBERTURA DE ALCANTARILLADO RURAL,float64,528,528,0,100.0,0.0,7,521,0.0,A - Excelente,Sin tratamiento por faltantes
+IRCA_Fuente,object,528,528,0,100.0,0.0,2,526,,A - Excelente,Sin tratamiento por faltantes
+Version_Dataset,object,528,528,0,100.0,0.0,1,527,,A - Excelente,Sin tratamiento por faltantes
+AlcantarilladoRural_Imputado,int64,528,528,0,100.0,0.0,2,526,36.36,A - Excelente,Sin tratamiento por faltantes
+Saneamiento_Imputado,int64,528,528,0,100.0,0.0,2,526,36.36,A - Excelente,Sin tratamiento por faltantes
+AcueductoUrbano_Imputado,int64,528,528,0,100.0,0.0,2,526,36.36,A - Excelente,Sin tratamiento por faltantes
+AcueductoRural_Imputado,int64,528,528,0,100.0,0.0,2,526,36.36,A - Excelente,Sin tratamiento por faltantes
+AguaPotable_Imputada,int64,528,528,0,100.0,0.0,2,526,36.36,A - Excelente,Sin tratamiento por faltantes
+Volumen_Imputado,int64,528,528,0,100.0,0.0,2,526,91.67,A - Excelente,Sin tratamiento por faltantes
+Poblacion_Imputada,int64,528,528,0,100.0,0.0,2,526,36.36,A - Excelente,Sin tratamiento por faltantes
+Densidad_Imputada,int64,528,528,0,100.0,0.0,2,526,36.36,A - Excelente,Sin tratamiento por faltantes
+IRCA_Imputado,int64,528,528,0,100.0,0.0,2,526,90.91,A - Excelente,Sin tratamiento por faltantes
+VolumenUtilDiarioMasa,float64,528,336,192,63.64,36.36,84,252,0.0,C - Media,Requiere estrategia para datos faltantes
+AGUAS RESIDUALES TRATADAS,float64,528,96,432,18.18,81.82,4,92,4.55,D - Baja,Cobertura insuficiente; revisar uso
+CONTINUIDAD DE ACUEDUCTO URBANO,float64,528,96,432,18.18,81.82,1,95,0.0,D - Baja,Cobertura insuficiente; revisar uso
+CALIDAD DEL AGUA,float64,528,96,432,18.18,81.82,8,88,2.27,D - Baja,Cobertura insuficiente; revisar uso
+Nivel_Minimo,float64,528,87,441,16.48,83.52,83,4,0.0,D - Baja,Cobertura insuficiente; revisar uso
+SOLIDOS SUSPENDIDOS TOTALES,float64,528,50,478,9.47,90.53,45,5,0.0,D - Baja,Cobertura insuficiente; revisar uso
+CONDUCTIVIDAD ELECTRICA,float64,528,50,478,9.47,90.53,50,0,0.0,D - Baja,Cobertura insuficiente; revisar uso
+OXIGENO DISUELTO (OD),float64,528,50,478,9.47,90.53,46,4,0.0,D - Baja,Cobertura insuficiente; revisar uso
+pH,float64,528,50,478,9.47,90.53,45,5,0.0,D - Baja,Cobertura insuficiente; revisar uso
+TEMPERATURA,float64,528,50,478,9.47,90.53,44,6,0.0,D - Baja,Cobertura insuficiente; revisar uso
+DEMANDA QUIMICA DE OXIGENO (DQO),float64,528,49,479,9.28,90.72,44,5,0.0,D - Baja,Cobertura insuficiente; revisar uso
+FOSFORO TOTAL,float64,528,49,479,9.28,90.72,45,4,0.0,D - Baja,Cobertura insuficiente; revisar uso
+INDICE DE DESEMPENO INSTITUCIONAL,float64,528,48,480,9.09,90.91,4,44,0.0,D - Baja,Cobertura insuficiente; revisar uso
+TURBIDEZ,float64,528,34,494,6.44,93.56,30,4,0.0,D - Baja,Cobertura insuficiente; revisar uso
+NITROGENO TOTAL,float64,528,29,499,5.49,94.51,29,0,0.0,D - Baja,Cobertura insuficiente; revisar uso
+DEMANDA BIOQUIMICA DE OXIGENO (DBO5),float64,528,26,502,4.92,95.08,19,7,0.0,D - Baja,Cobertura insuficiente; revisar uso
