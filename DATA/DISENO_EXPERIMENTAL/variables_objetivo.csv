@@ -1,9 +1,9 @@
-﻿Orden,Experimento,Variable_Objetivo,Tipo_Problema,Existe_Dataset,Registros_Disponibles,Cobertura_%
-1,Exp01,irca,Clasificación,True,528,100.0
-2,Exp02,CALIDAD DEL AGUA,Clasificación,True,96,18.18
-3,Exp03,Nivel_Minimo,Regresión,True,87,16.48
-4,Exp04,VolumenUtilDiarioMasa,Regresión,True,336,63.64
-5,Exp05,DEMANDA BIOQUIMICA DE OXIGENO (DBO5),Regresión,True,26,4.92
-6,Exp06,DEMANDA QUIMICA DE OXIGENO (DQO),Regresión,True,49,9.28
-7,Exp07,OXIGENO DISUELTO (OD),Regresión,True,50,9.47
-8,Exp08,pH,Regresión,True,50,9.47
+﻿Orden,Experimento,Variable_Objetivo,Variable_Objetivo_Modelo,Tipo_Problema,Existe_Dataset,Registros_Disponibles,Cobertura_%,Existe_Objetivo_Modelo,Registros_Objetivo_Modelo,Cobertura_Objetivo_Modelo_%
+1,Exp01,irca,nivel_de_riesgo,Clasificación,True,528,100.0,True,528,100.0
+2,Exp02,CALIDAD DEL AGUA,CALIDAD DEL AGUA,Clasificación,True,96,18.18,True,96,18.18
+3,Exp03,Nivel_Minimo,Nivel_Minimo,Regresión,True,87,16.48,True,87,16.48
+4,Exp04,VolumenUtilDiarioMasa,VolumenUtilDiarioMasa,Regresión,True,336,63.64,True,336,63.64
+5,Exp05,DEMANDA BIOQUIMICA DE OXIGENO (DBO5),DEMANDA BIOQUIMICA DE OXIGENO (DBO5),Regresión,True,26,4.92,True,26,4.92
+6,Exp06,DEMANDA QUIMICA DE OXIGENO (DQO),DEMANDA QUIMICA DE OXIGENO (DQO),Regresión,True,49,9.28,True,49,9.28
+7,Exp07,OXIGENO DISUELTO (OD),OXIGENO DISUELTO (OD),Regresión,True,50,9.47,True,50,9.47
+8,Exp08,pH,pH,Regresión,True,50,9.47,True,50,9.47
