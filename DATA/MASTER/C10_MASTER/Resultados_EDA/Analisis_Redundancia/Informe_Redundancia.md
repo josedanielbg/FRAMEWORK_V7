@@ -2,36 +2,48 @@
 
 ## Objetivo
 
-Cuantificar la redundancia estructural entre las variables numéricas del Dataset Maestro V04 como insumo para la construcción del Índice de Pertinencia para Machine Learning (IPML).
+Cuantificar la redundancia estructural entre las variables numéricas analíticas del Dataset Maestro V04 como insumo para etapas posteriores del Framework y para la construcción del Índice de Pertinencia para Machine Learning (IPML).
 
-## Resultados Generales
+## Criterio metodológico
 
-- Variables evaluadas: **35**
-- Relaciones redundantes: **32**
+Se consideran relaciones de redundancia aquellas asociaciones con correlación absoluta de Pearson >= 0.90 y con un soporte mínimo de 30 observaciones pareadas. Las correlaciones con menor soporte no se utilizan para construir este diagnóstico.
+
+El Índice de Redundancia se obtiene normalizando el número de relaciones fuertes de cada variable respecto al máximo observado en el universo analítico. Por tanto, es un indicador relativo dentro del Dataset Maestro V04.
+
+## Resultados generales
+
+- Variables analíticas evaluadas: **35**
+- Relaciones redundantes con soporte suficiente: **8**
+- Variables involucradas en alguna relación fuerte: **14**
+- Máximo de relaciones fuertes observado: **2**
 
 ## Distribución del Índice de Redundancia
 
-- Muy Baja: 24 variables
-- Muy Alta: 8 variables
-- Baja: 3 variables
+- Muy Alta: 2 variables
+- Alta: 0 variables
+- Moderada: 12 variables
+- Baja: 0 variables
+- Muy Baja: 21 variables
 
 ## Variables con mayor redundancia
 
-- DENSIDAD POBLACIONAL (IR=1.000)
-- ACCESO A AGUA POTABLE ADECUADO (IR=1.000)
-- PORCENTAJE DE LA POBLACION CON ACCESO A METODOS DE SANEAMIENTO ADECUADOS (IR=1.000)
-- COBERTURA DE ACUEDUCTO URBANO (IR=1.000)
-- COBERTURA DE ACUEDUCTO RURAL (IR=1.000)
-- COBERTURA DE ALCANTARILLADO URBANO (IR=1.000)
-- COBERTURA DE ALCANTARILLADO RURAL (IR=1.000)
-- INDICE DE DESEMPENO INSTITUCIONAL (IR=0.833)
-- CALIDAD DEL AGUA (IR=0.333)
-- CONDUCTIVIDAD ELECTRICA (IR=0.333)
+- AGUAS RESIDUALES TRATADAS (relaciones=2, IR=1.000, nivel=Muy Alta)
+- INDICE DE DESEMPENO INSTITUCIONAL (relaciones=2, IR=1.000, nivel=Muy Alta)
+- ACCESO A AGUA POTABLE ADECUADO (relaciones=1, IR=0.500, nivel=Moderada)
+- CALIDAD DEL AGUA (relaciones=1, IR=0.500, nivel=Moderada)
+- COBERTURA DE ACUEDUCTO RURAL (relaciones=1, IR=0.500, nivel=Moderada)
+- COBERTURA DE ACUEDUCTO URBANO (relaciones=1, IR=0.500, nivel=Moderada)
+- COBERTURA DE ALCANTARILLADO RURAL (relaciones=1, IR=0.500, nivel=Moderada)
+- COBERTURA DE ALCANTARILLADO URBANO (relaciones=1, IR=0.500, nivel=Moderada)
+- CONDUCTIVIDAD ELECTRICA (relaciones=1, IR=0.500, nivel=Moderada)
+- DENSIDAD POBLACIONAL (relaciones=1, IR=0.500, nivel=Moderada)
 
 ## Interpretación
 
-Las variables con mayor Índice de Redundancia representan grupos de información altamente relacionados. Las variables con IR cercano a cero aportan información más independiente dentro del Dataset Maestro.
+Un Índice de Redundancia elevado indica que una variable participa en una mayor proporción de las relaciones fuertes identificadas dentro del universo analítico. Un índice igual a cero indica que la variable no participa en relaciones que cumplan simultáneamente el umbral de correlación y el soporte mínimo definidos para este análisis.
 
-## Conclusiones
+Este resultado no implica que una variable sea irrelevante, ni que deba ser eliminada automáticamente. La redundancia constituye únicamente un componente diagnóstico que debe evaluarse posteriormente junto con otros criterios, incluido el VIF, la cobertura, la calidad de los datos y el conocimiento del dominio.
 
-El Índice de Redundancia constituye el primer criterio objetivo para la evaluación de variables dentro del Framework y será integrado posteriormente con el VIF, la cobertura, la calidad de datos y el conocimiento del dominio para construir el IPML.
+## Conclusión
+
+El diagnóstico caracteriza la redundancia estructural de las 35 variables numéricas analíticas sin realizar eliminación automática. Sus resultados quedan disponibles como insumo para los análisis posteriores del Framework y para la integración final del IPML.
