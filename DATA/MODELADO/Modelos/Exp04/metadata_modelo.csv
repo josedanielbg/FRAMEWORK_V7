@@ -1,0 +1,29 @@
+﻿Parametro,Valor
+Experimento,Exp04
+Experimento Fuente C13,Exp04
+Dominio,Gestión Hídrica
+Tipo Problema,Regresión
+Modelo,LSTM
+Variable Objetivo,VolumenUtilDiarioMasa
+Variable Objetivo Cientifico,VolumenUtilDiarioMasa
+Ventana,12
+Horizonte,1
+Variables Predictoras,9
+Variables Modelo,ONI;PORCENTAJE DE LA POBLACION CON ACCESO A METODOS DE SANEAMIENTO ADECUADOS;Precipitacion_mm;Radiacion_Solar;irca;Humedad_Relativa;Temp_Min_C;Mes;Velocidad_Viento
+Metodo Transformacion,RobustScaler
+Transformacion Aplicada en C13,False
+Scaler Ajustado En,C14 - exclusivamente conjunto de entrenamiento
+Scaler,scaler.pkl
+Transformacion Objetivo,StandardScaler
+Scaler Objetivo Ajustado En,C14 - exclusivamente y_train
+Scaler Objetivo,scaler_y.pkl
+Numero Secuencias,336
+Muestras Train,232
+Muestras Validacion,52
+Muestras Prueba,52
+Estrategia Split,Temporal por Nodo usando Fecha_Objetivo
+Fecha Generacion,2026-08-12 21:03:03
+Tensor X,tensor_X.npy
+Tensor X Raw,tensor_X_raw.npy
+Tensor y,tensor_y.npy
+Metadata Split,metadata_split.csv
