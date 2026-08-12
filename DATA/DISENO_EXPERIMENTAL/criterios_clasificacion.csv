@@ -1,4 +1,4 @@
-Metrica,Valor_Minimo,Descripcion
+﻿Metrica,Valor_Minimo,Descripcion
 Accuracy,0.85,Exactitud global
 Precision,0.7,Capacidad para evitar falsos positivos
 Recall,0.7,Capacidad para detectar positivos

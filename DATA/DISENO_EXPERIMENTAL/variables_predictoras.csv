@@ -1,10 +1,79 @@
-Orden,Variable
-1,Precipitacion_mm
-2,ONI
-3,Radiacion_Solar
-4,Humedad_Relativa
-5,Temp_Min_C
-6,Mes
-7,Velocidad_Viento
-8,irca
-9,VolumenUtilDiarioMasa
+﻿Experimento,Variable_Objetivo,Orden_Predictor,Variable_Predictora,Ranking_IPML,IPML,Categoria
+Exp01,irca,1,ONI,1,1.0,Variabilidad Climática
+Exp01,irca,2,PORCENTAJE DE LA POBLACION CON ACCESO A METODOS DE SANEAMIENTO ADECUADOS,2,1.0,Infraestructura
+Exp01,irca,3,Precipitacion_mm,3,1.0,Climática
+Exp01,irca,4,Radiacion_Solar,4,1.0,Climática
+Exp01,irca,5,VolumenUtilDiarioMasa,6,0.9636,Hidrológica
+Exp01,irca,6,Humedad_Relativa,7,0.95,Climática
+Exp01,irca,7,Temp_Min_C,12,0.9,Climática
+Exp01,irca,8,Mes,13,0.8668,Temporal
+Exp01,irca,9,Velocidad_Viento,14,0.8668,Climática
+Exp02,CALIDAD DEL AGUA,1,ONI,1,1.0,Variabilidad Climática
+Exp02,CALIDAD DEL AGUA,2,PORCENTAJE DE LA POBLACION CON ACCESO A METODOS DE SANEAMIENTO ADECUADOS,2,1.0,Infraestructura
+Exp02,CALIDAD DEL AGUA,3,Precipitacion_mm,3,1.0,Climática
+Exp02,CALIDAD DEL AGUA,4,Radiacion_Solar,4,1.0,Climática
+Exp02,CALIDAD DEL AGUA,5,irca,5,1.0,Calidad del Agua
+Exp02,CALIDAD DEL AGUA,6,VolumenUtilDiarioMasa,6,0.9636,Hidrológica
+Exp02,CALIDAD DEL AGUA,7,Humedad_Relativa,7,0.95,Climática
+Exp02,CALIDAD DEL AGUA,8,Temp_Min_C,12,0.9,Climática
+Exp02,CALIDAD DEL AGUA,9,Mes,13,0.8668,Temporal
+Exp02,CALIDAD DEL AGUA,10,Velocidad_Viento,14,0.8668,Climática
+Exp03,Nivel_Minimo,1,ONI,1,1.0,Variabilidad Climática
+Exp03,Nivel_Minimo,2,PORCENTAJE DE LA POBLACION CON ACCESO A METODOS DE SANEAMIENTO ADECUADOS,2,1.0,Infraestructura
+Exp03,Nivel_Minimo,3,Precipitacion_mm,3,1.0,Climática
+Exp03,Nivel_Minimo,4,Radiacion_Solar,4,1.0,Climática
+Exp03,Nivel_Minimo,5,irca,5,1.0,Calidad del Agua
+Exp03,Nivel_Minimo,6,VolumenUtilDiarioMasa,6,0.9636,Hidrológica
+Exp03,Nivel_Minimo,7,Humedad_Relativa,7,0.95,Climática
+Exp03,Nivel_Minimo,8,Temp_Min_C,12,0.9,Climática
+Exp03,Nivel_Minimo,9,Mes,13,0.8668,Temporal
+Exp03,Nivel_Minimo,10,Velocidad_Viento,14,0.8668,Climática
+Exp04,VolumenUtilDiarioMasa,1,ONI,1,1.0,Variabilidad Climática
+Exp04,VolumenUtilDiarioMasa,2,PORCENTAJE DE LA POBLACION CON ACCESO A METODOS DE SANEAMIENTO ADECUADOS,2,1.0,Infraestructura
+Exp04,VolumenUtilDiarioMasa,3,Precipitacion_mm,3,1.0,Climática
+Exp04,VolumenUtilDiarioMasa,4,Radiacion_Solar,4,1.0,Climática
+Exp04,VolumenUtilDiarioMasa,5,irca,5,1.0,Calidad del Agua
+Exp04,VolumenUtilDiarioMasa,6,Humedad_Relativa,7,0.95,Climática
+Exp04,VolumenUtilDiarioMasa,7,Temp_Min_C,12,0.9,Climática
+Exp04,VolumenUtilDiarioMasa,8,Mes,13,0.8668,Temporal
+Exp04,VolumenUtilDiarioMasa,9,Velocidad_Viento,14,0.8668,Climática
+Exp05,DEMANDA BIOQUIMICA DE OXIGENO (DBO5),1,ONI,1,1.0,Variabilidad Climática
+Exp05,DEMANDA BIOQUIMICA DE OXIGENO (DBO5),2,PORCENTAJE DE LA POBLACION CON ACCESO A METODOS DE SANEAMIENTO ADECUADOS,2,1.0,Infraestructura
+Exp05,DEMANDA BIOQUIMICA DE OXIGENO (DBO5),3,Precipitacion_mm,3,1.0,Climática
+Exp05,DEMANDA BIOQUIMICA DE OXIGENO (DBO5),4,Radiacion_Solar,4,1.0,Climática
+Exp05,DEMANDA BIOQUIMICA DE OXIGENO (DBO5),5,irca,5,1.0,Calidad del Agua
+Exp05,DEMANDA BIOQUIMICA DE OXIGENO (DBO5),6,VolumenUtilDiarioMasa,6,0.9636,Hidrológica
+Exp05,DEMANDA BIOQUIMICA DE OXIGENO (DBO5),7,Humedad_Relativa,7,0.95,Climática
+Exp05,DEMANDA BIOQUIMICA DE OXIGENO (DBO5),8,Temp_Min_C,12,0.9,Climática
+Exp05,DEMANDA BIOQUIMICA DE OXIGENO (DBO5),9,Mes,13,0.8668,Temporal
+Exp05,DEMANDA BIOQUIMICA DE OXIGENO (DBO5),10,Velocidad_Viento,14,0.8668,Climática
+Exp06,DEMANDA QUIMICA DE OXIGENO (DQO),1,ONI,1,1.0,Variabilidad Climática
+Exp06,DEMANDA QUIMICA DE OXIGENO (DQO),2,PORCENTAJE DE LA POBLACION CON ACCESO A METODOS DE SANEAMIENTO ADECUADOS,2,1.0,Infraestructura
+Exp06,DEMANDA QUIMICA DE OXIGENO (DQO),3,Precipitacion_mm,3,1.0,Climática
+Exp06,DEMANDA QUIMICA DE OXIGENO (DQO),4,Radiacion_Solar,4,1.0,Climática
+Exp06,DEMANDA QUIMICA DE OXIGENO (DQO),5,irca,5,1.0,Calidad del Agua
+Exp06,DEMANDA QUIMICA DE OXIGENO (DQO),6,VolumenUtilDiarioMasa,6,0.9636,Hidrológica
+Exp06,DEMANDA QUIMICA DE OXIGENO (DQO),7,Humedad_Relativa,7,0.95,Climática
+Exp06,DEMANDA QUIMICA DE OXIGENO (DQO),8,Temp_Min_C,12,0.9,Climática
+Exp06,DEMANDA QUIMICA DE OXIGENO (DQO),9,Mes,13,0.8668,Temporal
+Exp06,DEMANDA QUIMICA DE OXIGENO (DQO),10,Velocidad_Viento,14,0.8668,Climática
+Exp07,OXIGENO DISUELTO (OD),1,ONI,1,1.0,Variabilidad Climática
+Exp07,OXIGENO DISUELTO (OD),2,PORCENTAJE DE LA POBLACION CON ACCESO A METODOS DE SANEAMIENTO ADECUADOS,2,1.0,Infraestructura
+Exp07,OXIGENO DISUELTO (OD),3,Precipitacion_mm,3,1.0,Climática
+Exp07,OXIGENO DISUELTO (OD),4,Radiacion_Solar,4,1.0,Climática
+Exp07,OXIGENO DISUELTO (OD),5,irca,5,1.0,Calidad del Agua
+Exp07,OXIGENO DISUELTO (OD),6,VolumenUtilDiarioMasa,6,0.9636,Hidrológica
+Exp07,OXIGENO DISUELTO (OD),7,Humedad_Relativa,7,0.95,Climática
+Exp07,OXIGENO DISUELTO (OD),8,Temp_Min_C,12,0.9,Climática
+Exp07,OXIGENO DISUELTO (OD),9,Mes,13,0.8668,Temporal
+Exp07,OXIGENO DISUELTO (OD),10,Velocidad_Viento,14,0.8668,Climática
+Exp08,pH,1,ONI,1,1.0,Variabilidad Climática
+Exp08,pH,2,PORCENTAJE DE LA POBLACION CON ACCESO A METODOS DE SANEAMIENTO ADECUADOS,2,1.0,Infraestructura
+Exp08,pH,3,Precipitacion_mm,3,1.0,Climática
+Exp08,pH,4,Radiacion_Solar,4,1.0,Climática
+Exp08,pH,5,irca,5,1.0,Calidad del Agua
+Exp08,pH,6,VolumenUtilDiarioMasa,6,0.9636,Hidrológica
+Exp08,pH,7,Humedad_Relativa,7,0.95,Climática
+Exp08,pH,8,Temp_Min_C,12,0.9,Climática
+Exp08,pH,9,Mes,13,0.8668,Temporal
+Exp08,pH,10,Velocidad_Viento,14,0.8668,Climática

@@ -1,27 +1,31 @@
-
 # DISEÑO EXPERIMENTAL DEL FRAMEWORK V7
 
-Este directorio contiene la configuración oficial utilizada por el Framework.
+Este directorio contiene los artefactos oficiales del Diseño Experimental
+utilizados por el Framework V7.
 
-Contenido
+## Contenido
 
-• Variables objetivo
+- Variables objetivo
+- Variables predictoras
+- Catálogo experimental
+- Configuración experimental
+- Criterios de evaluación
+- Estado de los experimentos
 
-• Variables predictoras
+## Experimentos
 
-• Catálogo experimental
+El diseño contiene 8 experimentos:
 
-• Configuración experimental
+- Exp01 a Exp08
 
-• Criterios de evaluación
+Los experimentos conservan su definición independientemente de su
+viabilidad actual.
 
-• Estado de los experimentos
+La viabilidad se determina a partir de la cobertura disponible de la
+variable objetivo, utilizando un umbral de referencia del 50%.
 
-Estos archivos son consumidos automáticamente por:
+## Integración
 
-FW7_C13_MachineLearning.ipynb
-
-FW7_C14_Modelado.ipynb
-
-FW7_C15_Evaluacion_Modelos.ipynb
-
+Estos artefactos forman parte del flujo experimental del Framework V7
+y sirven como insumo para las etapas posteriores de Machine Learning
+y para su integración con FRAMEWORK_STREAMLIT.
