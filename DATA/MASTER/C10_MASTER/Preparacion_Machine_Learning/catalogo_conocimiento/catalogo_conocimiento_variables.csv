@@ -34,3 +34,7 @@ DENSIDAD POBLACIONAL,Demográfica,Alta,2,Describe la concentración espacial de 
 INDICE DE DESEMPENO INSTITUCIONAL,Institucional,Alta,2,Representa la capacidad institucional para apoyar la gestión sostenible del recurso hídrico.
 Anio,Temporal,Media,2,Permite identificar tendencias temporales de largo plazo en las variables del sistema hídrico.
 Mes,Temporal,Alta,3,"Representa la estacionalidad anual, fundamental para explicar la variabilidad climática e hidrológica."
+Anio,Temporal,Media,1,Permite identificar tendencias temporales de largo plazo en las variables del sistema hídrico.
+Mes,Temporal,Alta,2,"Representa la estacionalidad anual, fundamental para explicar la variabilidad climática e hidrológica."
+Anio,Temporal,Media,1,Permite identificar tendencias temporales de largo plazo en las variables del sistema hídrico.
+Mes,Temporal,Alta,2,"Representa la estacionalidad anual, fundamental para explicar la variabilidad climática e hidrológica."
