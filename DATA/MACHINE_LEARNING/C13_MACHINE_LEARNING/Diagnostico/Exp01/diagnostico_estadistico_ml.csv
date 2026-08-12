@@ -1,0 +1,11 @@
+﻿Variable,Asimetria,Outliers,Recomendacion
+ONI,0.891,12,Evaluar estandarización.
+PORCENTAJE DE LA POBLACION CON ACCESO A METODOS DE SANEAMIENTO ADECUADOS,-3.296,36,Considerar escalamiento robusto.
+Precipitacion_mm,0.657,7,Evaluar estandarización.
+Radiacion_Solar,0.436,16,No requiere transformación.
+irca,1.018,12,Considerar escalamiento robusto.
+VolumenUtilDiarioMasa,0.124,0,No requiere transformación.
+Humedad_Relativa,-1.056,6,Considerar escalamiento robusto.
+Temp_Min_C,-0.216,0,No requiere transformación.
+Mes,0.0,0,No requiere transformación.
+Velocidad_Viento,0.68,5,Evaluar estandarización.
