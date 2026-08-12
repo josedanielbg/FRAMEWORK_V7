@@ -1,0 +1,17 @@
+﻿Control,Estado
+X_raw_es_3D,True
+X_publicado_es_3D,True
+y_es_1D,True
+Alineacion_X_y,True
+Alineacion_X_metadata,True
+Secuencias_coinciden_metadata,True
+Ventana_coincide,True
+Predictoras_coinciden,True
+Indices_secuenciales,True
+Sin_NaN_X_raw,True
+Sin_NaN_X_transformado,True
+Sin_NaN_y,True
+Scaler_reproduce_tensor_C14,True
+Shape_modelo_ventana,True
+Shape_modelo_predictoras,True
+Clasificacion_con_dos_clases_globales,True

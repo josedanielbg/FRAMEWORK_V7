@@ -1,0 +1,5 @@
+﻿Nodo,Particion,N,Accuracy,Precision,Recall,F1,Especificidad,Accuracy_Balanceada,AUC_ROC,Clases_Presentes
+Bogota_Sabana,Prueba,18,1.0,0.0,0.0,0.0,1.0,0.5,,1
+Sopo_Sur,Prueba,18,1.0,0.0,0.0,0.0,1.0,0.5,,1
+Tocancipa_Media,Prueba,18,1.0,0.0,0.0,0.0,1.0,0.5,,1
+Villapinzon_Alta,Prueba,18,1.0,0.0,0.0,0.0,1.0,0.5,,1
