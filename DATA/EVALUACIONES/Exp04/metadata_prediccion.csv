@@ -1,0 +1,29 @@
+﻿Parametro,Valor
+Experimento,Exp04
+Dominio,Gestión Hídrica
+Tipo Problema,Regresión
+Variable Objetivo,VolumenUtilDiarioMasa
+Variable Objetivo Cientifico,VolumenUtilDiarioMasa
+Modelo,modelo_Exp04_VolumenUtilDiarioMasa.keras
+Metodo Transformacion,RobustScaler
+Scaler X,scaler.pkl
+Transformacion Objetivo,StandardScaler
+Scaler y,scaler_y.pkl
+Ventana,12
+Horizonte,1
+Variables Predictoras,9
+Variables Modelo,ONI;PORCENTAJE DE LA POBLACION CON ACCESO A METODOS DE SANEAMIENTO ADECUADOS;Precipitacion_mm;Radiacion_Solar;irca;Humedad_Relativa;Temp_Min_C;Mes;Velocidad_Viento
+Registros Procesados,336
+Predicciones Generadas,336
+Muestras Train,232
+Muestras Validacion,52
+Muestras Prueba,52
+Estado C14,MODELO REQUIERE AJUSTES
+Estado C15,MODELO REQUIERE AJUSTES
+Estados Coinciden,True
+Diferencia Max Tensor,0.0
+Estrategia Evaluacion,Reproducción independiente de C14 usando tensor_X_raw + scalers publicados
+Fecha Ejecucion,2026-08-12 21:40:51
+Archivo Predicciones,predicciones.csv
+Archivo Predicciones Prueba,predicciones_prueba.csv
+Archivo Metricas,metricas_particiones.csv
