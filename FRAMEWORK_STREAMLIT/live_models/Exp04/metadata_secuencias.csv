@@ -1,0 +1,11 @@
+﻿Parametro,Valor
+Experimento,Exp04
+Dominio,Gestión Hídrica
+Tipo Problema,Regresión
+Modelo,LSTM
+Variable Objetivo,VolumenUtilDiarioMasa
+Ventana,12
+Horizonte,1
+Variables Predictoras,Precipitacion_mm;ONI;Radiacion_Solar;Humedad_Relativa;Temp_Min_C;Mes;Velocidad_Viento;irca
+Variables Modelo,8
+Numero de Secuencias,516
