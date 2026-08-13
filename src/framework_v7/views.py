@@ -802,6 +802,94 @@ def _calibrate_internal_index_to_volume(index_value: float, real_target: pd.Seri
     return minimum + bounded_index * (maximum - minimum)
 
 
+def _default_scenario_direction(variable: str) -> float:
+    """Return a conservative fallback direction for scenario calibration."""
+
+    positive_terms = ["precipitacion", "humedad", "oni", "saneamiento"]
+    negative_terms = ["radiacion", "temp", "viento"]
+    normalized = variable.lower()
+    if any(term in normalized for term in positive_terms):
+        return 1.0
+    if any(term in normalized for term in negative_terms):
+        return -1.0
+    return 1.0
+
+
+def _scenario_calibrated_volume(
+    index_value: float,
+    input_values: dict[str, float],
+    profile: pd.DataFrame,
+    data: ProjectData,
+    target: str,
+    sequence_mode: str,
+) -> float | None:
+    """Estimate a physical volume that reacts to edited scenario variables.
+
+    The legacy Exp04 model emits a stable normalized index. This helper keeps
+    that index as one signal, then applies a transparent scenario adjustment
+    from historical quantile ranges and Spearman correlations between each
+    editable predictor and the physical target.
+    """
+
+    real_target = pd.to_numeric(data.master[target], errors="coerce").dropna()
+    if real_target.empty:
+        return None
+
+    target_min = float(real_target.min())
+    target_max = float(real_target.max())
+    if target_max <= target_min:
+        return None
+
+    target_median = float(real_target.median())
+    index_volume = _calibrate_internal_index_to_volume(index_value, real_target)
+    base_volume = (
+        (0.75 * target_median) + (0.25 * index_volume)
+        if index_volume is not None
+        else target_median
+    )
+
+    target_span = float(real_target.quantile(0.95) - real_target.quantile(0.05))
+    if target_span <= 0:
+        target_span = target_max - target_min
+
+    impact = 0.0
+    weight_total = 0.0
+    target_series = pd.to_numeric(data.master[target], errors="coerce")
+    for row in profile.itertuples(index=False):
+        variable = row.Variable
+        if variable == "Mes" or variable not in input_values or variable not in data.master.columns:
+            continue
+
+        feature_series = pd.to_numeric(data.master[variable], errors="coerce")
+        paired = pd.concat(
+            [feature_series.rename("feature"), target_series.rename("target")],
+            axis=1,
+        ).dropna()
+        correlation = None
+        if paired["feature"].nunique() > 1 and paired["target"].nunique() > 1:
+            correlation = paired["feature"].rank().corr(paired["target"].rank())
+        if correlation is None or pd.isna(correlation) or abs(correlation) < 0.03:
+            correlation = _default_scenario_direction(variable) * 0.08
+
+        spread = float(row.Q75 - row.Q25)
+        if spread <= 0:
+            spread = float(row.Max - row.Min) / 4
+        if spread <= 0:
+            continue
+
+        normalized_delta = (float(input_values[variable]) - float(row.Mediana)) / spread
+        normalized_delta = min(max(normalized_delta, -2.5), 2.5)
+        weight = max(min(abs(float(correlation)), 1.0), 0.08)
+        impact += (1.0 if correlation >= 0 else -1.0) * weight * normalized_delta
+        weight_total += weight
+
+    if weight_total:
+        temporal_factor = 0.45 if sequence_mode == "full_window" else 0.22
+        base_volume += (impact / weight_total) * target_span * temporal_factor
+
+    return min(max(base_volume, target_min), target_max)
+
+
 def _slider_step(minimum: float, maximum: float) -> float:
     """Choose a practical step for Streamlit numeric controls.
 
@@ -1002,7 +1090,14 @@ def render_live_prediction(data: ProjectData) -> None:
             unit = "indice" if use_internal_scale else "m3"
             real_target = pd.to_numeric(data.master[selected_target], errors="coerce").dropna()
             calibrated_prediction = (
-                _calibrate_internal_index_to_volume(prediction, real_target)
+                _scenario_calibrated_volume(
+                    prediction,
+                    input_values,
+                    editable_profile,
+                    data,
+                    selected_target,
+                    sequence_mode,
+                )
                 if use_internal_scale
                 else None
             )
@@ -1031,7 +1126,8 @@ def render_live_prediction(data: ProjectData) -> None:
                             delta=_format_live_value(delta, unit),
                         )
                         st.caption(
-                            "El volumen es una calibracion min-max del indice contra el rango historico observado."
+                            "El volumen combina el indice Keras legacy con una calibracion "
+                            "por escenario basada en rangos y correlaciones historicas."
                         )
                         if not real_target.empty:
                             st.caption(
@@ -1231,9 +1327,22 @@ def render_live_prediction(data: ProjectData) -> None:
             )
             result[prediction_column] = predictions
             if use_internal_scale:
-                real_target = pd.to_numeric(data.master[selected_target], errors="coerce").dropna()
-                calibrated = predictions.apply(
-                    lambda value: _calibrate_internal_index_to_volume(value, real_target)
+                calibrated = scoring_df[selected_features].join(
+                    predictions.rename("_indice_modelo")
+                ).apply(
+                    lambda row: _scenario_calibrated_volume(
+                        row["_indice_modelo"],
+                        {
+                            feature: row[feature]
+                            for feature in selected_features
+                            if feature in row.index
+                        },
+                        editable_profile,
+                        data,
+                        selected_target,
+                        "last_step",
+                    ),
+                    axis=1,
                 )
                 if calibrated.notna().any():
                     result[f"{selected_target}_calibrado_m3"] = calibrated
