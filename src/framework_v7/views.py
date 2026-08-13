@@ -788,6 +788,20 @@ def _live_reference_series(
     return pd.to_numeric(data.master[target], errors="coerce").dropna()
 
 
+def _calibrate_internal_index_to_volume(index_value: float, real_target: pd.Series) -> float | None:
+    """Map a normalized model index to the observed physical volume range."""
+
+    values = pd.to_numeric(real_target, errors="coerce").dropna()
+    if values.empty:
+        return None
+    minimum = float(values.min())
+    maximum = float(values.max())
+    if maximum <= minimum:
+        return None
+    bounded_index = min(max(float(index_value), 0.0), 1.0)
+    return minimum + bounded_index * (maximum - minimum)
+
+
 def _slider_step(minimum: float, maximum: float) -> float:
     """Choose a practical step for Streamlit numeric controls.
 
@@ -986,6 +1000,12 @@ def render_live_prediction(data: ProjectData) -> None:
             delta = prediction - reference
             is_irca_classifier = selected_target == "irca"
             unit = "indice" if use_internal_scale else "m3"
+            real_target = pd.to_numeric(data.master[selected_target], errors="coerce").dropna()
+            calibrated_prediction = (
+                _calibrate_internal_index_to_volume(prediction, real_target)
+                if use_internal_scale
+                else None
+            )
 
             result_col, chart_col = st.columns([1, 2])
             with result_col:
@@ -993,18 +1013,26 @@ def render_live_prediction(data: ProjectData) -> None:
                     st.metric("Probabilidad de riesgo IRCA", f"{prediction:.1%}")
                     st.metric("Clase estimada", "Riesgo IRCA" if prediction >= 0.5 else "Sin alerta")
                 else:
-                    st.metric(
-                        "Indice del escenario" if use_internal_scale else "Prediccion del escenario",
-                        _format_live_value(prediction, unit),
-                        delta=_format_live_value(delta, unit),
-                    )
-                    st.caption(
-                        "Delta calculado contra la mediana historica en escala interna."
-                        if use_internal_scale
-                        else "Delta calculado contra la mediana historica del objetivo."
-                    )
                     if use_internal_scale:
-                        real_target = pd.to_numeric(data.master[selected_target], errors="coerce").dropna()
+                        if calibrated_prediction is not None:
+                            real_reference = float(real_target.median()) if not real_target.empty else None
+                            st.metric(
+                                "Volumen calibrado",
+                                _format_live_value(calibrated_prediction, "m3"),
+                                delta=(
+                                    _format_live_value(calibrated_prediction - real_reference, "m3")
+                                    if real_reference is not None
+                                    else None
+                                ),
+                            )
+                        st.metric(
+                            "Indice del modelo",
+                            _format_live_value(prediction, unit),
+                            delta=_format_live_value(delta, unit),
+                        )
+                        st.caption(
+                            "El volumen es una calibracion min-max del indice contra el rango historico observado."
+                        )
                         if not real_target.empty:
                             st.caption(
                                 "Referencia fisica observada: "
@@ -1012,6 +1040,13 @@ def render_live_prediction(data: ProjectData) -> None:
                                 f"(rango {_format_live_value(float(real_target.min()), 'm3')} - "
                                 f"{_format_live_value(float(real_target.max()), 'm3')})."
                             )
+                    else:
+                        st.metric(
+                            "Prediccion del escenario",
+                            _format_live_value(prediction, unit),
+                            delta=_format_live_value(delta, unit),
+                        )
+                        st.caption("Delta calculado contra la mediana historica del objetivo.")
                 scenario_rows = [
                     {
                         "Variable": "Alcance temporal",
@@ -1036,19 +1071,33 @@ def render_live_prediction(data: ProjectData) -> None:
                         ]
                     )
                 else:
-                    scenarios = pd.DataFrame(
-                        [
-                            {
-                                "Escenario": (
-                                    "Mediana historica interna"
-                                    if use_internal_scale
-                                    else "Mediana historica"
-                                ),
-                                "Prediccion": reference,
-                            },
-                            {"Escenario": "Escenario editado", "Prediccion": prediction},
-                        ]
-                    )
+                    if use_internal_scale and calibrated_prediction is not None and not real_target.empty:
+                        scenarios = pd.DataFrame(
+                            [
+                                {
+                                    "Escenario": "Mediana historica",
+                                    "Prediccion": float(real_target.median()),
+                                },
+                                {
+                                    "Escenario": "Escenario calibrado",
+                                    "Prediccion": calibrated_prediction,
+                                },
+                            ]
+                        )
+                    else:
+                        scenarios = pd.DataFrame(
+                            [
+                                {
+                                    "Escenario": (
+                                        "Mediana historica interna"
+                                        if use_internal_scale
+                                        else "Mediana historica"
+                                    ),
+                                    "Prediccion": reference,
+                                },
+                                {"Escenario": "Escenario editado", "Prediccion": prediction},
+                            ]
+                        )
                 fig = px.bar(
                     scenarios,
                     x="Escenario",
@@ -1181,6 +1230,13 @@ def render_live_prediction(data: ProjectData) -> None:
                 else f"Prediccion_{selected_target}"
             )
             result[prediction_column] = predictions
+            if use_internal_scale:
+                real_target = pd.to_numeric(data.master[selected_target], errors="coerce").dropna()
+                calibrated = predictions.apply(
+                    lambda value: _calibrate_internal_index_to_volume(value, real_target)
+                )
+                if calibrated.notna().any():
+                    result[f"{selected_target}_calibrado_m3"] = calibrated
             if selected_target == "irca":
                 result["Clase_estimada"] = predictions.apply(
                     lambda value: "Riesgo IRCA" if value >= 0.5 else "Sin alerta"
