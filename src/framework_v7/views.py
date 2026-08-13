@@ -759,7 +759,33 @@ def _format_live_value(value: float, unit: str) -> str:
 
     if unit == "m3":
         return f"{value:,.0f} {unit}"
+    if unit == "indice":
+        return f"{value:,.3f}"
     return f"{value:,.2f} {unit}"
+
+
+def _uses_internal_live_scale(artifact_paths: dict[str, object]) -> bool:
+    """Return whether live predictions are emitted in model-internal scale."""
+
+    model_path = artifact_paths.get("model")
+    if model_path is None:
+        return False
+    return "live_models" in rel(model_path) and artifact_paths.get("target_scaler") is None
+
+
+def _live_reference_series(
+    target: str,
+    use_internal_scale: bool,
+    data: ProjectData,
+    keras_model: object | None = None,
+) -> pd.Series:
+    """Return the comparable reference series for live prediction charts."""
+
+    if use_internal_scale and keras_model is not None:
+        transformed = getattr(keras_model, "transformed_dataset", pd.DataFrame())
+        if target in transformed.columns:
+            return pd.to_numeric(transformed[target], errors="coerce").dropna()
+    return pd.to_numeric(data.master[target], errors="coerce").dropna()
 
 
 def _slider_step(minimum: float, maximum: float) -> float:
@@ -859,6 +885,7 @@ def render_live_prediction(data: ProjectData) -> None:
         feature for feature in str(selected_row["Variables modelo"]).split(";") if feature
     ]
     artifact_paths = keras_experiment_artifact_paths(selected_experiment)
+    use_internal_scale = _uses_internal_live_scale(artifact_paths)
 
     profile = feature_profile(data.master, selected_features)
     if profile.empty:
@@ -875,6 +902,11 @@ def render_live_prediction(data: ProjectData) -> None:
         "La prediccion live usa solo Exp04 porque fue el experimento que respondio "
         "a cambios de escenario en las validaciones internas."
     )
+    if use_internal_scale:
+        st.info(
+            "Este simulador usa el artefacto legacy de Exp04. Su salida es un indice "
+            "normalizado del modelo, no un volumen fisico en m3."
+        )
     if artifact_paths["model"] is not None:
         st.caption(f"Modelo: {rel(artifact_paths['model'])}")
     if artifact_paths["scaler"] is not None:
@@ -944,11 +976,16 @@ def render_live_prediction(data: ProjectData) -> None:
                     st.error(f"No fue posible generar la prediccion: {type(error).__name__}: {error}")
                     return
 
-            observed_target = pd.to_numeric(data.master[selected_target], errors="coerce").dropna()
+            observed_target = _live_reference_series(
+                selected_target,
+                use_internal_scale,
+                data,
+                keras_model,
+            )
             reference = float(observed_target.median()) if not observed_target.empty else prediction
             delta = prediction - reference
             is_irca_classifier = selected_target == "irca"
-            unit = "m3"
+            unit = "indice" if use_internal_scale else "m3"
 
             result_col, chart_col = st.columns([1, 2])
             with result_col:
@@ -957,11 +994,24 @@ def render_live_prediction(data: ProjectData) -> None:
                     st.metric("Clase estimada", "Riesgo IRCA" if prediction >= 0.5 else "Sin alerta")
                 else:
                     st.metric(
-                        "Prediccion del escenario",
+                        "Indice del escenario" if use_internal_scale else "Prediccion del escenario",
                         _format_live_value(prediction, unit),
                         delta=_format_live_value(delta, unit),
                     )
-                    st.caption("Delta calculado contra la mediana historica del objetivo.")
+                    st.caption(
+                        "Delta calculado contra la mediana historica en escala interna."
+                        if use_internal_scale
+                        else "Delta calculado contra la mediana historica del objetivo."
+                    )
+                    if use_internal_scale:
+                        real_target = pd.to_numeric(data.master[selected_target], errors="coerce").dropna()
+                        if not real_target.empty:
+                            st.caption(
+                                "Referencia fisica observada: "
+                                f"mediana {_format_live_value(float(real_target.median()), 'm3')} "
+                                f"(rango {_format_live_value(float(real_target.min()), 'm3')} - "
+                                f"{_format_live_value(float(real_target.max()), 'm3')})."
+                            )
                 scenario_rows = [
                     {
                         "Variable": "Alcance temporal",
@@ -989,7 +1039,11 @@ def render_live_prediction(data: ProjectData) -> None:
                     scenarios = pd.DataFrame(
                         [
                             {
-                                "Escenario": "Mediana historica",
+                                "Escenario": (
+                                    "Mediana historica interna"
+                                    if use_internal_scale
+                                    else "Mediana historica"
+                                ),
                                 "Prediccion": reference,
                             },
                             {"Escenario": "Escenario editado", "Prediccion": prediction},
@@ -1121,7 +1175,12 @@ def render_live_prediction(data: ProjectData) -> None:
                     axis=1,
                 )
             result = upload_df.copy()
-            result[f"Prediccion_{selected_target}"] = predictions
+            prediction_column = (
+                f"Indice_{selected_target}"
+                if use_internal_scale
+                else f"Prediccion_{selected_target}"
+            )
+            result[prediction_column] = predictions
             if selected_target == "irca":
                 result["Clase_estimada"] = predictions.apply(
                     lambda value: "Riesgo IRCA" if value >= 0.5 else "Sin alerta"

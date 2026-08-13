@@ -142,8 +142,11 @@ La vista `Gobierno de modelos` presenta el control operativo de los modelos:
 ## Prediccion Live
 
 La app incluye inferencia interactiva con `Exp04`, el experimento de regresion
-para `VolumenUtilDiarioMasa` que se usa como simulador de escenarios. La entrada
-se restringe a las variables marcadas como aptas en
+para `VolumenUtilDiarioMasa` que se usa como simulador de escenarios. En la
+vista live se usa el artefacto legacy validado por sensibilidad, por lo que la
+salida se muestra como indice normalizado del modelo. Las evaluaciones
+consolidadas de `DATA/EVALUACIONES/Exp04` conservan los valores fisicos en m3.
+La entrada se restringe a las variables marcadas como aptas en
 `DATA/MASTER/C11_MASTER/Preparacion_Machine_Learning/ipm/variables_machine_learning.csv`
 y usa el `scaler.pkl` del experimento para construir la secuencia temporal que
 espera el LSTM. Permite:

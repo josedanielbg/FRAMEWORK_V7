@@ -414,8 +414,9 @@ def predict_with_keras_model(
     sequence = build_keras_sequence(artifacts, values, sequence_mode)
     prediction = artifacts.model.predict(sequence, verbose=0)
     value = float(np.asarray(prediction).reshape(-1)[0])
-    if artifacts.target_scaler is not None:
-        value = float(artifacts.target_scaler.inverse_transform([[value]]).reshape(-1)[0])
+    target_scaler = getattr(artifacts, "target_scaler", None)
+    if target_scaler is not None:
+        value = float(target_scaler.inverse_transform([[value]]).reshape(-1)[0])
     return value
 
 
