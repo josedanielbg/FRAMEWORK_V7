@@ -1000,15 +1000,6 @@ def render_live_prediction(data: ProjectData) -> None:
     c2.metric("Variable objetivo", selected_target)
     c3.metric("Ventana LSTM", selected_window)
     c4.metric("Variables editables", len(editable_profile))
-    st.caption(
-        "La prediccion live usa solo Exp04 porque fue el experimento que respondio "
-        "a cambios de escenario en las validaciones internas."
-    )
-    if use_internal_scale:
-        st.info(
-            "Este simulador usa el artefacto legacy de Exp04. Su salida es un indice "
-            "normalizado del modelo, no un volumen fisico en m3."
-        )
     if artifact_paths["model"] is not None:
         st.caption(f"Modelo: {rel(artifact_paths['model'])}")
     if artifact_paths["scaler"] is not None:
@@ -1125,17 +1116,6 @@ def render_live_prediction(data: ProjectData) -> None:
                             _format_live_value(prediction, unit),
                             delta=_format_live_value(delta, unit),
                         )
-                        st.caption(
-                            "El volumen combina el indice Keras legacy con una calibracion "
-                            "por escenario basada en rangos y correlaciones historicas."
-                        )
-                        if not real_target.empty:
-                            st.caption(
-                                "Referencia fisica observada: "
-                                f"mediana {_format_live_value(float(real_target.median()), 'm3')} "
-                                f"(rango {_format_live_value(float(real_target.min()), 'm3')} - "
-                                f"{_format_live_value(float(real_target.max()), 'm3')})."
-                            )
                     else:
                         st.metric(
                             "Prediccion del escenario",
